@@ -1,5 +1,5 @@
-const CACHE='cmubiotrage-v6', TILES='cmubiotrage-tiles';
-const FILES=['./','index.html','styles.css','app.js','data.json','manifest.json','icons/icon.svg','lib/leaflet.js','lib/leaflet.css','lib/images/marker-icon.png','lib/images/marker-icon-2x.png','lib/images/marker-shadow.png'];
+const CACHE='cmubiotrage-v10', TILES='cmubiotrage-tiles';
+const FILES=['./','index.html','styles.css','app.js','data.json','manifest.json','icons/icon.svg','assets/bg.svg','lib/leaflet.js','lib/leaflet.css','lib/images/marker-icon.png','lib/images/marker-icon-2x.png','lib/images/marker-shadow.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x.startsWith('cmubiotrage-')&&x!==CACHE&&x!==TILES).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{

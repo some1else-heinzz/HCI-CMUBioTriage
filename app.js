@@ -272,10 +272,11 @@ async function submitReport() {
   }
 }
 let staffMap = null, reportMarkers = null, reportTimer = null, reportController = null;
-let reportRows = [], reportNext = null;
+let reportRows = [], reportNext = null, reportFilter = 'active';
 screensStaff['staff-reports'] = () => staffNav() + `<h1>Submitted reports</h1>
   <p class="lead">Reports from users, with their submitted locations.</p>
   <button class="btn small" id="refreshReports" type="button">Refresh reports</button>
+  <div class="chips" id="reportFilter" role="group" aria-label="Show reports">${[['active', 'Active'], ['handled', 'Handled'], ['all', 'All']].map(([k, t]) => `<button type="button" class="chip" data-filter="${k}" aria-pressed="${k === reportFilter}">${t}</button>`).join('')}</div>
   <p id="reportsStatus" role="status" aria-live="polite">Loading submitted reports…</p>
   <section class="card"><h2>Report locations</h2><div id="staffMap" aria-label="Map of submitted report locations"></div>
   <p id="staffMapNote" class="review" hidden>Map tiles could not load. Coordinates and map links are available in each report below.</p>
@@ -295,6 +296,12 @@ function startReportView() {
       .on('tileerror', () => { const note = $('#staffMapNote'); if (note) note.hidden = false; });
     reportMarkers = L.featureGroup().addTo(staffMap);
   } else $('#staffMapNote').hidden = false;
+  document.querySelectorAll('[data-filter]').forEach(b => b.onclick = () => {
+    reportFilter = b.dataset.filter; reportRows = []; reportNext = null;
+    document.querySelectorAll('[data-filter]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    if (reportController) { reportController.abort(); reportController = null; }
+    loadReports(false, false);
+  });
   $('#refreshReports').onclick = () => loadReports(false, false);
   $('#olderReports').onclick = () => loadReports(true, false);
   loadReports(false, false);
@@ -309,7 +316,7 @@ async function loadReports(older, automatic) {
   $('#refreshReports').disabled = true; $('#olderReports').disabled = true;
   if (!automatic) status.textContent = 'Loading submitted reports…';
   try {
-    const result = await api(apiUrl('reports') + (older && reportNext ? '?before=' + encodeURIComponent(reportNext) : ''), { signal: controller.signal });
+    const result = await api(apiUrl('reports') + '?' + new URLSearchParams(Object.assign({ status: reportFilter }, older && reportNext ? { before: reportNext } : {})), { signal: controller.signal });
     if (controller.signal.aborted) return;
     const previousIds = new Set(reportRows.map(r => r.id));
     const newReports = result.reports.filter(r => !previousIds.has(r.id));
@@ -334,6 +341,15 @@ async function loadReports(older, automatic) {
     }
   }
 }
+async function reportAction(id, request, apply) {
+  try { await api(apiUrl('report') + request.query, request.options); apply(); renderReports(false);
+    const st = $('#reportsStatus'); if (st) st.textContent = `${reportRows.length} report${reportRows.length === 1 ? '' : 's'} shown.`; toast('✔ Done');
+  } catch (error) {
+    if (error.status === 401) { sessionStorage.removeItem('ss_staff'); location.hash = '#/staff'; return; }
+    if (error.status === 404) { reportRows = reportRows.filter(r => r.id !== id); renderReports(false); }
+    toast(error.message);
+  }
+}
 function renderReports(fit) {
   reportMarkers?.clearLayers();
   let mapped = 0;
@@ -345,13 +361,24 @@ function renderReports(fit) {
       if (staffMap) L.marker([report.lat, report.lng]).addTo(reportMarkers).bindPopup(`<b>${esc(title)}</b><br>${esc(new Date(report.submittedAt).toLocaleString())}<br>${esc(d.cond)}`);
     }
     return `<article class="card report-card" id="report-${report.id}"><h2>${esc(title)}</h2>
-      <p class="report-time">Submitted ${esc(new Date(report.submittedAt).toLocaleString())}</p>
+      <p class="report-time">Submitted ${esc(new Date(report.submittedAt).toLocaleString())} ${report.handled ? '<span class="tag t-Confirmed">Handled</span>' : ''}</p>
       <dl class="report-details">${[['Area', d.area], ['Surroundings', d.surr], ['Landmark', d.landmark], ['Can meet responders', d.meet], ['Time of bite', d.time], ['Condition', d.cond], ['Actions taken', d.done], ['Snake', d.snake]].map(([label, value]) => `<div><dt>${label}</dt><dd>${esc(value)}</dd></div>`).join('')}</dl>
-      ${hasPin ? `<p>Location: ${report.lat.toFixed(5)}, ${report.lng.toFixed(5)}</p><button class="btn small primary" data-report-map="${report.id}" type="button">Show on map</button><a class="btn small" href="${pinLink(report)}" target="_blank" rel="noopener">Open in maps</a>` : '<p class="review">No map pin attached. Use the area and landmark provided.</p>'}</article>`;
+      ${hasPin ? `<p>Location: ${report.lat.toFixed(5)}, ${report.lng.toFixed(5)}</p><button class="btn small primary" data-report-map="${report.id}" type="button">Show on map</button><a class="btn small" href="${pinLink(report)}" target="_blank" rel="noopener">Open in maps</a>` : '<p class="review">No map pin attached. Use the area and landmark provided.</p>'}<div class="report-actions"><button class="btn small" data-handle="${report.id}" data-to="${report.handled ? 0 : 1}" type="button">${report.handled ? 'Reopen' : '✔ Mark as handled'}</button><button class="btn small danger" data-del="${report.id}" type="button">Delete…</button></div></article>`;
   }).join('') || '<div class="card"><h2>No reports yet</h2><p>Reports appear here after a user submits them from “Tell the responder”.</p></div>';
   $('#locationCount').textContent = `${mapped} of ${reportRows.length} loaded reports have map locations.`;
   $('#olderReports').hidden = !reportNext;
   if (fit && mapped && staffMap) staffMap.fitBounds(reportMarkers.getBounds(), { padding: [30, 30], maxZoom: 17 });
+  document.querySelectorAll('[data-handle]').forEach(b => b.onclick = () => {
+    const id = b.dataset.handle, to = b.dataset.to === '1';
+    reportAction(id, { query: '', options: { method: 'POST', body: JSON.stringify({ id, handled: to }) } }, () => {
+      if (reportFilter === 'all') { const row = reportRows.find(r => r.id === id); if (row) row.handled = to; } else reportRows = reportRows.filter(r => r.id !== id);
+    });
+  });
+  document.querySelectorAll('[data-del]').forEach(b => b.onclick = () => {
+    const id = b.dataset.del;
+    if (!confirm('Delete this report permanently? This cannot be undone.')) return;
+    reportAction(id, { query: '?id=' + encodeURIComponent(id), options: { method: 'DELETE' } }, () => { reportRows = reportRows.filter(r => r.id !== id); });
+  });
   document.querySelectorAll('[data-report-map]').forEach(button => button.onclick = () => {
     const report = reportRows.find(row => row.id === button.dataset.reportMap);
     if (!staffMap) { toast('Map unavailable. Use Open in maps.'); return; }
@@ -401,7 +428,7 @@ function wire(r) {
     on('save', async () => {
       const o = $('#saveOut');
       if (!('serviceWorker' in navigator)) { o.innerHTML = '<p class="msg">This browser cannot save offline. Add it to your home screen instead.</p>'; return; }
-      try { const keys = await (await caches.open('cmubiotrage-v6')).keys();
+      try { const keys = await (await caches.open('cmubiotrage-v10')).keys();
         o.innerHTML = keys.length >= 6 ? `<p class="msg">✔ Saved offline: reviewed ${esc(D.reviewed)}</p>` : '<p class="msg">Not saved yet. Stay online a few seconds and tap again.</p>';
       } catch { o.innerHTML = '<p class="msg">Could not check. Reload the page while online and try again.</p>'; }
       netStatus();
@@ -457,7 +484,7 @@ function wire(r) {
 /* ---------- Status banner + boot ---------- */
 function netStatus() {
   const ok = 'serviceWorker' in navigator && navigator.serviceWorker.controller;
-  const n = $('#net'); n.textContent = ok ? `Saved offline · reviewed ${D.reviewed}` : 'Not saved for offline use yet';
+  const n = $('#net'); if (!n) return; n.textContent = ok ? `Saved offline · reviewed ${D.reviewed}` : 'Not saved for offline use yet';
   n.className = 'pill' + (ok ? '' : ' off');
 }
 function applyPrefs() {
@@ -474,9 +501,11 @@ window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferr
 window.addEventListener('hashchange', route);
 (async function boot() {
   try { D = await (await fetch('data.json')).json(); }
-  catch { $('#app').innerHTML = '<p class="msg">Could not load guide data. Reload while online once, then it will work offline.</p>'; return; }
+  catch { $('#app').innerHTML = location.protocol === 'file:'
+    ? '<div class="card"><h1>Open this through Apache</h1><p>You opened the file directly from the folder, which browsers block. Start Apache in XAMPP, then open:</p><p class="big">http://localhost/CMUBioTriage/</p></div>'
+    : '<p class="msg">Could not load guide data. Reload while online once, then it will work offline.</p>'; return; }
   if (window.L) L.Icon.Default.imagePath = 'lib/images/'; bindPrefs();
-  $('#ver').textContent = `Version ${D.version} · Reviewed ${D.reviewed}`;
+  if ($('#ver')) $('#ver').textContent = `Version ${D.version} · Reviewed ${D.reviewed}`;
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').then(() => navigator.serviceWorker.ready).then(() => { netStatus(); }).catch(() => {});
   try { const session = await api(apiUrl('session')); if (session.authenticated) sessionStorage.setItem('ss_staff', '1'); else sessionStorage.removeItem('ss_staff'); } catch { sessionStorage.removeItem('ss_staff'); }
   netStatus(); route();

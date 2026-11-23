@@ -43,13 +43,19 @@ if ($method === 'GET') {
     if (empty($_SESSION['staff'])) json_out(401, ['error' => 'Staff sign-in required.']);
     $limit = 20;
     $before = (isset($_GET['before']) && ctype_digit((string)$_GET['before'])) ? (int)$_GET['before'] : PHP_INT_MAX;
-    $rows = array_values(array_filter(read_json($file), function ($r) use ($before) { return ($r['ms'] ?? 0) < $before; }));
+    $status = $_GET['status'] ?? 'active';
+    if (!in_array($status, ['active', 'handled', 'all'], true)) $status = 'active';
+    $rows = array_values(array_filter(read_json($file), function ($r) use ($before, $status) {
+        if (($r['ms'] ?? 0) >= $before) return false;
+        $h = !empty($r['handled']);
+        return $status === 'all' || ($status === 'handled') === $h;
+    }));
     usort($rows, function ($a, $b) { return ($b['ms'] ?? 0) <=> ($a['ms'] ?? 0); });
     $more = count($rows) > $limit;
     $page = array_slice($rows, 0, $limit);
     $out = [];
     foreach ($page as $r) {
-        $out[] = ['id' => $r['id'], 'details' => $r['details'], 'lat' => $r['lat'], 'lng' => $r['lng'], 'submittedAt' => gmdate('Y-m-d\TH:i:s\Z', (int)$r['ts'])];
+        $out[] = ['id' => $r['id'], 'details' => $r['details'], 'lat' => $r['lat'], 'lng' => $r['lng'], 'handled' => !empty($r['handled']), 'submittedAt' => gmdate('Y-m-d\TH:i:s\Z', (int)$r['ts'])];
     }
     $next = ($more && $page) ? (string)$page[count($page) - 1]['ms'] : null;
     json_out(200, ['reports' => $out, 'next' => $next]);

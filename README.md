@@ -14,6 +14,7 @@ Reports are saved in `api/_data/reports.json`. The folder must be writable (it i
 
 ## Files
 - `api/reports.php` – users POST reports; staff GET them (needs login)
+- `api/report.php` – staff: mark handled / reopen / delete a report (deletions are logged by ID and time only in `api/_data/audit.json`)
 - `api/session.php` – staff PIN login / logout / check
 - `api/config.php` – PIN and settings (blocked from web access by `.htaccess`)
 - `api/_data/` – stored reports (blocked from web access)
@@ -21,5 +22,5 @@ Reports are saved in `api/_data/reports.json`. The folder must be writable (it i
 ## Notes
 - Netlify and other static hosts cannot run PHP. `netlify.toml` blocks `/api/*` there so PHP source is never exposed; public screens still work but report submission and staff login will say the service is unavailable.
 - Change `STAFF_PIN` and `SITE_SALT` in `api/config.php` before real use.
-- If you change files, bump the cache name in `sw.js` and `app.js` (now `cmubiotrage-v6`), then hard-refresh (Ctrl+Shift+R).
+- If you change files, bump the cache name in `sw.js` and `app.js` (now `cmubiotrage-v7`), then hard-refresh (Ctrl+Shift+R).
 - Reports are plain JSON on disk: fine for a class demo, not for real patient data.
