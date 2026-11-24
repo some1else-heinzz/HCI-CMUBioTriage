@@ -1,3 +1,4 @@
+/* CMUbiotrage styles: dark theme (default), glass UI, light mode, sunlight mode */
 /* CMUbiotrage – deep-green theme (dark by default, light variant follows system) */
 :root{--bg:#101a14;--ink:#eef5ef;--muted:#b4c7ba;--card:#17251d;--line:#2c4237;--head:#1b3a2e;--onhead:#fff;--callbg:#14352a;--accent:#7fd1a8;--onaccent:#06150d;--alarm:#e5484d;--onalarm:#fff;--chip:#7fd1a8;--white:#f6fbf7;--whiteink:#10231a;--dial:#1f6b4d;--warn:#3b2f08;--warnink:#ffe08a;--logo:#f7c04a}
 *{box-sizing:border-box}
@@ -103,9 +104,9 @@ button:disabled{opacity:.65;cursor:wait}
 body{background:#07120c}
 .bg{position:fixed;inset:0;z-index:-1;overflow:hidden;background:#07120c;pointer-events:none}
 .bg i{position:absolute;display:block}
-.bg .b1{inset:0;background:url(assets/bg-scales.jpg) center/cover no-repeat}
+.bg .b1{inset:0;background:url(../img/bg-scales.jpg) center/cover no-repeat}
 .bg::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 30%,rgba(5,14,9,.25),rgba(5,14,9,.78))}
-.bg .b2,.bg .b3{width:min(75vw,760px);height:46vh;background:url(assets/bg-snake.jpg) no-repeat;background-size:cover;mix-blend-mode:screen;opacity:.75;z-index:1}
+.bg .b2,.bg .b3{width:min(75vw,760px);height:46vh;background:url(../img/bg-snake.jpg) no-repeat;background-size:cover;mix-blend-mode:screen;opacity:.75;z-index:1}
 .bg .b2{top:0;right:0;background-position:top;-webkit-mask-image:linear-gradient(to bottom left,#000 30%,transparent 85%);mask-image:linear-gradient(to bottom left,#000 30%,transparent 85%)}
 .bg .b3{bottom:0;left:0;background-position:bottom;-webkit-mask-image:linear-gradient(to top right,#000 30%,transparent 85%);mask-image:linear-gradient(to top right,#000 30%,transparent 85%)}
 .bg::after{z-index:0}
@@ -147,10 +148,141 @@ html.sun .dockbtn{color:#000}html.sun .dockbtn[aria-pressed=true]{background:#00
 /* ===== Subtle Scales + Corner Snakes ===== */
 .bg{position:fixed;inset:0;z-index:-1;overflow:hidden;background:#07130d;pointer-events:none}
 .bg i{position:absolute;display:block}
-.bg .b1{inset:0;background:url(assets/bg-scales.jpg) center/cover no-repeat;opacity:.28}
+.bg .b1{inset:0;background:url(../img/bg-scales.jpg) center/cover no-repeat;opacity:.28}
 .bg::after{content:"";position:absolute;inset:0;z-index:0;background:radial-gradient(110% 85% at 50% 35%,rgba(7,19,13,.35),rgba(5,13,9,.88))}
-.bg .b2,.bg .b3{width:min(70vw,720px);height:45vh;background:url(assets/bg-snake.jpg) no-repeat;background-size:cover;mix-blend-mode:screen;opacity:.32;z-index:1}
+.bg .b2,.bg .b3{width:min(70vw,720px);height:45vh;background:url(../img/bg-snake.jpg) no-repeat;background-size:cover;mix-blend-mode:screen;opacity:.32;z-index:1}
 .bg .b2{top:0;right:0;background-position:top right;-webkit-mask-image:linear-gradient(to bottom left,#000 20%,transparent 80%);mask-image:linear-gradient(to bottom left,#000 20%,transparent 80%)}
 .bg .b3{bottom:0;left:0;background-position:bottom left;-webkit-mask-image:linear-gradient(to top right,#000 20%,transparent 80%);mask-image:linear-gradient(to top right,#000 20%,transparent 80%)}
 .call{background:var(--glass)}
 .tile:first-child{background:var(--accent);border-color:rgba(255,255,255,.35)}
+
+/* ===== Light mode (same snake + scales background, lighter wash) ===== */
+html.light:not(.sun){--bg:#eef5ef;--ink:#10231a;--muted:#2f4a3b;--card:rgba(255,255,255,.72);--line:#b7cdbf;--head:#e6f1e9;--onhead:#10231a;--callbg:#14352a;--accent:#1f6b4d;--onaccent:#fff;--alarm:#b42318;--chip:#1f6b4d;--dial:#1f6b4d;--warn:#fff1c2;--warnink:#4d3800;--logo:#f7c04a;--glass:rgba(255,255,255,.64);--glass-2:rgba(255,255,255,.55);--glass-line:rgba(16,35,26,.2);--glass-hi:rgba(255,255,255,.9);--shadow:0 8px 26px rgba(16,35,26,.16)}
+html.light:not(.sun) .call{background:linear-gradient(160deg,rgba(24,74,55,.94),rgba(14,44,32,.92));color:#fff}
+html.light:not(.sun) .nums>div{background:rgba(255,255,255,.92);color:#10231a;border-color:rgba(255,255,255,.6)}
+html.light:not(.sun) .tile:first-child{background:var(--accent);color:#fff}
+html.light:not(.sun) .tile:first-child span{color:#fff}
+html.light:not(.sun) input,html.light:not(.sun) textarea,html.light:not(.sun) select{background:rgba(255,255,255,.8);color:#10231a;border-color:#9fb8a8}
+html.light:not(.sun) .chip{background:rgba(255,255,255,.65);color:#10231a;border-color:#9fb8a8}
+html.light:not(.sun) .chip[aria-pressed=true]{background:var(--chip);color:#fff;border-color:var(--chip)}
+html.light:not(.sun) .btn:not(.primary):not(.dial){background:rgba(255,255,255,.55);border-color:var(--accent);color:var(--accent)}
+html.light:not(.sun) .btn.primary{background:var(--accent);color:#fff}
+html.light:not(.sun) .dockbtn:hover{background:rgba(16,35,26,.08)}
+html.light:not(.sun) .dockbtn[aria-pressed=true]{background:var(--accent);color:#fff}
+html.light:not(.sun) .tag.t-Confirmed{color:#14532d}
+html.light:not(.sun) .foot{color:var(--muted)}
+@media(prefers-reduced-transparency:reduce){html.light:not(.sun) .card,html.light:not(.sun) .tile,html.light:not(.sun) .dock,html.light:not(.sun) .top,html.light:not(.sun) .chip{background:#f3f8f4}}
+
+
+/* ===== Header layout: brand + Staff on the left, display options on the right ===== */
+.top{justify-content:space-between;gap:10px 16px}
+.topleft{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{font-size:1.55rem;gap:12px;letter-spacing:-.01em}
+.logo{width:48px;height:48px;border-radius:13px;font-size:1.25rem}
+.staffbtn{min-height:42px;padding:0 18px}
+.top .dock{padding:4px;gap:2px;border-radius:26px}
+.top .dockbtn{min-height:42px;padding:0 14px;font-size:.85rem;gap:6px}
+.top .dockbtn svg{width:20px;height:20px}
+@media(max-width:820px){
+  .top .dockbtn{padding:0 11px}
+  .top .dockbtn span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+}
+@media(max-width:560px){
+  .brand{font-size:1.3rem}.logo{width:42px;height:42px}
+  .top .dock{margin-left:auto}
+}
+
+main:focus{outline:none}
+
+
+/* ===== Header v3: glass bar, single right-hand box (Staff highlighted), same background in both themes ===== */
+.top{background:rgba(10,26,19,.22);-webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%);border-bottom:1px solid rgba(255,255,255,.14);box-shadow:0 8px 30px rgba(0,0,0,.18);color:#fff}
+.top .brand{color:#fff}
+.top .dock{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2)}
+.top .dockbtn{color:#fff}
+.top .dockbtn:hover{background:rgba(255,255,255,.14)}
+.top .dockbtn.staffbtn{background:var(--accent);color:var(--onaccent);border:0;min-height:42px;padding:0 16px;border-radius:99px}
+.top .dockbtn.staffbtn:hover{filter:brightness(1.08)}
+@media(max-width:820px){
+  .top .dockbtn span{position:static;width:auto;height:auto;clip:auto;overflow:visible}
+  .top .dockbtn{padding:0 12px}
+  #tsBtn span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+}
+@media(max-width:380px){.top .dockbtn svg{display:none}}
+
+/* About link: end of page content, not a footer */
+.aboutlink{margin:28px 0 8px;text-align:center}
+.aboutlink a{color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:3px;padding:10px 12px;display:inline-block}
+
+/* ===== Light theme v2: bright, high-contrast for outdoor use; same scales + snake texture, inverted to dark-on-light ===== */
+html.light:not(.sun){--bg:#f1f7f2;--ink:#08150e;--muted:#1d3a2b;--card:rgba(255,255,255,.93);--line:#2d5a43;--head:#f1f7f2;--onhead:#08150e;--callbg:#0d3b29;--accent:#0f5a3b;--onaccent:#fff;--alarm:#a80f16;--onalarm:#fff;--chip:#0f5a3b;--dial:#0f5a3b;--warn:#fff0b3;--warnink:#3d2b00;--glass:rgba(255,255,255,.93);--glass-2:rgba(255,255,255,.96);--glass-line:rgba(13,59,41,.55);--glass-hi:rgba(255,255,255,1);--shadow:0 4px 14px rgba(8,21,14,.18);color-scheme:light}
+html.light:not(.sun) body{background:#eaf3ec;color:#08150e}
+html.light:not(.sun) .bg{background:#eaf3ec}
+html.light:not(.sun) .bg .b1{opacity:.5;filter:invert(1) hue-rotate(180deg) saturate(.8);mix-blend-mode:multiply}
+html.light:not(.sun) .bg .b2,html.light:not(.sun) .bg .b3{filter:invert(1) hue-rotate(180deg);mix-blend-mode:multiply;opacity:.5}
+html.light:not(.sun) .bg::after{z-index:2;background:radial-gradient(110% 85% at 50% 35%,rgba(246,251,247,.55),rgba(232,243,235,.35))}
+/* header: bright glass, dark text */
+html.light:not(.sun) .top{background:rgba(244,250,246,.62);border-bottom:1px solid rgba(13,59,41,.35);box-shadow:0 4px 18px rgba(8,21,14,.12);color:#08150e}
+html.light:not(.sun) .top .brand{color:#08150e}
+html.light:not(.sun) .top .dock{background:rgba(255,255,255,.7);border:2px solid rgba(13,59,41,.55)}
+html.light:not(.sun) .top .dockbtn{color:#08150e}
+html.light:not(.sun) .top .dockbtn:hover{background:rgba(13,59,41,.12)}
+html.light:not(.sun) .top .dockbtn.staffbtn{background:#0f5a3b;color:#fff}
+/* page text on the light background */
+html.light:not(.sun) main,html.light:not(.sun) h1{color:#08150e}
+html.light:not(.sun) h2,html.light:not(.sun) .back,html.light:not(.sun) .aboutlink a{color:#0f5a3b}
+html.light:not(.sun) .lead,html.light:not(.sun) .report-time,html.light:not(.sun) .report-details dt{color:#1d3a2b}
+html.light:not(.sun) .dont h2{color:#a80f16}
+/* boxes: near-opaque white, strong dark borders */
+html.light:not(.sun) .card,html.light:not(.sun) .tile,html.light:not(.sun) .msg,html.light:not(.sun) pre{background:rgba(255,255,255,.94);color:#08150e;border:2px solid #2d5a43}
+html.light:not(.sun) .tile{color:#0f5a3b}
+html.light:not(.sun) .tile span{color:#08150e}
+html.light:not(.sun) .tile:first-child{background:#0f5a3b;color:#fff;border-color:#0f5a3b}
+html.light:not(.sun) .tile:first-child span{color:#fff}
+html.light:not(.sun) .call{background:#0d3b29;color:#fff;border:2px solid #08150e}
+html.light:not(.sun) .call h1{color:#fff}
+html.light:not(.sun) .nums>div{background:#fff;color:#08150e;border:2px solid #fff}
+html.light:not(.sun) .call>.btn.dial{background:transparent;border:2px solid #fff;color:#fff}
+html.light:not(.sun) .btn.dial{background:#0f5a3b;border-color:#0f5a3b;color:#fff}
+html.light:not(.sun) .nums .btn.dial{background:#0f5a3b;border-color:#0f5a3b}
+html.light:not(.sun) .btn:not(.primary):not(.dial){background:#fff;border:2px solid #0f5a3b;color:#0f5a3b}
+html.light:not(.sun) .btn.primary{background:#0f5a3b;border-color:#0f5a3b;color:#fff}
+html.light:not(.sun) .btn.danger{color:#a80f16;border-color:#a80f16}
+html.light:not(.sun) input,html.light:not(.sun) textarea,html.light:not(.sun) select{background:#fff;color:#08150e;border:2px solid #2d5a43}
+html.light:not(.sun) .chip{background:#fff;color:#08150e;border:2px solid #2d5a43}
+html.light:not(.sun) .chip[aria-pressed=true]{background:#0f5a3b;color:#fff;border-color:#0f5a3b}
+html.light:not(.sun) .tag.t-Confirmed{color:#0b4a2e}
+html.light:not(.sun) .msg.toast{background:#fff;color:#08150e}
+html.light:not(.sun) a:focus-visible,html.light:not(.sun) button:focus-visible{outline-color:#b45f00}
+@media(prefers-reduced-transparency:reduce){html.light:not(.sun) .top{background:#f4faf6}}
+
+
+/* ===== Light theme v3 (matches approved mockup): off-white page, python-skin texture lower-right only, forest-green header ===== */
+html.light:not(.sun){--bg:#f2f5ef;--logo:#e9b83c;--accent:#1b3a2e}
+html.light:not(.sun) body,html.light:not(.sun) .bg{background:#f2f5ef}
+html.light:not(.sun) .bg .b1,html.light:not(.sun) .bg .b2{display:none}
+html.light:not(.sun) .bg::after{display:none}
+html.light:not(.sun) .bg .b3{display:block;left:auto;right:0;bottom:0;top:auto;width:min(62vw,860px);height:78vh;background:url(../img/bg-python.jpg) right bottom/cover no-repeat;filter:none;mix-blend-mode:multiply;opacity:.2;z-index:0;-webkit-mask-image:linear-gradient(to top left,#000 0%,rgba(0,0,0,.6) 35%,transparent 78%);mask-image:linear-gradient(to top left,#000 0%,rgba(0,0,0,.6) 35%,transparent 78%)}
+/* header */
+html.light:not(.sun) .top{background:rgba(27,58,46,.96);border-bottom:1px solid rgba(0,0,0,.25);box-shadow:0 4px 16px rgba(8,21,14,.25);color:#fff}
+html.light:not(.sun) .top .brand{color:#fff}
+html.light:not(.sun) .logo{background:#e9b83c;color:#1b3a2e;border-radius:10px}
+html.light:not(.sun) .top .dock{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.3)}
+html.light:not(.sun) .top .dockbtn{color:#fff}
+html.light:not(.sun) .top .dockbtn:hover{background:rgba(255,255,255,.16)}
+html.light:not(.sun) .top .dockbtn.staffbtn{background:#9be8c1;color:#0d2a1d;border:0}
+/* page text */
+html.light:not(.sun) h2,html.light:not(.sun) .back,html.light:not(.sun) .aboutlink a{color:#1b3a2e}
+/* Call now: frosted mint glass, white contact boxes */
+html.light:not(.sun) .call{background:rgba(206,235,217,.72);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:#0d2a1d;border:1.5px solid rgba(27,58,46,.3);box-shadow:0 6px 22px rgba(27,58,46,.12);border-radius:22px}
+html.light:not(.sun) .call h1{color:#1b3a2e}
+html.light:not(.sun) .nums>div{background:#fff;color:#0d2a1d;border:1.5px solid rgba(27,58,46,.25);border-radius:16px}
+html.light:not(.sun) .tag.t-Unverified{background:#ffd978;color:#4a3000;border:2px solid #c98a00;margin:4px 0 6px}
+html.light:not(.sun) .nums .btn.dial{background:#1b3a2e;border-color:#1b3a2e;color:#fff}
+html.light:not(.sun) .call>a.btn.dial[href="tel:911"]{background:#1b3a2e;border:2px solid #1b3a2e;color:#fff}
+html.light:not(.sun) .call>a.btn.dial[href="#/nosignal"]{background:transparent;border:2px solid #1b3a2e;color:#1b3a2e}
+/* tiles: bright mint primary, translucent sage glass for the rest */
+html.light:not(.sun) .tile{background:rgba(205,224,208,.6);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1.5px solid rgba(27,58,46,.28);color:#1b3a2e}
+html.light:not(.sun) .tile span{color:#244a3a}
+html.light:not(.sun) .tile:first-child{background:#9be8c1;border-color:#4fb98a;color:#0d2a1d}
+html.light:not(.sun) .tile:first-child span{color:#0d2a1d}

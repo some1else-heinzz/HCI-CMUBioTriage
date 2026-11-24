@@ -35,8 +35,8 @@ const screens = {
     <section class="call" aria-label="Call now">
       <h1>Call now</h1>
       <div class="nums">
-        <div><div>${esc(D.primary.label)}</div><span class="num">${esc(D.primary.number)}</span>${dial(D.primary)}</div>
-        <div><div>${esc(D.alternate.label)}</div><span class="num">${esc(D.alternate.number)}</span>${dial(D.alternate)}</div>
+        <div><div>${esc(D.primary.label)}</div><span class="num">${esc(D.primary.number)}</span><span class="tag t-Unverified">Unverified</span>${dial(D.primary)}</div>
+        <div><div>${esc(D.alternate.label)}</div><span class="num">${esc(D.alternate.number)}</span><span class="tag t-Unverified">Unverified</span>${dial(D.alternate)}</div>
       </div>
       <a class="btn dial" href="tel:911">📞 Call 911 (national emergency)</a>
       <a class="btn dial" href="#/nosignal">⚠ Call didn’t connect</a>
@@ -401,7 +401,7 @@ function route() {
   if ((r === 'staff-dir' || r === 'staff-log') && SYNC() && !pulled[r]) { pulled[r] = true; $('#app').innerHTML = '<p class="msg">Loading shared data…</p>'; (r === 'staff-dir' ? pullStatus() : pullLog()).finally(route); return; }
   const view = screens[r] || screensStaff[r] || screens.home;
   const html = view(); if (html === '' ) return;
-  $('#app').innerHTML = html; $('#app').focus({ preventScroll: true }); window.scrollTo(0, 0);
+  $('#app').innerHTML = html + (r === 'about' || r === 'home' ? '' : '<p class="aboutlink"><a href="#/about">About this guide</a></p>'); $('#app').focus({ preventScroll: true }); window.scrollTo(0, 0);
   bindUnknown(); wire(r);
 }
 function wire(r) {
@@ -428,7 +428,7 @@ function wire(r) {
     on('save', async () => {
       const o = $('#saveOut');
       if (!('serviceWorker' in navigator)) { o.innerHTML = '<p class="msg">This browser cannot save offline. Add it to your home screen instead.</p>'; return; }
-      try { const keys = await (await caches.open('cmubiotrage-v10')).keys();
+      try { const keys = await (await caches.open('cmubiotrage-v15')).keys();
         o.innerHTML = keys.length >= 6 ? `<p class="msg">✔ Saved offline: reviewed ${esc(D.reviewed)}</p>` : '<p class="msg">Not saved yet. Stay online a few seconds and tap again.</p>';
       } catch { o.innerHTML = '<p class="msg">Could not check. Reload the page while online and try again.</p>'; }
       netStatus();
@@ -487,24 +487,34 @@ function netStatus() {
   const n = $('#net'); if (!n) return; n.textContent = ok ? `Saved offline · reviewed ${D.reviewed}` : 'Not saved for offline use yet';
   n.className = 'pill' + (ok ? '' : ' off');
 }
+const MOON = '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>';
+const SUN = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
 function applyPrefs() {
-  const p = store.get('ss_pref', { ts: 1, sun: false });
-  document.documentElement.style.setProperty('--ts', p.ts); document.documentElement.classList.toggle('sun', !!p.sun);
-  const b = $('#sunBtn'); if (b) b.setAttribute('aria-pressed', String(!!p.sun));
+  const p = store.get('ss_pref', { ts: 1 });
+  const root = document.documentElement;
+  root.style.setProperty('--ts', p.ts || 1);
+  root.classList.remove('sun');
+  root.classList.toggle('light', !!p.light);
+  const tb = $('#themeBtn');
+  if (tb) {
+    tb.querySelector('span').textContent = p.light ? 'Theme: Light' : 'Theme: Dark';
+    tb.setAttribute('aria-label', p.light ? 'Theme: Light. Switch to dark theme' : 'Theme: Dark. Switch to light theme');
+    $('#themeIcon').innerHTML = p.light ? SUN : MOON;
+  }
 }
 function bindPrefs() {
-  $('#tsBtn').onclick = () => { const p = store.get('ss_pref', { ts: 1, sun: false }); const o = [1, 1.25, 1.5]; p.ts = o[(o.indexOf(p.ts) + 1) % 3]; store.set('ss_pref', p); applyPrefs(); toast(p.ts === 1 ? 'Normal text' : p.ts === 1.25 ? 'Large text' : 'Extra large text'); };
-  $('#sunBtn').onclick = () => { const p = store.get('ss_pref', { ts: 1, sun: false }); p.sun = !p.sun; store.set('ss_pref', p); applyPrefs(); };
+  $('#tsBtn').onclick = () => { const p = store.get('ss_pref', { ts: 1 }); const o = [1, 1.25, 1.5]; p.ts = o[(o.indexOf(p.ts) + 1) % 3]; store.set('ss_pref', p); applyPrefs(); toast(p.ts === 1 ? 'Normal text' : p.ts === 1.25 ? 'Large text' : 'Extra large text'); };
+  $('#themeBtn').onclick = () => { const p = store.get('ss_pref', { ts: 1 }); p.light = !p.light; p.sun = false; store.set('ss_pref', p); applyPrefs(); };
   applyPrefs();
 }
 window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; });
 window.addEventListener('hashchange', route);
 (async function boot() {
-  try { D = await (await fetch('data.json')).json(); }
+  try { D = await (await fetch('assets/data/data.json')).json(); }
   catch { $('#app').innerHTML = location.protocol === 'file:'
     ? '<div class="card"><h1>Open this through Apache</h1><p>You opened the file directly from the folder, which browsers block. Start Apache in XAMPP, then open:</p><p class="big">http://localhost/CMUBioTriage/</p></div>'
     : '<p class="msg">Could not load guide data. Reload while online once, then it will work offline.</p>'; return; }
-  if (window.L) L.Icon.Default.imagePath = 'lib/images/'; bindPrefs();
+  if (window.L) L.Icon.Default.imagePath = 'assets/vendor/leaflet/images/'; bindPrefs();
   if ($('#ver')) $('#ver').textContent = `Version ${D.version} · Reviewed ${D.reviewed}`;
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').then(() => navigator.serviceWorker.ready).then(() => { netStatus(); }).catch(() => {});
   try { const session = await api(apiUrl('session')); if (session.authenticated) sessionStorage.setItem('ss_staff', '1'); else sessionStorage.removeItem('ss_staff'); } catch { sessionStorage.removeItem('ss_staff'); }

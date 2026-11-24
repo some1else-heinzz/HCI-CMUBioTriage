@@ -1,26 +1,41 @@
-# CMUbiotrage (XAMPP / PHP version, no Netlify needed)
+# CMUbiotrage (XAMPP / PHP version)
 
 ## Run on your PC (XAMPP)
-1. Copy this folder into `C:\xampp\htdocs\` (any folder name works).
-2. XAMPP Control Panel → start **Apache** only (no MySQL needed).
+1. Copy the `CMUBioTriage` folder into `C:\xampp\htdocs\`.
+2. In XAMPP Control Panel start **Apache** only (no MySQL needed).
 3. Open `http://localhost/CMUBioTriage/`.
 4. Staff login PIN is `1234` (change it in `api/config.php`).
 
-Reports are saved in `api/_data/reports.json`. The folder must be writable (it is by default on XAMPP/Windows).
-
 ## Open it on a phone
-- **Same Wi-Fi:** run `ipconfig`, then open `http://YOUR-PC-IP/CMUBioTriage/` on the phone. Allow Apache in Windows Firewall. Reports and staff login work. Over plain http the phone browser blocks GPS, offline install and the service worker.
-- **Full features (https):** keep XAMPP running and start a tunnel, e.g. `ngrok http 80` or Cloudflare Tunnel, then open `https://<tunnel-address>/CMUBioTriage/` on the phone. GPS, install and offline then work, and the phone still talks to your PC's PHP backend.
+- **Same Wi-Fi:** run `ipconfig`, then open `http://YOUR-PC-IP/CMUBioTriage/`. Allow Apache in Windows Firewall. Over plain http the phone blocks GPS, install and offline mode.
+- **Full features (https):** keep XAMPP running and use a tunnel (`ngrok http 80` or Cloudflare Tunnel), then open the https address.
 
-## Files
-- `api/reports.php` – users POST reports; staff GET them (needs login)
-- `api/report.php` – staff: mark handled / reopen / delete a report (deletions are logged by ID and time only in `api/_data/audit.json`)
-- `api/session.php` – staff PIN login / logout / check
-- `api/config.php` – PIN and settings (blocked from web access by `.htaccess`)
-- `api/_data/` – stored reports (blocked from web access)
+## Folder layout
+```
+CMUBioTriage/
+├── index.html            page
+├── manifest.json         PWA manifest
+├── sw.js                 service worker (offline cache; must stay in root)
+├── .htaccess, netlify.toml
+├── assets/
+│   ├── css/styles.css    all styles (dark, light, sunlight modes)
+│   ├── js/app.js         app logic
+│   ├── data/data.json    all guide content (numbers, hospitals, options)
+│   ├── img/              background images
+│   ├── icons/icon.svg
+│   └── vendor/leaflet/   Leaflet map library (its own CSS stays separate)
+└── api/                  PHP backend
+    ├── config.php        PIN + settings (blocked from web)
+    ├── _lib.php          shared helpers (blocked from web)
+    ├── session.php       staff login / logout / check
+    ├── reports.php       users POST reports; staff GET them
+    ├── report.php        staff: mark handled / reopen / delete
+    └── _data/            stored reports, audit log, throttle (blocked from web)
+```
 
 ## Notes
-- Netlify and other static hosts cannot run PHP. `netlify.toml` blocks `/api/*` there so PHP source is never exposed; public screens still work but report submission and staff login will say the service is unavailable.
+- Edit `assets/data/data.json` and replace the `[... confirm with UH]` placeholders with real numbers.
 - Change `STAFF_PIN` and `SITE_SALT` in `api/config.php` before real use.
-- If you change files, bump the cache name in `sw.js` and `app.js` (now `cmubiotrage-v7`), then hard-refresh (Ctrl+Shift+R).
+- After changing any file, bump the cache name in `sw.js` and `assets/js/app.js` (now `cmubiotrage-v15`), then hard-refresh (Ctrl+Shift+R).
+- Netlify cannot run PHP; `netlify.toml` blocks `/api/*` there so PHP source is never exposed.
 - Reports are plain JSON on disk: fine for a class demo, not for real patient data.
