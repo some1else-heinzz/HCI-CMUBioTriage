@@ -54,30 +54,31 @@ const screens = {
     const restock = states.filter(s => s.tag === 'Restock announced').length;
     const needs = D.hospitals.length - confirmed - restock;
     const counts = { all: D.hospitals.length, confirmed, restock, needs };
-    return `<section class="status-page">
-      <div class="status-heading"><div><h1>Antivenom status</h1><p class="lead">Facility confirmations and contact information</p></div><span class="status-connection ${SYNC() ? 'is-shared' : 'is-device-only'}">● ${SYNC() ? 'Shared sync configured' : 'Device only'}</span></div>
+    return `<section class="status-page availability-dashboard">
+      <div class="dashboard-brand"><strong>CMUbiotrage</strong><span>Dashboard concept</span></div>
+      <div class="status-heading"><div><h1>Antivenom Availability</h1><p class="lead">Facility confirmations and emergency contacts</p></div><span class="status-connection ${SYNC() ? 'is-shared' : 'is-device-only'}">● ${SYNC() ? 'Shared sync configured' : 'Device only'}</span></div>
       <nav class="status-nav" aria-label="Main navigation"><a class="status-nav-active" aria-current="page" href="#/home">⌁ &nbsp;Antivenom status</a><a href="#/staff">▤ &nbsp;Staff log in</a><a href="#/tell">▣ &nbsp;Handoff summary</a><a href="#/do">✚ &nbsp;First aid and contacts</a></nav>
-      <p class="status-loaded">● &nbsp;Last loaded: ${new Date().toLocaleString()}</p>
-      <div class="status-stats" aria-label="Facility status summary">
-        <div class="status-stat stat-blue"><span class="stat-icon">▤</span><div><small>All facilities</small><strong>${D.hospitals.length}</strong></div></div>
+      <div class="overview-heading"><h2>Availability overview</h2><span>Illustrative data</span></div>
+      <div class="status-stats" aria-label="Availability overview">
         <div class="status-stat stat-green"><span class="stat-icon">✓</span><div><small>Confirmed available</small><strong>${confirmed}</strong></div></div>
-        <div class="status-stat stat-lime"><span class="stat-icon">⚑</span><div><small>Restock announced</small><strong>${restock}</strong></div></div>
         <div class="status-stat stat-red"><span class="stat-icon">♧</span><div><small>Needs confirmation</small><strong>${needs}</strong></div></div>
+        <div class="status-stat stat-lime"><span class="stat-icon">⚑</span><div><small>Restock announced</small><strong>${restock}</strong></div></div>
+        <div class="status-stat stat-blue"><span class="stat-icon">▤</span><div><small>Total facilities</small><strong>${D.hospitals.length}</strong></div></div>
       </div>
       <div class="connection-warning ${SYNC() ? 'connection-shared' : 'connection-device-only'}" role="status"><strong>${SYNC() ? 'Shared sync is configured.' : 'Staff updates are saved only in this browser and are not visible on other devices.'}</strong> ${SYNC() ? (navigator.onLine ? 'Updates sync when online; check the time of the latest confirmation.' : 'This device is offline, so updates cannot reach other devices yet.') : 'Set up shared sync before staff use the board across multiple devices.'}</div>
-      <div class="status-warning" role="note"><strong>ⓘ &nbsp;This board can be out of date. A restock announcement is not a current stock confirmation. Always call before sending a patient.</strong></div>
+      <div class="status-warning dashboard-reminder" role="note"><strong>ⓘ &nbsp;Important reminder</strong><br>Always contact the healthcare facility to verify current antivenom availability before referring a patient. A restock announcement is not a current stock confirmation.</div>
       <form class="status-filter" id="facilityFilter"><input id="facilitySearch" type="search" placeholder="Hospital or town" aria-label="Search hospital or town"><div class="status-choices" role="group" aria-label="Filter facilities by stock status">${[['all','All'],['confirmed','Confirmed'],['restock','Restock announced'],['needs','Needs confirmation']].map(([key,label]) => `<button class="status-choice" type="button" data-status-filter="${key}" aria-pressed="${key === 'all'}">${label} <span>${counts[key]}</span></button>`).join('')}</div><p id="facilityCount" class="facility-count" aria-live="polite">${D.hospitals.length} facilities shown</p></form>
       <div class="facility-grid" id="facilityGrid">${D.hospitals.map((h, i) => {
         const st = states[i], s = st.s;
         const statusClass = st.tag === 'Confirmed' ? 'facility-confirmed' : st.tag === 'Restock announced' ? 'facility-restock' : 'facility-needs';
         const place = h.location || '';
-        const note = st.tag === 'Stale' ? 'This confirmation is more than 24 hours old. Call to check current stock.' : st.tag === 'Confirmed' ? 'Recently confirmed by staff. Call to reconfirm before sending a patient.' : st.tag === 'Restock announced' ? 'Restock announced, but current stock is not confirmed. Call before sending a patient.' : 'No current confirmation. Call to check stock before sending a patient.';
+        const note = st.tag === 'Stale' ? 'Confirmation is more than 24 hours old. Call to verify current stock.' : st.tag === 'Confirmed' ? 'Staff reported availability. Call to verify before referring a patient.' : st.tag === 'Restock announced' ? 'Restock announced; current stock is not confirmed. Call to verify.' : 'Availability must be verified directly with the facility.';
         const timestampLabel = s ? (s.status === 'Confirmed' ? 'Last confirmed' : s.status === 'Restock announced' ? 'Restock announced' : 'Last status update') : '';
         const hasCoords = h.coordinatesVerified === true && h.locationPending !== true && h.lat !== null && h.lat !== undefined && h.lng !== null && h.lng !== undefined && h.lat !== '' && h.lng !== '' && Number.isFinite(Number(h.lat)) && Number.isFinite(Number(h.lng)) && Math.abs(Number(h.lat)) <= 90 && Math.abs(Number(h.lng)) <= 180;
         const mapLink = hasCoords ? `<a class="facility-map-link" href="https://maps.google.com/?q=${Number(h.lat)},${Number(h.lng)}" target="_blank" rel="noopener">Open confirmed location in maps</a>` : '';
-        return `<article class="facility-card ${statusClass} ${st.tag === 'Stale' ? 'facility-stale' : ''}" data-facility="${esc((h.name + ' ' + place).toLowerCase())}" data-state="${statusClass}"><div class="facility-title"><div><h2>${esc(h.name)}</h2>${h.namePending ? '<span class="detail-pending">Facility name needs confirmation</span>' : ''}</div><span class="facility-badge ${st.tag === 'Stale' ? 'badge-stale' : ''}">${st.tag === 'Stale' ? 'Confirmation outdated' : st.tag === 'Confirmed' ? 'Confirmed available' : st.tag === 'Restock announced' ? 'Restock announced' : 'Needs confirmation'}</span></div>
-          ${place ? `<p class="facility-location">${esc(place)}${h.locationPending ? ' <span class="detail-pending">Location unverified</span>' : ''}</p>` : '<p class="facility-location"><span class="detail-pending">Facility location not confirmed</span></p>'}<p class="facility-note">${esc(note)}</p>
-          ${s ? `<p class="facility-meta"><strong>${timestampLabel}</strong> by ${esc(s.by || 'staff')}<br><time datetime="${new Date(s.at).toISOString()}">${esc(new Date(s.at).toLocaleString())}</time> <span aria-label="relative time">(${esc(relativeTime(s.at))})</span></p>` : '<p class="facility-meta">No staff confirmation recorded yet.</p>'}
+        return `<article class="facility-card ${statusClass} ${st.tag === 'Stale' ? 'facility-stale' : ''}" data-facility="${esc((h.name + ' ' + place).toLowerCase())}" data-state="${statusClass}"><div class="facility-title"><div><h2>${esc(h.name)}</h2>${h.namePending ? '<span class="detail-pending">Facility name needs confirmation</span>' : ''}</div><span class="facility-badge ${st.tag === 'Stale' ? 'badge-stale' : ''}">${st.tag === 'Stale' ? 'Outdated' : st.tag === 'Confirmed' ? 'Confirmed' : st.tag === 'Restock announced' ? 'Restock announced' : 'Unconfirmed'}</span></div>
+          ${place ? `<p class="facility-location">${esc(place)}${h.locationPending ? ' <span class="detail-pending">Location unverified</span>' : ''}</p>` : '<p class="facility-location"><span class="detail-pending">Facility location not confirmed</span></p>'}
+          <hr class="facility-divider">${s ? `<div class="facility-verification"><p><strong>${timestampLabel}:</strong> <time datetime="${new Date(s.at).toISOString()}">${esc(new Date(s.at).toLocaleString())}</time> (${esc(relativeTime(s.at))})</p><p><strong>${s.status === 'Confirmed' ? 'Verified by' : 'Updated by'}:</strong> ${esc(s.by || 'Not recorded')}</p><p><strong>${s.status === 'Confirmed' ? 'Verification details' : 'Update details'}:</strong> ${esc(s.details || 'No details provided.')}</p></div>` : '<div class="facility-verification"><p><strong>Last verified:</strong> No staff confirmation recorded.</p><p><strong>Verified by:</strong> Not recorded</p><p><strong>Verification details:</strong> Not provided</p></div>'}<p class="facility-note">${esc(note)}</p>
           <div class="facility-actions">${facilityContactLinks(h)}${mapLink}</div></article>`;
       }).join('')}</div>
       <div class="status-contacts"><a href="#/tell">Open handoff summary</a><a href="#/do">First aid guidance</a><a href="#/about">About this guide</a></div>
@@ -271,6 +272,7 @@ const screensStaff = {
       return `<div class="card"><b>${esc(h.name)}</b><div class="staff-directory-contacts">${facilityContactLinks(h, 'staff')}</div>
       <span class="tag t-${st.tag}">${st.tag}</span> ${st.note ? `<small>${st.note}</small>` : ''}
       <div><small>${s ? `Last updated by ${esc(s.by)} on ${new Date(s.at).toLocaleString()} (${relativeTime(s.at)})` : 'Not confirmed yet'}</small></div>
+      <div class="f"><label for="verificationDetails${i}">Verification details (optional)</label><textarea id="verificationDetails${i}" rows="2" data-verification-details="${i}" placeholder="How was availability checked? What did the facility report?">${esc(s?.details || '')}</textarea></div>
             <button class="btn small primary" data-conf="${i}">Mark confirmed now</button>
       <button class="btn small" data-restock="${i}">Mark restock announced</button>
       <button class="btn small" data-unconf="${i}">Mark unverified</button>
@@ -522,7 +524,7 @@ function wire(r) {
     on('save', async () => {
       const o = $('#saveOut');
       if (!('serviceWorker' in navigator)) { o.innerHTML = '<p class="msg">This browser cannot save offline. Add it to your home screen instead.</p>'; return; }
-      try { const keys = await (await caches.open('cmubiotrage-v23')).keys();
+      try { const keys = await (await caches.open('cmubiotrage-v25')).keys();
         o.innerHTML = keys.length >= 6 ? `<p class="msg">✔ Saved offline: reviewed ${esc(D.reviewed)}</p>` : '<p class="msg">Not saved yet. Stay online a few seconds and tap again.</p>';
       } catch { o.innerHTML = '<p class="msg">Could not check. Reload the page while online and try again.</p>'; }
       netStatus();
@@ -556,7 +558,9 @@ function wire(r) {
   if (r === 'staff-dir') document.querySelectorAll('[data-conf],[data-restock],[data-unconf]').forEach(b => b.addEventListener('click', () => {
     const conf = b.dataset.conf !== undefined, restock = b.dataset.restock !== undefined, key = b.dataset.conf ?? b.dataset.restock ?? b.dataset.unconf, i = +key, h = D.hospitals[i];
     const by = $('#staffName').value.trim(); if ((conf || restock) && !by) { toast('Enter your name at the top first.'); $('#staffName').focus(); return; }
-    const all = hStatus(); all[h.name] = { status: conf ? 'Confirmed' : restock ? 'Restock announced' : 'Unverified', by: by || 'staff', at: Date.now() };
+    const detailInput = document.querySelector(`[data-verification-details="${i}"]`);
+    const details = detailInput?.value.trim() || '';
+    const all = hStatus(); all[h.name] = { status: conf ? 'Confirmed' : restock ? 'Restock announced' : 'Unverified', by: by || 'staff', at: Date.now(), details };
     store.set('ss_status', all); pushStatus(i, all[h.name]); const keep = by; route(); const n = $('#staffName'); if (n) n.value = keep;
   }));
   if (r === 'staff-alert') on('gen', () => {
