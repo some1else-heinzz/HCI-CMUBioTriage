@@ -16,21 +16,26 @@ if ($method === 'POST') {
         $v = trim(preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', $v));
         $clean[$k] = $v === '' ? 'Unknown' : cut($v, 300);
     }
-    $lat = null; $lng = null;
+    $lat = null; $lng = null; $pinSource = null; $pinAccuracy = null;
     $pin = $in['pin'] ?? null;
     if ($pin !== null) {
         if (!is_array($pin) || !isset($pin['lat'], $pin['lng']) || !is_numeric($pin['lat']) || !is_numeric($pin['lng'])) json_out(400, ['error' => 'Invalid location.']);
         $lat = (float)$pin['lat']; $lng = (float)$pin['lng'];
         if ($lat < -90 || $lat > 90 || $lng < -180 || $lng > 180) json_out(400, ['error' => 'Invalid location.']);
         $lat = round($lat, 5); $lng = round($lng, 5);
+        $pinSource = in_array(($pin['source'] ?? ''), ['GPS', 'Map'], true) ? $pin['source'] : 'Unknown';
+        if (isset($pin['accuracy'])) {
+            if (!is_numeric($pin['accuracy']) || !is_finite((float)$pin['accuracy']) || (float)$pin['accuracy'] < 0 || (float)$pin['accuracy'] > 100000) json_out(400, ['error' => 'Invalid location accuracy.']);
+            $pinAccuracy = round((float)$pin['accuracy'], 1);
+        }
     }
     $ck = client_key(); $now = time();
-    $result = update_json($file, function (array &$rows) use ($id, $clean, $lat, $lng, $ck, $now) {
+    $result = update_json($file, function (array &$rows) use ($id, $clean, $lat, $lng, $pinSource, $pinAccuracy, $ck, $now) {
         foreach ($rows as $r) { if (($r['id'] ?? '') === $id) return ['id' => $id]; } // retry of the same report
         $recent = 0;
         foreach ($rows as $r) { if (($r['ck'] ?? '') === $ck && ($r['ts'] ?? 0) > $now - 600) $recent++; }
         if ($recent >= MAX_REPORTS_PER_10_MIN) return ['limited' => true];
-        $rows[] = ['id' => $id, 'ts' => $now, 'ms' => (int)round(microtime(true) * 1000), 'details' => $clean, 'lat' => $lat, 'lng' => $lng, 'ck' => $ck];
+        $rows[] = ['id' => $id, 'ts' => $now, 'ms' => (int)round(microtime(true) * 1000), 'details' => $clean, 'lat' => $lat, 'lng' => $lng, 'pinSource' => $pinSource, 'pinAccuracy' => $pinAccuracy, 'ck' => $ck];
         if (count($rows) > 2000) $rows = array_slice($rows, -2000);
         return ['id' => $id];
     });
@@ -55,7 +60,7 @@ if ($method === 'GET') {
     $page = array_slice($rows, 0, $limit);
     $out = [];
     foreach ($page as $r) {
-        $out[] = ['id' => $r['id'], 'details' => $r['details'], 'lat' => $r['lat'], 'lng' => $r['lng'], 'handled' => !empty($r['handled']), 'submittedAt' => gmdate('Y-m-d\TH:i:s\Z', (int)$r['ts'])];
+        $out[] = ['id' => $r['id'], 'details' => $r['details'], 'lat' => $r['lat'], 'lng' => $r['lng'], 'locationSource' => $r['pinSource'] ?? null, 'locationAccuracy' => $r['pinAccuracy'] ?? null, 'handled' => !empty($r['handled']), 'submittedAt' => gmdate('Y-m-d\TH:i:s\Z', (int)$r['ts'])];
     }
     $next = ($more && $page) ? (string)$page[count($page) - 1]['ms'] : null;
     json_out(200, ['reports' => $out, 'next' => $next]);
