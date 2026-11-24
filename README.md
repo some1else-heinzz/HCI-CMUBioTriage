@@ -36,6 +36,6 @@ CMUBioTriage/
 ## Notes
 - Edit `assets/data/data.json` and replace the `[... confirm with UH]` placeholders with real numbers.
 - Change `STAFF_PIN` and `SITE_SALT` in `api/config.php` before real use.
-- After changing any file, bump the cache name in `sw.js` and `assets/js/app.js` (now `cmubiotrage-v15`), then hard-refresh (Ctrl+Shift+R).
+- After changing any file, bump the cache name in `sw.js` and `assets/js/app.js` (now `cmubiotrage-v19`), then hard-refresh (Ctrl+Shift+R).
 - Netlify cannot run PHP; `netlify.toml` blocks `/api/*` there so PHP source is never exposed.
 - Reports are plain JSON on disk: fine for a class demo, not for real patient data.

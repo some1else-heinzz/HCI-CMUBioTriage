@@ -31,24 +31,44 @@ async function share(text, url = location.href) {
 
 /* ---------- Public screens ---------- */
 const screens = {
-  home: () => `<div class="home">
-    <section class="call" aria-label="Call now">
-      <h1>Call now</h1>
-      <div class="nums">
-        <div><div>${esc(D.primary.label)}</div><span class="num">${esc(D.primary.number)}</span><span class="tag t-Unverified">Unverified</span>${dial(D.primary)}</div>
-        <div><div>${esc(D.alternate.label)}</div><span class="num">${esc(D.alternate.number)}</span><span class="tag t-Unverified">Unverified</span>${dial(D.alternate)}</div>
+  home: () => {
+    const states = D.hospitals.map(h => hState(h));
+    const confirmed = states.filter(s => s.tag === 'Confirmed').length;
+    const restock = states.filter(s => s.tag === 'Restock announced').length;
+    const needs = D.hospitals.length - confirmed - restock;
+    return `<section class="status-page">
+      <div class="status-heading"><div><h1>Antivenom status</h1><p class="lead">Facility confirmations and contact information</p></div><span class="status-connection">● ${SYNC() ? 'Shared board' : 'This device only'}</span></div>
+      <nav class="status-nav" aria-label="Main navigation"><a class="status-nav-active" href="#/home">⌁ &nbsp;Antivenom status</a><a href="#/staff">▤ &nbsp;Staff log in</a><a href="#/tell">▣ &nbsp;Handoff summary</a><a href="#/do">✚ &nbsp;First aid and contacts</a></nav>
+      <p class="status-loaded">● &nbsp;Last loaded: ${new Date().toLocaleString()}</p>
+      <div class="status-stats" aria-label="Facility status summary">
+        <div class="status-stat stat-blue"><span class="stat-icon">▤</span><div><small>All facilities</small><strong>${D.hospitals.length}</strong></div></div>
+        <div class="status-stat stat-green"><span class="stat-icon">✓</span><div><small>Confirmed available</small><strong>${confirmed}</strong></div></div>
+        <div class="status-stat stat-lime"><span class="stat-icon">⚑</span><div><small>Restock announced</small><strong>${restock}</strong></div></div>
+        <div class="status-stat stat-red"><span class="stat-icon">♧</span><div><small>Needs confirmation</small><strong>${needs}</strong></div></div>
       </div>
-      <a class="btn dial" href="tel:911">📞 Call 911 (national emergency)</a>
-      <a class="btn dial" href="#/nosignal">⚠ Call didn’t connect</a>
-    </section>
-    <nav class="tiles" aria-label="Guide sections">
-      <a class="tile" href="#/do"><b>What to do now</b><span>Do and don’t</span></a>
-      <a class="tile" href="#/tell"><b>Tell the responder</b><span>Tap answers, no typing</span></a>
-      <a class="tile" href="#/before"><b>Before an emergency</b><span>Save this guide offline</span></a>
-      <a class="tile" href="#/about"><b>About this guide</b><span>Limits and version</span></a>
-    </nav></div>`,
+      <div class="status-warning" role="note"><strong>ⓘ &nbsp;This board can be out of date. A restock announcement is not a current stock confirmation. Always call before sending a patient.</strong></div>
+      <form class="status-filter" id="facilityFilter"><input id="facilitySearch" type="search" placeholder="Hospital or town" aria-label="Search hospital or town"><select id="facilityStatus" aria-label="Filter by status"><option value="all">All (${D.hospitals.length})</option><option value="confirmed">Confirmed available</option><option value="restock">Restock announced</option><option value="needs">Needs confirmation</option></select><button class="status-filter-button" type="submit">Filter</button></form>
+      <p id="facilityCount" class="facility-count" aria-live="polite">${D.hospitals.length} facilities shown</p>
+      <div class="facility-grid" id="facilityGrid">${D.hospitals.map((h, i) => {
+        const st = states[i], s = st.s;
+        const statusClass = st.tag === 'Confirmed' ? 'facility-confirmed' : st.tag === 'Restock announced' ? 'facility-restock' : 'facility-needs';
+        const place = h.location || '';
+        const note = st.tag === 'Confirmed' ? 'Recently confirmed by staff. Call to reconfirm before sending a patient.' : st.tag === 'Restock announced' ? 'Restock announced. Call to confirm current stock before sending a patient.' : 'Nobody has confirmed this yet. Call to confirm before sending a patient.';
+        return `<article class="facility-card ${statusClass}" data-facility="${esc((h.name + ' ' + place).toLowerCase())}" data-state="${statusClass}"><div class="facility-title"><h2>${esc(h.name)}</h2><span class="facility-badge">${st.tag === 'Confirmed' ? 'Confirmed available' : st.tag === 'Restock announced' ? 'Restock announced' : 'Not yet confirmed'}</span></div>
+          ${place ? `<p class="facility-location">${esc(place)}</p>` : ''}<p class="facility-note">${esc(note)}</p>
+          ${s ? `<p class="facility-meta">Last updated by ${esc(s.by || 'staff')} · ${esc(new Date(s.at).toLocaleString())}</p>` : ''}
+          ${isNum(h.number) ? dial(h, 'btn small primary facility-dial') : '<span class="facility-number">Number not set</span>'}</article>`;
+      }).join('')}</div>
+      <div class="status-contacts"><a href="#/tell">Open handoff summary</a><a href="#/do">First aid guidance</a><a href="#/about">About this guide</a></div>
+    </section>`;
+  },
 
-  do: () => `${back()}<h1>What to do now</h1>${pending}
+  do: () => `${back()}<h1>First aid and contacts</h1>${pending}
+    <section class="card"><h2>Call for help now</h2><div class="contact-links">
+      <div><strong>${esc(D.primary.label)}</strong><span class="num">${esc(D.primary.number)}</span>${dial(D.primary)}</div>
+      <div><strong>${esc(D.alternate.label)}</strong><span class="num">${esc(D.alternate.number)}</span>${dial(D.alternate)}</div>
+    </div><a class="btn dial" href="tel:911">Call 911 (national emergency)</a></section>
+    <h2>What to do now</h2>
     <div class="cols">
       <div class="card do"><h2>✔ Do</h2><ul class="clean">${D.dos.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
       <div class="card dont"><h2>✖ Don’t</h2><ul class="clean">${D.donts.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
@@ -202,8 +222,9 @@ const screensStaff = {
     ${D.hospitals.map((h, i) => { const st = hState(h), s = st.s;
       return `<div class="card"><b>${esc(h.name)}</b><br>${esc(h.number)}<br>
       <span class="tag t-${st.tag}">${st.tag}</span> ${st.note ? `<small>${st.note}</small>` : ''}
-      <div><small>${s ? `Last confirmed by ${esc(s.by)} on ${new Date(s.at).toLocaleString()}` : 'Not confirmed yet'}</small></div>
+      <div><small>${s ? `Last updated by ${esc(s.by)} on ${new Date(s.at).toLocaleString()}` : 'Not confirmed yet'}</small></div>
             <button class="btn small primary" data-conf="${i}">Mark confirmed now</button>
+      <button class="btn small" data-restock="${i}">Mark restock announced</button>
       <button class="btn small" data-unconf="${i}">Mark unverified</button>
       ${isNum(h.number) ? `<a class="btn small" href="tel:${esc(h.number.replace(/\s/g, ''))}">📞 Call</a>` : ''}</div>`; }).join('')}`,
 
@@ -406,6 +427,24 @@ function route() {
 }
 function wire(r) {
   const on = (id, fn) => { const e = document.getElementById(id); if (e) e.addEventListener('click', fn); };
+  if (r === 'home') {
+    const form = $('#facilityFilter'), search = $('#facilitySearch'), filter = $('#facilityStatus');
+    const applyFacilityFilter = () => {
+      const query = search.value.trim().toLowerCase(), wanted = filter.value;
+      let shown = 0;
+      document.querySelectorAll('[data-facility]').forEach(card => {
+        const state = card.dataset.state;
+        const stateMatch = wanted === 'all' || (wanted === 'confirmed' && state === 'facility-confirmed') || (wanted === 'restock' && state === 'facility-restock') || (wanted === 'needs' && state === 'facility-needs');
+        const visible = stateMatch && card.dataset.facility.includes(query);
+        card.hidden = !visible;
+        if (visible) shown++;
+      });
+      $('#facilityCount').textContent = `${shown} facilit${shown === 1 ? 'y' : 'ies'} shown`;
+    };
+    form.addEventListener('submit', e => { e.preventDefault(); applyFacilityFilter(); });
+    search.addEventListener('input', applyFacilityFilter);
+    filter.addEventListener('change', applyFacilityFilter);
+  }
   on('shareBtn', () => share('Snakebite first-response guide for CMU.'));
   if (r === 'tell') {
     pendingSubmission = null;
@@ -428,7 +467,7 @@ function wire(r) {
     on('save', async () => {
       const o = $('#saveOut');
       if (!('serviceWorker' in navigator)) { o.innerHTML = '<p class="msg">This browser cannot save offline. Add it to your home screen instead.</p>'; return; }
-      try { const keys = await (await caches.open('cmubiotrage-v15')).keys();
+      try { const keys = await (await caches.open('cmubiotrage-v19')).keys();
         o.innerHTML = keys.length >= 6 ? `<p class="msg">✔ Saved offline: reviewed ${esc(D.reviewed)}</p>` : '<p class="msg">Not saved yet. Stay online a few seconds and tap again.</p>';
       } catch { o.innerHTML = '<p class="msg">Could not check. Reload the page while online and try again.</p>'; }
       netStatus();
@@ -459,10 +498,10 @@ function wire(r) {
   }
   if (r === 'staff-reports') startReportView();
   if (r === 'staff-dir') on('refresh', () => { pulled[r] = false; route(); });
-  if (r === 'staff-dir') document.querySelectorAll('[data-conf],[data-unconf]').forEach(b => b.addEventListener('click', () => {
-    const conf = b.dataset.conf !== undefined, i = +(b.dataset.conf ?? b.dataset.unconf), h = D.hospitals[i];
-    const by = $('#staffName').value.trim(); if (conf && !by) { toast('Enter your name at the top first.'); $('#staffName').focus(); return; }
-    const all = hStatus(); all[h.name] = conf ? { status: 'Confirmed', by, at: Date.now() } : { status: 'Unverified', by: by || 'staff', at: Date.now() };
+  if (r === 'staff-dir') document.querySelectorAll('[data-conf],[data-restock],[data-unconf]').forEach(b => b.addEventListener('click', () => {
+    const conf = b.dataset.conf !== undefined, restock = b.dataset.restock !== undefined, key = b.dataset.conf ?? b.dataset.restock ?? b.dataset.unconf, i = +key, h = D.hospitals[i];
+    const by = $('#staffName').value.trim(); if ((conf || restock) && !by) { toast('Enter your name at the top first.'); $('#staffName').focus(); return; }
+    const all = hStatus(); all[h.name] = { status: conf ? 'Confirmed' : restock ? 'Restock announced' : 'Unverified', by: by || 'staff', at: Date.now() };
     store.set('ss_status', all); pushStatus(i, all[h.name]); const keep = by; route(); const n = $('#staffName'); if (n) n.value = keep;
   }));
   if (r === 'staff-alert') on('gen', () => {

@@ -30,18 +30,22 @@
  "hospitals": [
   {
    "name": "Bukidnon Provincial Hospital (BPH), Maramag",
+   "location": "Maramag, Bukidnon. Nearest known stock, about 15 km from CMU.",
    "number": "[NUMBER – confirm]"
   },
   {
    "name": "Bukidnon Provincial Medical Center (BPMC), Malaybalay",
+   "location": "Malaybalay, Bukidnon",
    "number": "[NUMBER – confirm]"
   },
   {
    "name": "Valencia Sanitarium / Adventist Medical Center",
+   "location": "Named by the ER nurse; location to be confirmed",
    "number": "[NUMBER – confirm]"
   },
   {
    "name": "Cagayan de Oro City hospital (specify)",
+   "location": "Referral destination named by the ER nurse; hospital not specified",
    "number": "[NUMBER – confirm]"
   }
  ],
