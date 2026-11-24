@@ -3,7 +3,7 @@ const STALE_MS = 24 * 3600 * 1000;
 let D = null, deferredInstall = null;
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const isNum = n => /^[+\d][\d\s\-()]{5,}$/.test(n || '');
+const isNum = n => typeof n === 'string' && /^\+?[\d\s\-()]+$/.test(n) && (n.match(/\d/g) || []).length >= 7;
 const store = {
   get: (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
   set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
@@ -13,8 +13,25 @@ const pending = '<span class="review">Content pending medical review</span>';
 
 function dial(c, cls = 'btn dial') {
   return isNum(c.number)
-    ? `<a class="${cls}" href="tel:${esc(c.number.replace(/\s/g, ''))}">📞 Tap to dial ${esc(c.label)}</a>`
+    ? `<a class="${cls}" href="tel:${esc(c.number.replace(/[^\d+]/g, ''))}">📞 Tap to dial ${esc(c.label)}</a>`
     : `<span class="review">${esc(c.label)}: number not set yet</span>`;
+}
+function facilityContactLinks(h, context = 'public') {
+  const contacts = Array.isArray(h.contacts) && h.contacts.length ? h.contacts : (h.number ? [{ label: 'Main', number: h.number }] : []);
+  if (!contacts.length) return '<span class="facility-number"><strong>Phone number not set</strong><br>Contact details need confirmation</span>';
+  return contacts.map((contact, index) => isNum(contact.number)
+    ? `<a class="${context === 'public' && index === 0 ? 'btn primary facility-call-main' : 'facility-call-secondary'}" href="tel:${esc(contact.number.replace(/[^\d+]/g, ''))}"><span>📞 ${context === 'public' && index === 0 ? 'Call ' : ''}${esc(contact.label)}</span><small>${esc(contact.number)}</small></a>`
+    : `<span class="facility-number">${esc(contact.label)} number not set</span>`).join('');
+}
+function relativeTime(timestamp) {
+  const seconds = Math.max(0, Math.floor((Date.now() - timestamp) / 1000));
+  if (seconds < 60) return 'just now';
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+  const days = Math.floor(hours / 24);
+  return `${days} day${days === 1 ? '' : 's'} ago`;
 }
 function toast(msg) {
   const t = document.createElement('div'); t.className = 'msg toast'; t.setAttribute('role', 'status'); t.textContent = msg;
@@ -36,9 +53,10 @@ const screens = {
     const confirmed = states.filter(s => s.tag === 'Confirmed').length;
     const restock = states.filter(s => s.tag === 'Restock announced').length;
     const needs = D.hospitals.length - confirmed - restock;
+    const counts = { all: D.hospitals.length, confirmed, restock, needs };
     return `<section class="status-page">
-      <div class="status-heading"><div><h1>Antivenom status</h1><p class="lead">Facility confirmations and contact information</p></div><span class="status-connection">● ${SYNC() ? 'Shared board' : 'This device only'}</span></div>
-      <nav class="status-nav" aria-label="Main navigation"><a class="status-nav-active" href="#/home">⌁ &nbsp;Antivenom status</a><a href="#/staff">▤ &nbsp;Staff log in</a><a href="#/tell">▣ &nbsp;Handoff summary</a><a href="#/do">✚ &nbsp;First aid and contacts</a></nav>
+      <div class="status-heading"><div><h1>Antivenom status</h1><p class="lead">Facility confirmations and contact information</p></div><span class="status-connection ${SYNC() ? 'is-shared' : 'is-device-only'}">● ${SYNC() ? 'Shared sync configured' : 'Device only'}</span></div>
+      <nav class="status-nav" aria-label="Main navigation"><a class="status-nav-active" aria-current="page" href="#/home">⌁ &nbsp;Antivenom status</a><a href="#/staff">▤ &nbsp;Staff log in</a><a href="#/tell">▣ &nbsp;Handoff summary</a><a href="#/do">✚ &nbsp;First aid and contacts</a></nav>
       <p class="status-loaded">● &nbsp;Last loaded: ${new Date().toLocaleString()}</p>
       <div class="status-stats" aria-label="Facility status summary">
         <div class="status-stat stat-blue"><span class="stat-icon">▤</span><div><small>All facilities</small><strong>${D.hospitals.length}</strong></div></div>
@@ -46,18 +64,21 @@ const screens = {
         <div class="status-stat stat-lime"><span class="stat-icon">⚑</span><div><small>Restock announced</small><strong>${restock}</strong></div></div>
         <div class="status-stat stat-red"><span class="stat-icon">♧</span><div><small>Needs confirmation</small><strong>${needs}</strong></div></div>
       </div>
+      <div class="connection-warning ${SYNC() ? 'connection-shared' : 'connection-device-only'}" role="status"><strong>${SYNC() ? 'Shared sync is configured.' : 'Staff updates are saved only in this browser and are not visible on other devices.'}</strong> ${SYNC() ? (navigator.onLine ? 'Updates sync when online; check the time of the latest confirmation.' : 'This device is offline, so updates cannot reach other devices yet.') : 'Set up shared sync before staff use the board across multiple devices.'}</div>
       <div class="status-warning" role="note"><strong>ⓘ &nbsp;This board can be out of date. A restock announcement is not a current stock confirmation. Always call before sending a patient.</strong></div>
-      <form class="status-filter" id="facilityFilter"><input id="facilitySearch" type="search" placeholder="Hospital or town" aria-label="Search hospital or town"><select id="facilityStatus" aria-label="Filter by status"><option value="all">All (${D.hospitals.length})</option><option value="confirmed">Confirmed available</option><option value="restock">Restock announced</option><option value="needs">Needs confirmation</option></select><button class="status-filter-button" type="submit">Filter</button></form>
-      <p id="facilityCount" class="facility-count" aria-live="polite">${D.hospitals.length} facilities shown</p>
+      <form class="status-filter" id="facilityFilter"><input id="facilitySearch" type="search" placeholder="Hospital or town" aria-label="Search hospital or town"><div class="status-choices" role="group" aria-label="Filter facilities by stock status">${[['all','All'],['confirmed','Confirmed'],['restock','Restock announced'],['needs','Needs confirmation']].map(([key,label]) => `<button class="status-choice" type="button" data-status-filter="${key}" aria-pressed="${key === 'all'}">${label} <span>${counts[key]}</span></button>`).join('')}</div><p id="facilityCount" class="facility-count" aria-live="polite">${D.hospitals.length} facilities shown</p></form>
       <div class="facility-grid" id="facilityGrid">${D.hospitals.map((h, i) => {
         const st = states[i], s = st.s;
         const statusClass = st.tag === 'Confirmed' ? 'facility-confirmed' : st.tag === 'Restock announced' ? 'facility-restock' : 'facility-needs';
         const place = h.location || '';
-        const note = st.tag === 'Confirmed' ? 'Recently confirmed by staff. Call to reconfirm before sending a patient.' : st.tag === 'Restock announced' ? 'Restock announced. Call to confirm current stock before sending a patient.' : 'Nobody has confirmed this yet. Call to confirm before sending a patient.';
-        return `<article class="facility-card ${statusClass}" data-facility="${esc((h.name + ' ' + place).toLowerCase())}" data-state="${statusClass}"><div class="facility-title"><h2>${esc(h.name)}</h2><span class="facility-badge">${st.tag === 'Confirmed' ? 'Confirmed available' : st.tag === 'Restock announced' ? 'Restock announced' : 'Not yet confirmed'}</span></div>
-          ${place ? `<p class="facility-location">${esc(place)}</p>` : ''}<p class="facility-note">${esc(note)}</p>
-          ${s ? `<p class="facility-meta">Last updated by ${esc(s.by || 'staff')} · ${esc(new Date(s.at).toLocaleString())}</p>` : ''}
-          ${isNum(h.number) ? dial(h, 'btn small primary facility-dial') : '<span class="facility-number">Number not set</span>'}</article>`;
+        const note = st.tag === 'Stale' ? 'This confirmation is more than 24 hours old. Call to check current stock.' : st.tag === 'Confirmed' ? 'Recently confirmed by staff. Call to reconfirm before sending a patient.' : st.tag === 'Restock announced' ? 'Restock announced, but current stock is not confirmed. Call before sending a patient.' : 'No current confirmation. Call to check stock before sending a patient.';
+        const timestampLabel = s ? (s.status === 'Confirmed' ? 'Last confirmed' : s.status === 'Restock announced' ? 'Restock announced' : 'Last status update') : '';
+        const hasCoords = h.coordinatesVerified === true && h.locationPending !== true && h.lat !== null && h.lat !== undefined && h.lng !== null && h.lng !== undefined && h.lat !== '' && h.lng !== '' && Number.isFinite(Number(h.lat)) && Number.isFinite(Number(h.lng)) && Math.abs(Number(h.lat)) <= 90 && Math.abs(Number(h.lng)) <= 180;
+        const mapLink = hasCoords ? `<a class="facility-map-link" href="https://maps.google.com/?q=${Number(h.lat)},${Number(h.lng)}" target="_blank" rel="noopener">Open confirmed location in maps</a>` : '';
+        return `<article class="facility-card ${statusClass} ${st.tag === 'Stale' ? 'facility-stale' : ''}" data-facility="${esc((h.name + ' ' + place).toLowerCase())}" data-state="${statusClass}"><div class="facility-title"><div><h2>${esc(h.name)}</h2>${h.namePending ? '<span class="detail-pending">Facility name needs confirmation</span>' : ''}</div><span class="facility-badge ${st.tag === 'Stale' ? 'badge-stale' : ''}">${st.tag === 'Stale' ? 'Confirmation outdated' : st.tag === 'Confirmed' ? 'Confirmed available' : st.tag === 'Restock announced' ? 'Restock announced' : 'Needs confirmation'}</span></div>
+          ${place ? `<p class="facility-location">${esc(place)}${h.locationPending ? ' <span class="detail-pending">Location unverified</span>' : ''}</p>` : '<p class="facility-location"><span class="detail-pending">Facility location not confirmed</span></p>'}<p class="facility-note">${esc(note)}</p>
+          ${s ? `<p class="facility-meta"><strong>${timestampLabel}</strong> by ${esc(s.by || 'staff')}<br><time datetime="${new Date(s.at).toISOString()}">${esc(new Date(s.at).toLocaleString())}</time> <span aria-label="relative time">(${esc(relativeTime(s.at))})</span></p>` : '<p class="facility-meta">No staff confirmation recorded yet.</p>'}
+          <div class="facility-actions">${facilityContactLinks(h)}${mapLink}</div></article>`;
       }).join('')}</div>
       <div class="status-contacts"><a href="#/tell">Open handoff summary</a><a href="#/do">First aid guidance</a><a href="#/about">About this guide</a></div>
     </section>`;
@@ -77,7 +98,9 @@ const screens = {
     <a class="btn dial" style="background:var(--alarm);color:var(--onalarm)" href="#/home">Go to call block</a>`,
 
   tell: () => `${back()}<h1>Tell the responder</h1>
-    <p class="lead">Tap an answer. Choose “Unknown” instead of guessing.</p>
+    <p class="lead">Share the key details with responders. Tap an answer or mark it Unknown; you do not need to guess.</p>
+    <section class="handoff-callout" aria-label="Emergency calling"><div><h2>Need urgent help?</h2><p>This form only shares information with staff. It does not call emergency services or dispatch responders.</p></div><div class="handoff-call-actions"><a class="btn emergency-call" href="tel:911">Call emergency services · 911</a><a class="btn small" href="#/do">Other emergency contacts</a></div></section>
+    <section class="card handoff-preview"><h2>Handoff summary</h2><p class="lead">Updates as you answer. Review it before sharing.</p><pre id="liveSummary" aria-label="Current handoff summary"></pre><div class="handoff-share-actions"><button class="btn small" id="copySummary" type="button">Copy summary</button><a class="btn small primary" id="sumSms" href="sms:?&body=">Open SMS with summary</a><button class="btn small" id="sumShare" type="button">Share summary</button></div><p class="handoff-share-note">Opening SMS or sharing does not send the report to hospital staff.</p></section>
     <div class="cols">
       <section class="card"><h2>Where are you?</h2>
         ${sel('area','Area',D.options.areas)}${sel('surr','Surroundings',D.options.surroundings)}
@@ -90,13 +113,12 @@ const screens = {
         <div id="pinOut" aria-live="polite"></div></section>
       <section class="card"><h2>What happened?</h2>${pending}
         ${sel('time','Time of the bite',D.options.times)}
-        ${chips('cond','Victim’s condition (tap all that apply)',D.options.conditions)}
+        ${txt('time_exact','Exact date and time, if known','datetime-local')}<small class="field-hint">Optional. Leave blank if you are unsure.</small>
+        ${chips('cond','Victim’s condition (tap all that apply)',[...['Hard to breathe','Unconscious','Drooping eyelids'],...D.options.conditions.filter(x => !['Hard to breathe','Unconscious','Drooping eyelids'].includes(x))])}
         ${chips('done','Actions already taken',D.options.actions)}
         ${sel('snake','Snake (only if safe to note)',D.options.snakes)}</section>
     </div>
-    <section class="card"><h2>Send your report to staff</h2><p>Submit the details above so staff can see your report and attached location. Internet is required. Submitting does not confirm that help is on the way; call for urgent assistance.</p><button class="btn primary" id="submitReport" type="button">Submit report to staff</button><div id="submitStatus" role="status" aria-live="polite"></div></section>
-    <button class="btn" id="sum" type="button">Build and copy summary</button><pre id="sumOut" hidden></pre>
-    <div id="sumBtns" hidden><a class="btn small primary" id="sumSms" href="#">Send by SMS</a><button class="btn small" id="sumShare" type="button">Share</button></div>`,
+    <section class="card"><h2>Send your report to staff</h2><p>Internet is required. Staff will receive this report; this does not confirm that help is on the way.</p><button class="btn primary" id="submitReport" type="button">Submit report to staff</button><div id="submitStatus" role="status" aria-live="polite"></div></section>`,
 
   nosignal: () => `${back()}<h1>Call didn’t connect</h1>
     <div class="card"><h2>Try next</h2><ul class="clean">
@@ -133,10 +155,27 @@ function txt(id, label, type = 'text', v = '') {
 }
 function val(id) {
   const g = document.querySelector(`[data-chips="${id}"]`);
-  if (g) { const on = [...g.querySelectorAll('.chip[aria-pressed="true"]')].map(b => b.textContent); return on.join(', ') || 'Unknown'; }
-  const e = document.getElementById('f_' + id); if (!e) return 'Unknown';
-  if (e.tagName === 'SELECT') { if (e.value === 'Other (type)') return document.getElementById('o_' + id).value.trim() || 'Unknown'; return e.value || 'Unknown'; }
-  return e.value.trim() || 'Unknown';
+  if (g) { const on = [...g.querySelectorAll('.chip[aria-pressed="true"]')].map(b => b.textContent); return on.join(', ') || 'Not answered'; }
+  const e = document.getElementById('f_' + id); if (!e) return 'Not answered';
+  if (e.tagName === 'SELECT') { if (e.value === 'Other (type)') return document.getElementById('o_' + id).value.trim() || 'Not answered'; return e.value || 'Not answered'; }
+  return e.value.trim() || 'Not answered';
+}
+function biteTime() {
+  const exact = $('#f_time_exact')?.value;
+  if (!exact) return val('time');
+  const date = new Date(exact);
+  return Number.isNaN(date.getTime()) ? val('time') : `Exact: ${date.toLocaleString()}`;
+}
+function buildHandoffSummary() {
+  return `SNAKEBITE HANDOFF\nArea: ${val('area')}\nSurroundings: ${val('surr')}\nLandmark: ${val('landmark')}\nCan someone meet responders: ${val('meet')}\nLocation pin: ${pinText()}\nTime of bite: ${biteTime()}\nCondition: ${val('cond')}\nActions already taken: ${val('done')}\nSnake (only if safely seen): ${val('snake')}`;
+}
+function updateHandoffSummary() {
+  const preview = $('#liveSummary');
+  if (!preview) return;
+  const summary = buildHandoffSummary();
+  preview.textContent = summary;
+  const sms = $('#sumSms');
+  if (sms) sms.href = 'sms:?&body=' + encodeURIComponent(summary);
 }
 function bindUnknown() {
   document.querySelectorAll('[data-sel]').forEach(e => e.addEventListener('change', () => {
@@ -155,21 +194,29 @@ function bindUnknown() {
 let map = null, pinMarker = null;
 const getPin = () => { try { return JSON.parse(sessionStorage.getItem('ss_pin')); } catch { return null; } };
 const pinLink = p => `https://maps.google.com/?q=${p.lat.toFixed(5)},${p.lng.toFixed(5)}`;
-const pinText = () => { const p = getPin(); return p ? `${p.lat.toFixed(5)}, ${p.lng.toFixed(5)} ${pinLink(p)}` : 'Unknown'; };
-const pinNote = () => { const p = getPin(); return p ? `<p class="review">Map pin attached: ${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}. Clear it on the Tell the responder screen if it is old.</p>` : ''; };
+const pinText = () => {
+  const p = getPin();
+  if (!p) return 'No location pin attached';
+  const method = p.source === 'GPS' ? `GPS (accuracy about ${Math.round(p.accuracy || 0)} m)` : p.source === 'Map' ? 'Map tap (accuracy not measured)' : 'Previously saved pin (source and accuracy not recorded)';
+  const captured = p.at ? `; selected ${new Date(p.at).toLocaleString()}` : '';
+  return `${p.lat.toFixed(5)}, ${p.lng.toFixed(5)} · ${method}${captured} · ${pinLink(p)}`;
+};
+const pinNote = () => { const p = getPin(); return p ? `<p class="review">Location pin attached: ${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}. Check whether it is still current; clear or replace it if needed.</p>` : ''; };
 function renderPin() {
-  const o = $('#pinOut'); if (!o) return; const p = getPin(); if (!p) { o.innerHTML = ''; return; }
+  const o = $('#pinOut'); if (!o) return; const p = getPin(); if (!p) { o.innerHTML = ''; updateHandoffSummary(); return; }
   const link = pinLink(p), body = 'Snakebite location: ' + link;
   o.innerHTML = `<div class="card"><div class="lbl">Your pin</div><span class="big">${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}</span>
+    <p>${p.source === 'GPS' ? `GPS accuracy about ${Math.round(p.accuracy || 0)} m` : p.source === 'Map' ? 'Map location selected; accuracy not measured' : 'Previously saved location; source and accuracy not recorded'}${p.at ? ` · selected ${new Date(p.at).toLocaleString()}` : ''}</p>
     <p><a href="${link}" target="_blank" rel="noopener">Open in maps</a> (needs internet)</p>
     <button class="btn small" id="cpPin" type="button">Copy link</button>
     <a class="btn small primary" href="sms:?&body=${encodeURIComponent(body)}">Send location by SMS</a>
     <button class="btn small" id="clrPin" type="button">Clear pin</button></div>`;
   $('#cpPin').onclick = () => copy(link);
   $('#clrPin').onclick = () => { sessionStorage.removeItem('ss_pin'); if (pinMarker) { pinMarker.remove(); pinMarker = null; } renderPin(); };
+  updateHandoffSummary();
 }
-function setPin(lat, lng, center) {
-  sessionStorage.setItem('ss_pin', JSON.stringify({ lat, lng }));
+function setPin(lat, lng, center, source = 'Map', accuracy = null) {
+  sessionStorage.setItem('ss_pin', JSON.stringify({ lat, lng, source, accuracy, at: Date.now() }));
   if (map) { if (pinMarker) pinMarker.setLatLng([lat, lng]); else pinMarker = L.marker([lat, lng]).addTo(map); if (center) map.setView([lat, lng], 17); }
   renderPin();
 }
@@ -182,7 +229,7 @@ function openMap() {
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap contributors' }).addTo(map)
     .on('tileerror', () => { $('#mapNote').hidden = false; });
   if (p) pinMarker = L.marker([p.lat, p.lng]).addTo(map);
-  map.on('click', e => setPin(e.latlng.lat, e.latlng.lng, false));
+  map.on('click', e => setPin(e.latlng.lat, e.latlng.lng, false, 'Map'));
 }
 
 /* ---------- Optional shared sync (Firebase Realtime Database REST) ---------- */
@@ -208,8 +255,9 @@ const hStatus = () => store.get('ss_status', {});
 function hState(h) {
   const s = hStatus()[h.name];
   if (!s || !s.at) return { tag: 'Unverified', note: 'Never confirmed.' };
-  if (Date.now() - s.at > STALE_MS) return { tag: 'Stale', note: 'Last confirmation is over 24 hours old.', s };
-  return { tag: s.status || 'Unverified', note: '', s };
+  const status = s.status || 'Unverified';
+  if ((status === 'Confirmed' || status === 'Restock announced') && Date.now() - s.at > STALE_MS) return { tag: 'Stale', note: 'Last confirmation is over 24 hours old.', s };
+  return { tag: status, note: '', s };
 }
 const screensStaff = {
   staff: () => sessionStorage.getItem('ss_staff') ? (location.hash = '#/staff-reports', '') : `${back()}<h1>Staff access</h1>
@@ -220,13 +268,13 @@ const screensStaff = {
     <p class="review">Call to confirm antivenom. Listing does not guarantee stock or capacity.</p>
     <div class="card"><div class="f"><label for="staffName">Your name (used for every confirmation)</label><input id="staffName" autocomplete="name" placeholder="Type once"></div></div>
     ${D.hospitals.map((h, i) => { const st = hState(h), s = st.s;
-      return `<div class="card"><b>${esc(h.name)}</b><br>${esc(h.number)}<br>
+      return `<div class="card"><b>${esc(h.name)}</b><div class="staff-directory-contacts">${facilityContactLinks(h, 'staff')}</div>
       <span class="tag t-${st.tag}">${st.tag}</span> ${st.note ? `<small>${st.note}</small>` : ''}
-      <div><small>${s ? `Last updated by ${esc(s.by)} on ${new Date(s.at).toLocaleString()}` : 'Not confirmed yet'}</small></div>
+      <div><small>${s ? `Last updated by ${esc(s.by)} on ${new Date(s.at).toLocaleString()} (${relativeTime(s.at)})` : 'Not confirmed yet'}</small></div>
             <button class="btn small primary" data-conf="${i}">Mark confirmed now</button>
       <button class="btn small" data-restock="${i}">Mark restock announced</button>
       <button class="btn small" data-unconf="${i}">Mark unverified</button>
-      ${isNum(h.number) ? `<a class="btn small" href="tel:${esc(h.number.replace(/\s/g, ''))}">📞 Call</a>` : ''}</div>`; }).join('')}`,
+      </div>`; }).join('')}`,
 
   'staff-alert': () => staffNav() + `<h1>Pre-alert message</h1>${pinNote()}
     <div class="cols"><section class="card">
@@ -272,9 +320,9 @@ async function api(path, options = {}) {
 let pendingSubmission = null;
 async function submitReport() {
   const button = $('#submitReport'), out = $('#submitStatus');
-  const details = Object.fromEntries(['area', 'surr', 'meet', 'landmark', 'time', 'cond', 'done', 'snake'].map(key => [key, val(key)]));
+  const details = Object.fromEntries(['area', 'surr', 'meet', 'landmark', 'time', 'cond', 'done', 'snake'].map(key => [key, key === 'time' ? biteTime() : val(key)]));
   const pin = getPin();
-  if (!pin && details.area === 'Unknown' && details.landmark === 'Unknown') {
+  if (!pin && ['Unknown', 'Not answered'].includes(details.area) && ['Unknown', 'Not answered'].includes(details.landmark)) {
     out.textContent = 'Choose an area, enter a landmark, or attach a location using the map or GPS.'; return;
   }
   const signature = JSON.stringify({ details, pin });
@@ -288,7 +336,7 @@ async function submitReport() {
     $('#app').addEventListener('input', reset, { once: true });
     $('#app').addEventListener('click', e => { if (e.target.closest('.chip, #gps, #clrPin, #map')) reset(); });
   } catch (error) {
-    out.textContent = `${error.message} Submission is not confirmed. Retry to confirm delivery, or use the summary tools below to send by SMS. Your answers remain on this screen.`;
+    out.textContent = `${error.message} Submission is not confirmed. Retry to confirm delivery, or use the summary actions above. Your answers remain on this screen.`;
     button.disabled = false;
   }
 }
@@ -384,7 +432,7 @@ function renderReports(fit) {
     return `<article class="card report-card" id="report-${report.id}"><h2>${esc(title)}</h2>
       <p class="report-time">Submitted ${esc(new Date(report.submittedAt).toLocaleString())} ${report.handled ? '<span class="tag t-Confirmed">Handled</span>' : ''}</p>
       <dl class="report-details">${[['Area', d.area], ['Surroundings', d.surr], ['Landmark', d.landmark], ['Can meet responders', d.meet], ['Time of bite', d.time], ['Condition', d.cond], ['Actions taken', d.done], ['Snake', d.snake]].map(([label, value]) => `<div><dt>${label}</dt><dd>${esc(value)}</dd></div>`).join('')}</dl>
-      ${hasPin ? `<p>Location: ${report.lat.toFixed(5)}, ${report.lng.toFixed(5)}</p><button class="btn small primary" data-report-map="${report.id}" type="button">Show on map</button><a class="btn small" href="${pinLink(report)}" target="_blank" rel="noopener">Open in maps</a>` : '<p class="review">No map pin attached. Use the area and landmark provided.</p>'}<div class="report-actions"><button class="btn small" data-handle="${report.id}" data-to="${report.handled ? 0 : 1}" type="button">${report.handled ? 'Reopen' : '✔ Mark as handled'}</button><button class="btn small danger" data-del="${report.id}" type="button">Delete…</button></div></article>`;
+      ${hasPin ? `<p>Location: ${report.lat.toFixed(5)}, ${report.lng.toFixed(5)}</p><p class="report-time">${report.locationSource === 'GPS' ? `GPS estimate, accuracy about ${Number.isFinite(report.locationAccuracy) ? Math.round(report.locationAccuracy) + ' m' : 'not recorded'}` : report.locationSource === 'Map' ? 'Selected on map; accuracy not measured' : 'Location source or accuracy not recorded'}</p><button class="btn small primary" data-report-map="${report.id}" type="button">Show on map</button><a class="btn small" href="${pinLink(report)}" target="_blank" rel="noopener">Open in maps</a>` : '<p class="review">No map pin attached. Use the area and landmark provided.</p>'}<div class="report-actions"><button class="btn small" data-handle="${report.id}" data-to="${report.handled ? 0 : 1}" type="button">${report.handled ? 'Reopen' : '✔ Mark as handled'}</button><button class="btn small danger" data-del="${report.id}" type="button">Delete…</button></div></article>`;
   }).join('') || '<div class="card"><h2>No reports yet</h2><p>Reports appear here after a user submits them from “Tell the responder”.</p></div>';
   $('#locationCount').textContent = `${mapped} of ${reportRows.length} loaded reports have map locations.`;
   $('#olderReports').hidden = !reportNext;
@@ -428,9 +476,10 @@ function route() {
 function wire(r) {
   const on = (id, fn) => { const e = document.getElementById(id); if (e) e.addEventListener('click', fn); };
   if (r === 'home') {
-    const form = $('#facilityFilter'), search = $('#facilitySearch'), filter = $('#facilityStatus');
+    const form = $('#facilityFilter'), search = $('#facilitySearch');
+    let selectedStatus = 'all';
     const applyFacilityFilter = () => {
-      const query = search.value.trim().toLowerCase(), wanted = filter.value;
+      const query = search.value.trim().toLowerCase(), wanted = selectedStatus;
       let shown = 0;
       document.querySelectorAll('[data-facility]').forEach(card => {
         const state = card.dataset.state;
@@ -441,33 +490,39 @@ function wire(r) {
       });
       $('#facilityCount').textContent = `${shown} facilit${shown === 1 ? 'y' : 'ies'} shown`;
     };
+    document.querySelectorAll('[data-status-filter]').forEach(button => button.addEventListener('click', () => {
+      selectedStatus = button.dataset.statusFilter;
+      document.querySelectorAll('[data-status-filter]').forEach(choice => choice.setAttribute('aria-pressed', String(choice === button)));
+      applyFacilityFilter();
+    }));
     form.addEventListener('submit', e => { e.preventDefault(); applyFacilityFilter(); });
     search.addEventListener('input', applyFacilityFilter);
-    filter.addEventListener('change', applyFacilityFilter);
   }
   on('shareBtn', () => share('Snakebite first-response guide for CMU.'));
   if (r === 'tell') {
     pendingSubmission = null;
     on('submitReport', submitReport);
+    on('copySummary', () => copy(buildHandoffSummary()));
+    on('sumShare', () => share(buildHandoffSummary(), ''));
+    $('#app').querySelectorAll('input,select').forEach(field => {
+      field.addEventListener('input', updateHandoffSummary);
+      field.addEventListener('change', updateHandoffSummary);
+    });
+    document.querySelectorAll('[data-chips]').forEach(group => group.addEventListener('click', updateHandoffSummary));
+    updateHandoffSummary();
     on('mapBtn', openMap); renderPin();
     on('gps', () => {
       const o = $('#gpsOut'); o.innerHTML = '<p>Finding location…</p>';
       if (!navigator.geolocation) { o.innerHTML = '<p class="msg">GPS is not available. Tap the map or choose an area instead.</p>'; return; }
-      navigator.geolocation.getCurrentPosition(p => { o.innerHTML = `<p>GPS accuracy about ${Math.round(p.coords.accuracy)} m.</p>`; setPin(p.coords.latitude, p.coords.longitude, true); },
+      navigator.geolocation.getCurrentPosition(p => { o.innerHTML = `<p>GPS accuracy about ${Math.round(p.coords.accuracy)} m.</p>`; setPin(p.coords.latitude, p.coords.longitude, true, 'GPS', p.coords.accuracy); },
         () => { o.innerHTML = '<p class="msg">Could not get GPS. Tap the map or choose an area instead.</p>'; }, { enableHighAccuracy: true, timeout: 15000 });
-    });
-    on('sum', () => {
-      const t = `SNAKEBITE REPORT (sent ${new Date().toLocaleTimeString()})\nArea: ${val('area')} | Surroundings: ${val('surr')} | Landmark: ${val('landmark')}\nSomeone can meet responders at road: ${val('meet')}\nMap pin: ${pinText()}\nTime of bite: ${val('time')}\nCondition: ${val('cond')}\nActions taken: ${val('done')}\nSnake: ${val('snake')}`;
-      const p = $('#sumOut'); p.hidden = false; p.textContent = t; $('#sumBtns').hidden = false;
-      $('#sumSms').href = 'sms:?&body=' + encodeURIComponent(t); $('#sumShare').onclick = () => share(t, '');
-      copy(t);
     });
   }
   if (r === 'before') {
     on('save', async () => {
       const o = $('#saveOut');
       if (!('serviceWorker' in navigator)) { o.innerHTML = '<p class="msg">This browser cannot save offline. Add it to your home screen instead.</p>'; return; }
-      try { const keys = await (await caches.open('cmubiotrage-v19')).keys();
+      try { const keys = await (await caches.open('cmubiotrage-v23')).keys();
         o.innerHTML = keys.length >= 6 ? `<p class="msg">✔ Saved offline: reviewed ${esc(D.reviewed)}</p>` : '<p class="msg">Not saved yet. Stay online a few seconds and tap again.</p>';
       } catch { o.innerHTML = '<p class="msg">Could not check. Reload the page while online and try again.</p>'; }
       netStatus();
