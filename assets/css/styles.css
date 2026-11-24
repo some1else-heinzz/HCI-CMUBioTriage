@@ -286,3 +286,49 @@ html.light:not(.sun) .tile{background:rgba(205,224,208,.6);-webkit-backdrop-filt
 html.light:not(.sun) .tile span{color:#244a3a}
 html.light:not(.sun) .tile:first-child{background:#9be8c1;border-color:#4fb98a;color:#0d2a1d}
 html.light:not(.sun) .tile:first-child span{color:#0d2a1d}
+
+/* Antivenom status board */
+.status-page{color:var(--ink)}
+.status-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.status-heading h1{font-size:2.15rem;margin:0;color:var(--ink)}
+.status-heading .lead{font-weight:650;margin:2px 0 14px}
+.status-connection{white-space:nowrap;border-radius:99px;padding:5px 12px;background:rgba(127,209,168,.16);color:var(--accent);font-size:.82rem;font-weight:800}
+.status-nav{display:flex;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--line);padding:0 0 12px;margin-bottom:12px}
+.status-nav a{min-height:44px;padding:9px 14px;display:inline-flex;align-items:center;border-radius:99px;color:var(--ink);font-size:.95rem;font-weight:750;text-decoration:none}
+.status-nav a:hover{background:var(--glass-2)}
+.status-nav a.status-nav-active{background:#087f71;color:#fff}
+.status-loaded,.facility-count{font-size:.82rem;color:var(--muted);font-weight:650;margin:10px 0}
+.status-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:10px 0 14px}
+.status-stat{display:flex;align-items:center;gap:13px;min-height:78px;padding:12px 14px;border:1px solid var(--line);border-left:4px solid #42a5df;border-radius:15px;background:var(--card)}
+.status-stat small{display:block;color:var(--muted);font-size:.78rem;font-weight:650}
+.status-stat strong{display:block;font-size:1.35rem;line-height:1.2}
+.stat-icon{display:grid;place-items:center;flex:none;width:42px;height:42px;border-radius:12px;background:rgba(127,209,168,.13);font-size:1.2rem;font-weight:850}
+.stat-green{border-left-color:#13ad79}.stat-lime{border-left-color:#69c94d}.stat-red{border-left-color:#f05268}
+.status-warning{padding:14px 16px;margin:14px 0 18px;border:1px solid #a8d9fb;border-radius:12px;background:#eaf5ff;color:#205581;font-size:.9rem}
+.status-filter{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:10px 12px;padding:14px;border:1px solid var(--line);border-radius:15px;background:var(--card)}
+.status-filter input,.status-filter select{min-height:46px;background:var(--bg)}
+.status-filter-button{grid-column:1/-1;justify-self:center;width:min(48%,420px);min-height:44px;border:0;border-radius:10px;background:#087f71;color:#fff;font:inherit;font-size:.9rem;font-weight:800;cursor:pointer}
+.status-filter-button:hover{filter:brightness(1.08)}
+.facility-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.facility-card{min-width:0;padding:16px;border:1px solid var(--line);border-left:4px solid #d5e3df;border-radius:16px;background:var(--card);box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.facility-card[hidden]{display:none}
+.facility-title{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.facility-title h2{margin:2px 0 5px;color:var(--ink);font-size:1rem;line-height:1.35}
+.facility-badge{flex:none;padding:5px 9px;border:1px solid #efd7a6;border-radius:99px;background:#fff5df;color:#a94b00;font-size:.68rem;font-weight:850;text-align:center}
+.facility-location{margin:0 0 14px;color:var(--muted);font-size:.82rem}
+.facility-note{margin:8px 0 14px;padding:8px 10px;border-radius:9px;background:#fff3d3;color:#8a5100;font-size:.76rem;font-weight:750}
+.facility-meta{font-size:.76rem;color:var(--muted)}
+.facility-number{display:inline-block;padding:8px 11px;border:1px dashed var(--line);border-radius:9px;background:var(--glass-2);color:var(--muted);font-size:.75rem;font-weight:750}
+.facility-dial{margin:2px 0 0!important;min-height:42px!important}
+.facility-confirmed{border-left-color:#18af7d}.facility-confirmed .facility-badge{background:#e5f8ef;border-color:#a7dec1;color:#086842}.facility-confirmed .facility-note{background:#e5f8ef;color:#086842}
+.facility-restock{border-left-color:#69c94d}.status-contacts{display:flex;flex-wrap:wrap;gap:14px;margin:18px 0;font-size:.85rem;font-weight:700}
+.status-contacts a{color:var(--accent)}
+.contact-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.contact-links>div{min-width:0;padding:12px;border:1px solid var(--line);border-radius:12px}
+.contact-links .num{font-size:1rem;overflow-wrap:anywhere}
+html.light:not(.sun) .status-warning{background:#edf6ff;color:#205581}
+html.light:not(.sun) .status-stat,html.light:not(.sun) .status-filter,html.light:not(.sun) .facility-card{background:#fff}
+html.light:not(.sun) .facility-card{border-color:#d5e3df;border-left-width:4px;box-shadow:0 4px 14px rgba(17,49,37,.06)}
+html.light:not(.sun) .facility-title h2{color:#102c3a}
+@media(max-width:760px){.status-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.facility-grid{grid-template-columns:1fr}}
+@media(max-width:520px){.status-heading{display:block}.status-heading h1{font-size:1.8rem}.status-connection{display:inline-block;margin-bottom:8px}.status-filter{grid-template-columns:1fr}.status-filter-button{grid-column:auto;width:100%}.facility-title{display:block}.facility-badge{display:inline-block;margin-bottom:7px}.contact-links{grid-template-columns:1fr}}
