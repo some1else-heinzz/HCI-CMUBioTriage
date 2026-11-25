@@ -445,3 +445,83 @@ html.light:not(.sun) .availability-dashboard .facility-call-main{color:#17392a}
 html.light:not(.sun) .availability-dashboard .facility-call-secondary{background:#f7f9f8;color:#17392a;border-color:#cbd8d0}
 @media(max-width:700px){.facility-verification{grid-template-columns:1fr;gap:7px}}
 @media(max-width:520px){.availability-dashboard{padding:13px}.availability-dashboard .status-stats{margin-inline:0}.availability-dashboard .status-filter,.availability-dashboard .connection-warning,.availability-dashboard .dashboard-reminder,.availability-dashboard .facility-grid{margin-inline:0}.availability-dashboard .status-nav{border-radius:17px}.availability-dashboard .status-nav a{font-size:.8rem;padding-inline:9px}}
+
+/* ===== Stock block, section titles, handoff-on-home, staff overview ===== */
+.section-title{margin:18px 10px 10px;font-size:1.15rem}
+.facility-stock{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 12px;margin:0 0 12px;padding:10px 12px;border:1px solid rgba(127,209,168,.38);border-radius:12px;background:rgba(127,209,168,.13);color:#eaf7ef}
+.facility-stock span{font-size:.74rem;font-weight:750;text-transform:uppercase;letter-spacing:.04em;opacity:.9}
+.facility-stock strong{font-size:1.25rem;line-height:1.2}
+.facility-stock small{flex:1 1 100%;font-size:.75rem;font-weight:650}
+.facility-stock.stock-none{border-style:dashed;background:transparent}
+.facility-stock.stock-none strong{font-size:1rem;font-weight:700;opacity:.85}
+.home-handoff{margin:26px 10px 8px;padding-top:6px;border-top:1px solid rgba(255,255,255,.16)}
+.home-handoff>h2{margin:14px 0 4px;font-size:1.3rem}
+.staff-overview{margin:6px 0 14px}
+.staff-overview .overview-heading{margin:10px 0 8px}
+.staff-overview .overview-heading h2{color:var(--ink)}
+.staff-overview .status-stats{margin:0 0 12px}
+.staff-overview .status-stat{border-radius:10px}
+.staff-overview .dashboard-reminder{margin:12px 0}
+
+/* ===== Light theme v3: off-white page, mint hex-scale snake body lower-right, forest-green header ===== */
+html.light:not(.sun){--bg:#f2f5ef;--logo:#e9b83c}
+html.light:not(.sun) body,html.light:not(.sun) .bg{background:#f2f5ef}
+html.light:not(.sun) .bg .b1{display:none}
+html.light:not(.sun) .bg::after{display:none}
+html.light:not(.sun) .bg .b3{display:block;left:auto;top:auto;right:-30vw;bottom:-10vh;width:135vw;height:44vh;background-image:url(../img/bg-hex.svg),linear-gradient(to bottom,#d3eadf 0%,#a9d4c0 55%,#c6e3d4 100%);background-size:34px auto,100% 100%;background-repeat:repeat,no-repeat;background-position:0 0,0 0;filter:none;mix-blend-mode:normal;opacity:.6;transform:rotate(-31deg);transform-origin:center;z-index:0;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 12%,#000 62%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 12%,#000 62%,transparent 100%)}
+html.light:not(.sun) .bg .b2{display:block;left:auto;top:auto;right:-30vw;bottom:-10vh;width:135vw;height:44vh;background:linear-gradient(to bottom,rgba(255,255,255,0) 15%,rgba(255,255,255,.6) 38%,rgba(255,255,255,0) 62%);mix-blend-mode:normal;opacity:.8;transform:rotate(-31deg);z-index:1;-webkit-mask-image:none;mask-image:none;filter:none}
+/* header */
+html.light:not(.sun) .top{background:rgba(27,58,46,.96);border-bottom:1px solid rgba(0,0,0,.25);box-shadow:0 4px 16px rgba(8,21,14,.25);color:#fff}
+html.light:not(.sun) .top .brand{color:#fff}
+html.light:not(.sun) .logo{background:#e9b83c;color:#1b3a2e;border-radius:10px}
+html.light:not(.sun) .top .dock{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.3)}
+html.light:not(.sun) .top .dockbtn{color:#fff}
+html.light:not(.sun) .top .dockbtn:hover{background:rgba(255,255,255,.16)}
+html.light:not(.sun) .top .dockbtn.staffbtn{background:#9be8c1;color:#0d2a1d;border:0}
+html.light:not(.sun) h2,html.light:not(.sun) .back,html.light:not(.sun) .aboutlink a{color:#1b3a2e}
+/* availability dashboard in light mode */
+html.light:not(.sun) .availability-dashboard{background:rgba(255,255,255,.58);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1.5px solid rgba(27,58,46,.28);color:#0d2a1d;box-shadow:0 6px 22px rgba(27,58,46,.1)}
+html.light:not(.sun) .dashboard-brand span{background:#d6efe0;color:#1b3a2e}
+html.light:not(.sun) .availability-dashboard .status-heading h1,html.light:not(.sun) .section-title,html.light:not(.sun) .home-handoff>h2{color:#0d2a1d}
+html.light:not(.sun) .availability-dashboard .status-heading .lead,html.light:not(.sun) .home-handoff .lead{color:#244a3a}
+html.light:not(.sun) .availability-dashboard .status-connection.is-device-only{background:#ffe9b8;color:#6b3d00}
+html.light:not(.sun) .availability-dashboard .status-nav{background:rgba(255,255,255,.75);border:1.5px solid rgba(27,58,46,.3)}
+html.light:not(.sun) .availability-dashboard .status-nav a{color:#0d2a1d}
+html.light:not(.sun) .availability-dashboard .status-nav a:hover{background:rgba(27,58,46,.1)}
+html.light:not(.sun) .availability-dashboard .status-nav a[aria-current="page"]{background:#1b3a2e;color:#fff}
+html.light:not(.sun) .overview-heading h2,html.light:not(.sun) .staff-overview .overview-heading h2{color:#0d2a1d}
+html.light:not(.sun) .overview-heading span{background:#dcecff;color:#0d4a8a}
+html.light:not(.sun) .status-stat{background:#fff;border:1.5px solid rgba(27,58,46,.28);color:#0d2a1d}
+html.light:not(.sun) .status-stat small{color:#244a3a}
+html.light:not(.sun) .status-stat strong{color:#0d2a1d}
+html.light:not(.sun) .status-stat.stat-green strong{color:#0a7a45}
+html.light:not(.sun) .dashboard-reminder{color:#0d2a1d}
+html.light:not(.sun) .availability-dashboard .facility-card,html.light:not(.sun) .facility-card{background:rgba(255,255,255,.93);border:1.5px solid rgba(27,58,46,.3);border-left-width:5px;box-shadow:0 4px 14px rgba(17,49,37,.08)}
+html.light:not(.sun) .availability-dashboard .facility-title h2,html.light:not(.sun) .facility-title h2{color:#0d2a1d}
+html.light:not(.sun) .availability-dashboard .facility-location{color:#244a3a}
+html.light:not(.sun) .availability-dashboard .facility-divider{border-top:1px solid rgba(27,58,46,.2)}
+html.light:not(.sun) .availability-dashboard .facility-verification p{color:#244a3a}
+html.light:not(.sun) .availability-dashboard .facility-verification strong{color:#0d2a1d}
+html.light:not(.sun) .availability-dashboard .facility-note{color:#4a3000}
+html.light:not(.sun) .availability-dashboard .facility-badge{background:#ffe9b8;border-color:#c98a00;color:#6b3d00}
+html.light:not(.sun) .availability-dashboard .facility-confirmed .facility-badge{background:#d9f5e5;border-color:#35a56c;color:#075d39}
+html.light:not(.sun) .facility-stock{background:#e3f4ea;border:1.5px solid #4fb98a;color:#0d2a1d}
+html.light:not(.sun) .facility-stock.stock-none{background:#fff;border:1.5px dashed #6b8f7b}
+html.light:not(.sun) .home-handoff{border-top:1px solid rgba(27,58,46,.25)}
+html.light:not(.sun) .status-contacts a{color:#1b3a2e}
+
+/* ===== Fixes: call button layout/contrast, hint overlap, staff tabs, delete button ===== */
+html{scroll-padding-top:90px}
+.home-handoff{scroll-margin-top:90px}
+.f .field-hint,.card .field-hint{margin:8px 0 12px}
+.staff-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 6px}
+.staff-tabs .btn{width:auto;margin:0;min-height:44px}
+.availability-dashboard .facility-call-main{flex:1 1 100%;width:100%;justify-content:space-between;gap:12px;padding:10px 16px;text-align:left}
+.availability-dashboard .facility-call-main small{font-size:.85rem;white-space:nowrap}
+html.light:not(.sun) .availability-dashboard .facility-call-main,html.light:not(.sun) .facility-call-main{background:#1b3a2e;border:2px solid #1b3a2e;color:#fff;flex:1 1 100%;width:100%;justify-content:space-between}
+html.light:not(.sun) .availability-dashboard .facility-call-main span,html.light:not(.sun) .facility-call-main span{color:#fff;font-size:.95rem}
+html.light:not(.sun) .availability-dashboard .facility-call-main small,html.light:not(.sun) .facility-call-main small{color:#d6efe0;font-size:.88rem;font-weight:700}
+html.light:not(.sun) .availability-dashboard .facility-call-main:hover{background:#0f2a20}
+/* delete: red in light mode (beats the generic green outlined button rule) */
+html.light:not(.sun) .btn.danger:not(.primary):not(.dial){background:#fff;border-color:#b4232e;color:#b4232e}
+html.light:not(.sun) .btn.danger:not(.primary):not(.dial):hover{background:#b4232e;color:#fff}
