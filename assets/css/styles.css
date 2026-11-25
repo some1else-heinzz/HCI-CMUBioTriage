@@ -420,7 +420,7 @@ html.light:not(.sun) .emergency-call{background:#b4232e;border-color:#b4232e;col
 .availability-dashboard .facility-confirmed .facility-badge{background:#092d1b;border-color:#176339;color:#39d879}
 .availability-dashboard .facility-stale .facility-badge{background:#35270e;color:#ffb74d}
 .availability-dashboard .facility-actions{justify-content:center}
-.availability-dashboard .facility-call-main{flex:0 1 270px;width:auto;min-height:46px!important;border:0;background:transparent;color:#f5f5f5;box-shadow:none}
+.availability-dashboard .facility-call-main{flex:0 1 270px;width:auto;min-height:46px!important;border:1px solid #424242;border-radius:9px;background:#191919;color:#f5f5f5;box-shadow:none}
 .availability-dashboard .facility-call-main::first-letter{color:#22c55e}
 .availability-dashboard .facility-call-secondary{background:#191919;border-color:#424242;color:#f2f2f2}
 .availability-dashboard .facility-call-secondary small{color:#c9c9c9}
@@ -445,3 +445,38 @@ html.light:not(.sun) .availability-dashboard .facility-call-main{color:#17392a}
 html.light:not(.sun) .availability-dashboard .facility-call-secondary{background:#f7f9f8;color:#17392a;border-color:#cbd8d0}
 @media(max-width:700px){.facility-verification{grid-template-columns:1fr;gap:7px}}
 @media(max-width:520px){.availability-dashboard{padding:13px}.availability-dashboard .status-stats{margin-inline:0}.availability-dashboard .status-filter,.availability-dashboard .connection-warning,.availability-dashboard .dashboard-reminder,.availability-dashboard .facility-grid{margin-inline:0}.availability-dashboard .status-nav{border-radius:17px}.availability-dashboard .status-nav a{font-size:.8rem;padding-inline:9px}}
+
+/* Home quick-start panel */
+.availability-dashboard .home-quick-start{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.95fr);align-items:center;gap:20px 32px;margin:12px 0 14px;padding:20px;border:2px solid #ef3340;border-radius:18px;background:#0e1712}
+.quick-start-copy{align-self:center}.quick-start-kicker{font-size:.78rem;font-weight:900}.quick-start-copy h2{margin:6px 0;font-size:1.8rem;line-height:1.15;color:#fff}.quick-start-copy p{max-width:440px;margin:0;color:#e2e8e4;font-size:1rem;line-height:1.65}
+.quick-start-actions{display:grid;gap:8px}.quick-start-actions a{display:flex;min-height:56px;align-items:center;justify-content:center;padding:10px 14px;border:1px solid #83d3ad;border-radius:13px;background:#1c2922;color:#83d3ad;text-align:center;text-decoration:none;font-weight:850}.quick-start-actions a:hover{filter:brightness(1.12)}.quick-start-actions .quick-call{color:#fff}.quick-start-actions .quick-primary{border-color:#81d1aa;background:#81d1aa;color:#07160e}
+.quick-start-demo{grid-column:1/-1;margin:0;color:#ffd36b;font-size:.82rem;font-weight:800}.home-offline-note{margin:0 0 16px;padding:13px 14px;border:1px solid #8fc5ff;border-radius:13px;background:#10243b;color:#e7f1ff;font-size:.82rem;line-height:1.55}
+@media(max-width:640px){.availability-dashboard .home-quick-start{grid-template-columns:1fr;padding:16px}.quick-start-copy p{font-size:.95rem}.quick-start-demo{grid-column:1}.quick-start-actions a{min-height:50px}}
+.quick-start-actions .quick-primary{border-color:#83d3ad;background:#1c2922;color:#83d3ad}
+.quick-start-actions .quick-primary:hover{background:#81d1aa;color:#07160e}
+.quick-start-actions a:hover{background:#81d1aa;border-color:#81d1aa;color:#07160e;filter:none}
+.app-page-content{padding:8px 10px 2px}
+@media(max-width:520px){.app-page-content{padding:6px 2px 0}}
+.top .dockbtn.staffbtn{background:transparent;color:inherit;border:1px solid transparent}
+.top .dockbtn.staffbtn:hover,.top .dockbtn.staffbtn:focus-visible{background:rgba(255,255,255,.14);color:inherit}
+html.light:not(.sun) .top .dockbtn.staffbtn{background:transparent;color:#fff;border:1px solid transparent}
+html.light:not(.sun) .top .dockbtn.staffbtn:hover,html.light:not(.sun) .top .dockbtn.staffbtn:focus-visible{background:rgba(255,255,255,.16);color:inherit}
+.handoff-call-actions{display:grid;gap:8px}
+.handoff-call-actions .btn{width:100%;min-height:56px;margin:0}
+.handoff-call-actions .btn:not(.emergency-call){border-color:rgba(255,255,255,.28);background:transparent;color:var(--ink)}
+.handoff-call-actions .btn:not(.emergency-call):hover,.handoff-call-actions .btn:not(.emergency-call):focus-visible{border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:var(--ink)}
+html.light:not(.sun) .handoff-call-actions .btn:not(.emergency-call){border-color:rgba(16,35,26,.25);color:#10231a}
+html.light:not(.sun) .handoff-call-actions .btn:not(.emergency-call):hover,html.light:not(.sun) .handoff-call-actions .btn:not(.emergency-call):focus-visible{background:rgba(16,35,26,.08);color:#10231a}
+#app .handoff-share-actions .btn{border:1px solid rgba(255,255,255,.28);background:transparent;color:var(--accent)}
+#app .handoff-share-actions .btn:hover,#app .handoff-share-actions .btn:focus-visible{border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:var(--ink)}
+html.light:not(.sun) #app .handoff-share-actions .btn{border-color:rgba(16,35,26,.25);color:#10231a}
+html.light:not(.sun) #app .handoff-share-actions .btn:hover,html.light:not(.sun) #app .handoff-share-actions .btn:focus-visible{background:rgba(16,35,26,.08);color:#10231a}
+html.light:not(.sun) #app .availability-dashboard .facility-count{color:#42515a}
+html.light:not(.sun) #app .availability-dashboard .facility-call-main{border-color:#0f5a3b;background:#0f5a3b;color:#fff}
+html.light:not(.sun) #app .availability-dashboard .facility-call-secondary small{color:#42515a}
+html.light:not(.sun) #app .availability-dashboard .quick-start-kicker,html.light:not(.sun) #app .availability-dashboard .quick-start-copy h2{color:#fff}
+html.light:not(.sun) #app .availability-dashboard .status-choice span{background:#e4e9e6;color:#263b31}
+html.light:not(.sun) #app .availability-dashboard .status-choice[aria-pressed="true"] span{background:#e7f4ed;color:#075e36}
+.availability-dashboard .facility-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));align-items:stretch;justify-content:stretch;gap:8px}
+#app .availability-dashboard .facility-actions .facility-call-main,#app .availability-dashboard .facility-actions .facility-call-secondary{display:flex;flex:initial;align-items:center;justify-content:space-between;gap:8px;width:100%;min-width:0;min-height:48px!important;margin:0!important;padding:8px 10px;border-radius:9px;font-size:.78rem;line-height:1.3;text-align:left;overflow-wrap:anywhere}
+#app .availability-dashboard .facility-actions .facility-call-main small{flex:none;color:inherit;font-size:.74rem;font-weight:750}

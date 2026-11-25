@@ -10,6 +10,7 @@ const store = {
 };
 const back = (to = '#/home') => `<a class="back" href="${to}">‹ Back</a>`;
 const pending = '<span class="review">Content pending medical review</span>';
+const dashboardNav = active => `<nav class="status-nav" aria-label="Main navigation"><a class="${active === 'home' ? 'status-nav-active' : ''}" ${active === 'home' ? 'aria-current="page"' : ''} href="#/home">⌁ &nbsp;Antivenom Status</a><a class="${active === 'tell' ? 'status-nav-active' : ''}" ${active === 'tell' ? 'aria-current="page"' : ''} href="#/tell">▣ &nbsp;Handoff Summary</a><a class="${active === 'do' ? 'status-nav-active' : ''}" ${active === 'do' ? 'aria-current="page"' : ''} href="#/do">✚ &nbsp;First Aid and Contacts</a></nav>`;
 
 function dial(c, cls = 'btn dial') {
   return isNum(c.number)
@@ -55,9 +56,14 @@ const screens = {
     const needs = D.hospitals.length - confirmed - restock;
     const counts = { all: D.hospitals.length, confirmed, restock, needs };
     return `<section class="status-page availability-dashboard">
-      <div class="dashboard-brand"><strong>CMUbiotrage</strong><span>Dashboard concept</span></div>
+      <div class="dashboard-brand"><strong>CMUbiotrage</strong></div>
+      <section class="home-quick-start" aria-labelledby="quickStartTitle">
+        <div class="quick-start-copy"><strong class="quick-start-kicker">SNAKEBITE RESPONSE GUIDE</strong><h2 id="quickStartTitle">Get Help First</h2><p>Call emergency services. Ask someone nearby to help, and open First aid and contacts for the guide’s instructions.</p></div>
+        <div class="quick-start-actions"><a class="quick-call" href="tel:143">Call Philippine Red Cross · 143</a><a class="quick-primary" href="#/do">First Aid and Contacts</a><a href="#/tell">Prepare Location Details for Responders</a><a href="#/before">Save Guide for Offline Use</a></div>
+      </section>
+      <aside class="home-offline-note"><strong>Offline access:</strong> Open this guide online once before relying on it offline. First aid content is cached; new map areas, calls, SMS, and staff reports may need a connection or phone service.</aside>
       <div class="status-heading"><div><h1>Antivenom Availability</h1><p class="lead">Facility confirmations and emergency contacts</p></div><span class="status-connection ${SYNC() ? 'is-shared' : 'is-device-only'}">● ${SYNC() ? 'Shared sync configured' : 'Device only'}</span></div>
-      <nav class="status-nav" aria-label="Main navigation"><a class="status-nav-active" aria-current="page" href="#/home">⌁ &nbsp;Antivenom status</a><a href="#/staff">▤ &nbsp;Staff log in</a><a href="#/tell">▣ &nbsp;Handoff summary</a><a href="#/do">✚ &nbsp;First aid and contacts</a></nav>
+      ${dashboardNav('home')}
       <div class="overview-heading"><h2>Availability overview</h2><span>Illustrative data</span></div>
       <div class="status-stats" aria-label="Availability overview">
         <div class="status-stat stat-green"><span class="stat-icon">✓</span><div><small>Confirmed available</small><strong>${confirmed}</strong></div></div>
@@ -81,26 +87,26 @@ const screens = {
           <hr class="facility-divider">${s ? `<div class="facility-verification"><p><strong>${timestampLabel}:</strong> <time datetime="${new Date(s.at).toISOString()}">${esc(new Date(s.at).toLocaleString())}</time> (${esc(relativeTime(s.at))})</p><p><strong>${s.status === 'Confirmed' ? 'Verified by' : 'Updated by'}:</strong> ${esc(s.by || 'Not recorded')}</p><p><strong>${s.status === 'Confirmed' ? 'Verification details' : 'Update details'}:</strong> ${esc(s.details || 'No details provided.')}</p></div>` : '<div class="facility-verification"><p><strong>Last verified:</strong> No staff confirmation recorded.</p><p><strong>Verified by:</strong> Not recorded</p><p><strong>Verification details:</strong> Not provided</p></div>'}<p class="facility-note">${esc(note)}</p>
           <div class="facility-actions">${facilityContactLinks(h)}${mapLink}</div></article>`;
       }).join('')}</div>
-      <div class="status-contacts"><a href="#/tell">Open handoff summary</a><a href="#/do">First aid guidance</a><a href="#/about">About this guide</a></div>
+      <div class="status-contacts"><a href="#/tell">Open Handoff Summary</a><a href="#/do">First Aid Guidance</a><a href="#/about">About This Guide</a></div>
     </section>`;
   },
 
-  do: () => `${back()}<h1>First aid and contacts</h1>${pending}
+  do: () => `<h1>First Aid and Contacts</h1>${pending}
     <section class="card"><h2>Call for help now</h2><div class="contact-links">
       <div><strong>${esc(D.primary.label)}</strong><span class="num">${esc(D.primary.number)}</span>${dial(D.primary)}</div>
       <div><strong>${esc(D.alternate.label)}</strong><span class="num">${esc(D.alternate.number)}</span>${dial(D.alternate)}</div>
-    </div><a class="btn dial" href="tel:911">Call 911 (national emergency)</a></section>
+    </div><a class="btn dial" href="tel:143">Call Philippine Red Cross · 143</a></section>
     <h2>What to do now</h2>
     <div class="cols">
       <div class="card do"><h2>✔ Do</h2><ul class="clean">${D.dos.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
       <div class="card dont"><h2>✖ Don’t</h2><ul class="clean">${D.donts.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
     </div>
-    <a class="btn primary" href="#/tell">Tell the responder</a>
+    <a class="btn primary" href="#/tell">Tell The Responder</a>
     <a class="btn dial" style="background:var(--alarm);color:var(--onalarm)" href="#/home">Go to call block</a>`,
 
-  tell: () => `${back()}<h1>Tell the responder</h1>
+  tell: () => `<h1>Tell the Responder</h1>
     <p class="lead">Share the key details with responders. Tap an answer or mark it Unknown; you do not need to guess.</p>
-    <section class="handoff-callout" aria-label="Emergency calling"><div><h2>Need urgent help?</h2><p>This form only shares information with staff. It does not call emergency services or dispatch responders.</p></div><div class="handoff-call-actions"><a class="btn emergency-call" href="tel:911">Call emergency services · 911</a><a class="btn small" href="#/do">Other emergency contacts</a></div></section>
+    <section class="handoff-callout" aria-label="Emergency calling"><div><h2>Need urgent help?</h2><p>This form only shares information with staff. It does not call emergency services or dispatch responders.</p></div><div class="handoff-call-actions"><a class="btn emergency-call" href="tel:143">Call Philippine Red Cross · 143</a><a class="btn small" href="#/do">Other emergency contacts</a></div></section>
     <section class="card handoff-preview"><h2>Handoff summary</h2><p class="lead">Updates as you answer. Review it before sharing.</p><pre id="liveSummary" aria-label="Current handoff summary"></pre><div class="handoff-share-actions"><button class="btn small" id="copySummary" type="button">Copy summary</button><a class="btn small primary" id="sumSms" href="sms:?&body=">Open SMS with summary</a><button class="btn small" id="sumShare" type="button">Share summary</button></div><p class="handoff-share-note">Opening SMS or sharing does not send the report to hospital staff.</p></section>
     <div class="cols">
       <section class="card"><h2>Where are you?</h2>
@@ -126,7 +132,7 @@ const screens = {
       <li>Call the alternate number.</li>
       <li>If it is safe, send someone to an area with signal.</li>
       <li>Ask someone nearby to open this guide or call for you.</li></ul></div>
-    ${dial(D.alternate, 'btn primary')}<a class="btn dial" href="tel:911">📞 Call 911 (national emergency)</a>
+    ${dial(D.alternate, 'btn primary')}<a class="btn dial" href="tel:143">📞 Call Philippine Red Cross · 143</a>
     <div class="card"><span class="num big">${esc(D.alternate.number)}</span></div>
     <button class="btn" id="shareBtn">Share this guide</button>`,
 
@@ -472,7 +478,12 @@ function route() {
   if ((r === 'staff-dir' || r === 'staff-log') && SYNC() && !pulled[r]) { pulled[r] = true; $('#app').innerHTML = '<p class="msg">Loading shared data…</p>'; (r === 'staff-dir' ? pullStatus() : pullLog()).finally(route); return; }
   const view = screens[r] || screensStaff[r] || screens.home;
   const html = view(); if (html === '' ) return;
-  $('#app').innerHTML = html + (r === 'about' || r === 'home' ? '' : '<p class="aboutlink"><a href="#/about">About this guide</a></p>'); $('#app').focus({ preventScroll: true }); window.scrollTo(0, 0);
+  const page = html + (r === 'about' || r === 'home' ? '' : '<p class="aboutlink"><a href="#/about">About this guide</a></p>');
+  const inDashboardShell = r === 'tell' || r === 'do';
+  $('#app').innerHTML = inDashboardShell
+    ? `<section class="status-page availability-dashboard app-page-shell"><div class="dashboard-brand"><strong>CMUbiotrage</strong></div>${dashboardNav(r)}<div class="app-page-content">${page}</div></section>`
+    : page;
+  $('#app').focus({ preventScroll: true }); window.scrollTo(0, 0);
   bindUnknown(); wire(r);
 }
 function wire(r) {
