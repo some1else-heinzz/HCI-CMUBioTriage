@@ -361,7 +361,8 @@ html.light:not(.sun) .facility-title h2{color:#102c3a}
 .handoff-callout{display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,.65fr);align-items:center;gap:14px;margin:14px 0;padding:16px;border:2px solid #d9363e;border-radius:14px;background:rgba(135,24,31,.16)}
 .handoff-callout h2{margin:0 0 5px;color:var(--alarm)}
 .handoff-callout p{margin:0;color:var(--ink);font-weight:650}
-.handoff-call-actions .btn{margin:4px 0}
+.handoff-call-actions{display:grid;grid-template-columns:1fr;gap:8px}
+.handoff-call-actions .btn{width:100%;min-height:56px;margin:0;box-sizing:border-box}
 .emergency-call{border-color:#b4232e;background:#b4232e;color:#fff}
 .handoff-preview pre{max-height:330px;overflow:auto;font-size:.9rem}
 .handoff-preview .lead{margin:0 0 8px}
@@ -525,3 +526,23 @@ html.light:not(.sun) .availability-dashboard .facility-call-main:hover{backgroun
 /* delete: red in light mode (beats the generic green outlined button rule) */
 html.light:not(.sun) .btn.danger:not(.primary):not(.dial){background:#fff;border-color:#b4232e;color:#b4232e}
 html.light:not(.sun) .btn.danger:not(.primary):not(.dial):hover{background:#b4232e;color:#fff}
+
+/* Emergency actions lead the public guide; availability remains secondary. */
+.emergency-start{display:grid;grid-template-columns:1fr;gap:10px;margin:14px 0;padding:20px;border:2px solid #e5484d;border-radius:18px;background:rgba(16,26,20,.94);color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.emergency-start h1{margin:0 0 6px;color:#fff;font-size:1.8rem}
+.emergency-start p{margin:4px 0;color:#f1f4f2}
+.emergency-eyebrow{font-size:.8rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.emergency-start-actions{display:grid;gap:8px}
+.emergency-start-actions .btn{margin:0}
+.emergency-start-actions .emergency-call{background:#b4232e;border-color:#b4232e;color:#fff}
+.emergency-start .emergency-limit{font-size:.85rem;font-weight:700;color:#ffe08a}
+.offline-hint{margin:12px 0 18px;padding:12px 14px;border:1px solid #91b8ff;border-radius:12px;background:#10233a;color:#f1f6ff;font-size:.9rem}
+html.light:not(.sun) .emergency-start{background:#fff;border-color:#b4232e;color:#10231a}
+html.light:not(.sun) .emergency-start h1,html.light:not(.sun) .emergency-start p{color:#10231a}
+html.light:not(.sun) .emergency-start .emergency-limit{color:#694400}
+html.light:not(.sun) .offline-hint{background:#edf4ff;color:#10233a}
+@media(min-width:700px){.emergency-start{grid-template-columns:1fr 1fr;align-items:center}.emergency-start .emergency-limit{grid-column:1/-1}}
+
+/* Keep staff verification fields within each hospital card. */
+.staff-directory-card,.staff-directory-card .f{min-width:0;max-width:100%}
+.staff-directory-card textarea{display:block;box-sizing:border-box;width:100%;max-width:100%;min-width:0;resize:vertical}

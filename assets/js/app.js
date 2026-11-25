@@ -9,7 +9,7 @@ const store = {
   set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
 };
 const back = (to = '#/home') => `<a class="back" href="${to}">‹ Back</a>`;
-const pending = '<span class="review">Content pending medical review</span>';
+const pending = '<span class="review">Demo content: first aid wording and contact details need local review before public use.</span>';
 
 function dial(c, cls = 'btn dial') {
   return isNum(c.number)
@@ -47,8 +47,8 @@ async function share(text, url = location.href) {
 }
 
 const tellBody = () => `
-    <section class="handoff-callout" aria-label="Emergency calling"><div><h2>Need urgent help?</h2><p>This form only shares information with staff. It does not call emergency services or dispatch responders.</p></div><div class="handoff-call-actions"><a class="btn emergency-call" href="tel:911">Call emergency services · 911</a><a class="btn small" href="#/do">Other emergency contacts</a></div></section>
-    <section class="card handoff-preview"><h2>Handoff summary</h2><p class="lead">Updates as you answer. Review it before sharing.</p><pre id="liveSummary" aria-label="Current handoff summary"></pre><div class="handoff-share-actions"><button class="btn small" id="copySummary" type="button">Copy summary</button><a class="btn small primary" id="sumSms" href="sms:?&body=">Open SMS with summary</a><button class="btn small" id="sumShare" type="button">Share summary</button></div><p class="handoff-share-note">Opening SMS or sharing does not send the report to hospital staff.</p></section>
+    <section class="handoff-callout" aria-label="Emergency calling"><div><h2>Need urgent help?</h2><p>This form only shares information with staff. It does not call emergency services or dispatch responders.</p></div><div class="handoff-call-actions"><a class="btn emergency-call" href="tel:143">Call local emergency services · 143</a><a class="btn small" href="#/do">Other emergency contacts</a></div></section>
+    <section class="card handoff-preview"><h2>Handoff summary</h2><p class="lead">Updates as you answer. Review it before sharing.</p><pre id="liveSummary" aria-label="Current handoff summary"></pre><div class="handoff-share-actions"><button class="btn small" id="copySummary" type="button">Copy summary</button><a class="btn small primary" id="sumSms" href="sms:?&body=">Open SMS with summary</a><button class="btn small" id="sumShare" type="button">Share summary</button></div><p class="handoff-share-note">SMS opens a draft; you must send it, and phone service may be needed. Sharing does not send a report to hospital staff.</p></section>
     <div class="cols">
       <section class="card"><h2>Where are you?</h2>
         ${sel('area','Area',D.options.areas)}${sel('surr','Surroundings',D.options.surroundings)}
@@ -73,6 +73,12 @@ const screens = {
     const states = D.hospitals.map(h => hState(h));
     return `<section class="status-page availability-dashboard">
       <div class="dashboard-brand"><strong>CMUbiotrage</strong><span>Dashboard concept</span></div>
+      <section class="emergency-start" aria-labelledby="emergencyStartTitle">
+        <div><p class="emergency-eyebrow">Snakebite response guide</p><h1 id="emergencyStartTitle">Get help first</h1><p>Call emergency services. Ask someone nearby to help, and open First aid and contacts for the guide’s instructions.</p></div>
+        <div class="emergency-start-actions"><a class="btn emergency-call" href="tel:143">Call local emergency services · 143</a><a class="btn primary" href="#/do">First aid and contacts</a><a class="btn" href="#/home" data-scroll="handoff">Prepare location details for responders</a><a class="btn" href="#/before">Save guide for offline use</a></div>
+        <p class="emergency-limit">Demo content: local contacts and first aid wording are awaiting review. The handoff form does not dispatch help.</p>
+      </section>
+      <p class="offline-hint"><strong>Offline access:</strong> Open this guide online once before relying on it offline. First aid content is cached; new map areas, calls, SMS, and staff reports may need a connection or phone service.</p>
       <div class="status-heading"><div><h1>Antivenom Availability</h1><p class="lead">Facility confirmations and emergency contacts</p></div><span class="status-connection ${SYNC() ? 'is-shared' : 'is-device-only'}">● ${SYNC() ? 'Shared sync configured' : 'Device only'}</span></div>
       <nav class="status-nav" aria-label="Main navigation"><a class="status-nav-active" aria-current="page" href="#/home">⌁ &nbsp;Antivenom status</a><a href="#/staff">▤ &nbsp;Staff log in</a><a href="#/home" data-scroll="handoff">▣ &nbsp;Tell the Responders</a><a href="#/do">✚ &nbsp;First aid and contacts</a></nav>
       <h2 class="section-title">Available hospitals</h2>
@@ -100,7 +106,7 @@ const screens = {
     <section class="card"><h2>Call for help now</h2><div class="contact-links">
       <div><strong>${esc(D.primary.label)}</strong><span class="num">${esc(D.primary.number)}</span>${dial(D.primary)}</div>
       <div><strong>${esc(D.alternate.label)}</strong><span class="num">${esc(D.alternate.number)}</span>${dial(D.alternate)}</div>
-    </div><a class="btn dial" href="tel:911">Call 911 (national emergency)</a></section>
+    </div><a class="btn dial" href="tel:143">Call local emergency services (143)</a></section>
     <h2>What to do now</h2>
     <div class="cols">
       <div class="card do"><h2>✔ Do</h2><ul class="clean">${D.dos.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
@@ -118,12 +124,12 @@ const screens = {
       <li>Call the alternate number.</li>
       <li>If it is safe, send someone to an area with signal.</li>
       <li>Ask someone nearby to open this guide or call for you.</li></ul></div>
-    ${dial(D.alternate, 'btn primary')}<a class="btn dial" href="tel:911">📞 Call 911 (national emergency)</a>
+    ${dial(D.alternate, 'btn primary')}<a class="btn dial" href="tel:143">📞 Call local emergency services (143)</a>
     <div class="card"><span class="num big">${esc(D.alternate.number)}</span></div>
     <button class="btn" id="shareBtn">Share this guide</button>`,
 
   before: () => `${back()}<h1>Before an emergency</h1>
-    <div class="card"><h2>Save for offline use</h2><p>The guide must be saved on your phone before you go where there is no signal.</p>
+    <div class="card"><h2>Save for offline use</h2><p>Open this guide online once and save it before going somewhere without signal. First aid content can work offline; maps, calls, SMS, and staff reports may still need internet or phone service.</p>
     <button class="btn primary" id="save">Save for offline use</button><div id="saveOut" aria-live="polite"></div>
     <button class="btn" id="install" hidden>Install app</button></div>
     <div class="card"><h2>Add to home screen</h2><p><b>Android (Chrome):</b> menu ⋮ → Add to Home screen / Install app.</p><p><b>iPhone (Safari):</b> Share → Add to Home Screen.</p></div>
@@ -275,7 +281,7 @@ const screensStaff = {
     <p class="review">Call to confirm antivenom. Listing does not guarantee stock or capacity.</p>
     <div class="card"><div class="f"><label for="staffName">Your name (used for every confirmation)</label><input id="staffName" autocomplete="name" placeholder="Type once"></div></div>
     ${D.hospitals.map((h, i) => { const st = hState(h), s = st.s;
-      return `<div class="card"><b>${esc(h.name)}</b><div class="staff-directory-contacts">${facilityContactLinks(h, 'staff')}</div>
+      return `<div class="card staff-directory-card"><b>${esc(h.name)}</b><div class="staff-directory-contacts">${facilityContactLinks(h, 'staff')}</div>
       <span class="tag t-${st.tag}">${st.tag}</span> ${st.note ? `<small>${st.note}</small>` : ''}
       <div><small>${s ? `Last updated by ${esc(s.by)} on ${new Date(s.at).toLocaleString()} (${relativeTime(s.at)})` : 'Not confirmed yet'}</small></div>
       <div class="f"><label for="verificationDetails${i}">Verification details (optional)</label><textarea id="verificationDetails${i}" rows="2" data-verification-details="${i}" placeholder="How was availability checked? What did the facility report?">${esc(s?.details || '')}</textarea></div>
@@ -521,7 +527,7 @@ function wire(r) {
     on('save', async () => {
       const o = $('#saveOut');
       if (!('serviceWorker' in navigator)) { o.innerHTML = '<p class="msg">This browser cannot save offline. Add it to your home screen instead.</p>'; return; }
-      try { const keys = await (await caches.open('cmubiotrage-v26')).keys();
+      try { const keys = await (await caches.open('cmubiotrage-v29')).keys();
         o.innerHTML = keys.length >= 6 ? `<p class="msg">✔ Saved offline: reviewed ${esc(D.reviewed)}</p>` : '<p class="msg">Not saved yet. Stay online a few seconds and tap again.</p>';
       } catch { o.innerHTML = '<p class="msg">Could not check. Reload the page while online and try again.</p>'; }
       netStatus();
