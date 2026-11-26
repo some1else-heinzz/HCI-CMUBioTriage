@@ -1,4 +1,4 @@
-const CACHE='cmubiotrage-v68', TILES='cmubiotrage-tiles';
+const CACHE='cmubiotrage-v69', TILES='cmubiotrage-tiles';
 const CORE=['assets/css/styles.css','assets/js/app.js','assets/data/data.json'];
 const FILES=['./','index.html','guide/','qr/','assets/img/offline-text-qr.svg','manifest.json',...CORE,'assets/icons/icon.svg','assets/icons/logo-96.png','assets/icons/logo-192.png','assets/icons/logo-512.png','assets/icons/logo-maskable-512.png','assets/img/bg-scales.jpg','assets/img/bg-snake.jpg','assets/img/bg-python.jpg','assets/img/bg-hex.svg','assets/vendor/leaflet/leaflet.js','assets/vendor/leaflet/leaflet.css','assets/vendor/leaflet/images/marker-icon.png','assets/vendor/leaflet/images/marker-icon-2x.png','assets/vendor/leaflet/images/marker-shadow.png'];
 const scopePath=path=>new URL(path,self.registration.scope).pathname;
