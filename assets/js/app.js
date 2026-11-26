@@ -10,7 +10,7 @@ const store = {
 };
 const back = (to = '#/home') => `<a class="back" href="${to}">‹ Back</a>`;
 const pending = '<span class="review">Content pending medical review</span>';
-const dashboardNav = active => `<nav class="status-nav" aria-label="Main navigation"><a class="${active === 'home' ? 'status-nav-active' : ''}" ${active === 'home' ? 'aria-current="page"' : ''} href="#/home">⌁ &nbsp;Antivenom status</a><a class="${active === 'tell' ? 'status-nav-active' : ''}" ${active === 'tell' ? 'aria-current="page"' : ''} href="#/tell">▣ &nbsp;Handoff summary</a><a class="${active === 'do' ? 'status-nav-active' : ''}" ${active === 'do' ? 'aria-current="page"' : ''} href="#/do">✚ &nbsp;First aid and contacts</a></nav>`;
+const dashboardNav = active => `<nav class="status-nav" aria-label="Main navigation"><a class="${active === 'home' ? 'status-nav-active' : ''}" ${active === 'home' ? 'aria-current="page"' : ''} href="#/home">⌁ &nbsp;Antivenom status</a><a class="${active === 'tell' ? 'status-nav-active' : ''}" ${active === 'tell' ? 'aria-current="page"' : ''} href="#/tell">▣ &nbsp;Handoff Summary</a><a class="${active === 'do' ? 'status-nav-active' : ''}" ${active === 'do' ? 'aria-current="page"' : ''} href="#/do">✚ &nbsp;First Aid and Contacts</a></nav>`;
 
 function dial(c, cls = 'btn dial') {
   return isNum(c.number)
@@ -48,10 +48,10 @@ async function share(text, url = location.href) {
 }
 
 const tellBody = () => `
-    <section class="handoff-callout" aria-label="Emergency calling"><div><h2>Need urgent help?</h2><p>This form only shares information with staff. It does not call emergency services or dispatch responders.</p></div><div class="handoff-call-actions"><a class="btn emergency-call" href="tel:143">Call Philippine Red Cross · 143</a><a class="btn small" href="#/do">Other emergency contacts</a></div></section>
-    <section class="card handoff-preview"><h2>Handoff summary</h2><p class="lead">Updates as you answer. Review it before sharing.</p><pre id="liveSummary" aria-label="Current handoff summary"></pre><div class="handoff-share-actions"><button class="btn small" id="copySummary" type="button">Copy summary</button><a class="btn small primary" id="sumSms" href="sms:?&body=">Open SMS with summary</a><button class="btn small" id="sumShare" type="button">Share summary</button></div><p class="handoff-share-note">SMS opens a draft; you must send it, and phone service may be needed. Sharing does not send a report to hospital staff.</p></section>
+    <section class="handoff-callout" aria-label="Emergency calling"><div><h2>Call for help first</h2><p>Use a phone call to reach help. This guide cannot dispatch responders.</p></div><div class="handoff-call-actions"><a class="btn emergency-call" href="tel:143">Call Philippine Red Cross · 143</a><a class="btn small" href="#/nosignal">Call didn’t connect?</a><a class="btn small" href="#/do">Other listed contacts</a></div></section>
+    <section class="card handoff-preview"><h2>Share a handoff summary</h2><p class="lead">Review these details, then choose how to share them. Sharing does not send a staff report.</p><pre id="liveSummary" aria-label="Current handoff summary"></pre><div class="handoff-share-actions"><button class="btn small" id="copySummary" type="button">Copy summary</button><a class="btn small primary" id="sumSms" href="sms:?&body=">Open SMS draft</a><button class="btn small" id="sumShare" type="button">Share with another app</button></div><p class="handoff-share-note">Copying or opening SMS does not contact responders automatically. In SMS, you still need to choose a recipient and send. Phone service may be needed.</p></section>
     <div class="cols">
-      <section class="card"><h2>Where are you?</h2>
+      <section class="card"><h2>Where are you?</h2><p class="field-hint">If the map or GPS is unavailable, choose the area and enter a nearby landmark. A map pin is optional.</p>
         ${sel('area','Area',D.options.areas)}${sel('surr','Surroundings',D.options.surroundings)}
         ${chips('meet','Can someone meet responders at the road?',D.options.meet,true)}
         ${txt('landmark','Nearest landmark (optional)')}
@@ -60,14 +60,14 @@ const tellBody = () => `
           <p id="mapNote" class="review" hidden>Map needs internet for new areas. Use GPS or the area list instead.</p></div>
         <button class="btn" id="gps" type="button">📍 Use my GPS</button><div id="gpsOut" aria-live="polite"></div>
         <div id="pinOut" aria-live="polite"></div></section>
-      <section class="card"><h2>What happened?</h2>${pending}
+      <section class="card"><h2>What happened?</h2>${pending}<p class="field-hint">For a staff report, provide an area, a landmark, or a location pin. Other answers are optional; choose Unknown if unsure.</p>
         ${sel('time','Time of the bite',D.options.times)}
         ${txt('time_exact','Exact date and time, if known','datetime-local')}<small class="field-hint">Optional. Leave blank if you are unsure.</small>
-        ${chips('cond','Victim’s condition (tap all that apply)',[...['Hard to breathe','Unconscious','Drooping eyelids'],...D.options.conditions.filter(x => !['Hard to breathe','Unconscious','Drooping eyelids'].includes(x))])}
+        <p class="urgent-symptom-note">Symptoms to tell the responder about. This guide does not diagnose or rank severity.</p>${chips('cond','Victim’s condition (tap all that apply)',[...['Hard to breathe','Unconscious','Drooping eyelids'],...D.options.conditions.filter(x => !['Hard to breathe','Unconscious','Drooping eyelids'].includes(x))])}
         ${chips('done','Actions already taken',D.options.actions)}
         ${sel('snake','Snake (only if safe to note)',D.options.snakes)}</section>
     </div>
-    <section class="card"><h2>Send your report to staff</h2><p>Internet is required. Staff will receive this report; this does not confirm that help is on the way.</p><button class="btn primary" id="submitReport" type="button">Submit report to staff</button><div id="submitStatus" role="status" aria-live="polite"></div></section>`;
+    <section class="card"><h2>Optional: submit a report to staff</h2><p>This sends the details to the staff report inbox when online. It does not call emergency services or confirm that help is on the way.</p><p class="connection-state" data-connection-state></p><button class="btn primary" id="submitReport" type="button">Submit report to staff</button><a class="btn emergency-call" href="tel:143">Call for urgent help · 143</a><div id="submitStatus" role="status" aria-live="polite"></div></section>`;
 
 /* ---------- Public screens ---------- */
 const screens = {
@@ -76,57 +76,56 @@ const screens = {
     return `<section class="status-page availability-dashboard">
       <div class="dashboard-brand"><strong>CMUbiotrage</strong></div>
       <section class="emergency-start" aria-labelledby="emergencyStartTitle">
-        <div><p class="emergency-eyebrow">Snakebite response guide</p><h1 id="emergencyStartTitle">Get help first</h1><p>Call emergency services. Ask someone nearby to help, and open First aid and contacts for the guide’s instructions.</p></div>
-        <div class="emergency-start-actions"><a class="btn emergency-call" href="tel:143">Call Philippine Red Cross · 143</a><a class="btn primary" href="#/do">First aid and contacts</a><a class="btn" href="#/home" data-scroll="handoff">Prepare location details for responders</a><a class="btn" href="#/before">Save guide for offline use</a></div>
+        <div><p class="emergency-eyebrow">Snakebite response guide</p><h1 id="emergencyStartTitle">Get help first</h1><p>Ask someone nearby to help. Follow these steps in order.</p></div>
+        <ol class="emergency-steps"><li><strong>Call for help</strong><a class="btn emergency-call" href="tel:143">Call Philippine Red Cross · 143</a><a class="call-failed-link" href="#/nosignal">Call didn’t connect?</a></li><li><strong>Follow the guide</strong><a class="btn primary" href="#/do">Open first aid and contacts</a></li><li><strong>Share useful details</strong><a class="btn" href="#/tell">Prepare a handoff summary</a><small>A summary or staff report does not dispatch help.</small></li></ol>
       </section>
-      <p class="offline-hint"><strong>Offline access:</strong> Open this guide online once before relying on it offline. First aid content is cached; new map areas, calls, SMS, and staff reports may need a connection or phone service.</p>
+      <p class="offline-hint"><strong>Offline:</strong> Previously saved guide content and the area/landmark form can work offline. New map areas, calls, SMS, and staff reports may need internet or phone service. <a href="#/before">Save the guide before you need it.</a></p>
       <div class="status-heading"><div><h1>Antivenom Availability</h1><p class="lead">Facility confirmations and emergency contacts</p></div><span class="status-connection ${SYNC() ? 'is-shared' : 'is-device-only'}">● ${SYNC() ? 'Shared sync configured' : 'Device only'}</span></div>
       ${dashboardNav('home')}
       <h2 class="section-title">Available hospitals</h2>
       <div class="facility-grid" id="facilityGrid">${D.hospitals.map((h, i) => {
         const st = states[i], s = st.s;
-        const statusClass = st.tag === 'Confirmed' ? 'facility-confirmed' : st.tag === 'Restock announced' ? 'facility-restock' : 'facility-needs';
+        const statusClass = st.tag === 'Confirmed' ? 'facility-confirmed' : st.tag === 'Restock announced' ? 'facility-restock' : st.tag === 'Unavailable' ? 'facility-unavailable' : 'facility-needs';
         const place = h.location || '';
-        const note = st.tag === 'Stale' ? 'Confirmation is more than 24 hours old. Call to verify current stock.' : st.tag === 'Confirmed' ? 'Staff reported availability. Call to verify before referring a patient.' : st.tag === 'Restock announced' ? 'Restock announced; current stock is not confirmed. Call to verify.' : 'Availability must be verified directly with the facility.';
+        const note = st.tag === 'Stale' ? 'Staff update is more than 24 hours old. Call to verify current stock.' : st.tag === 'Confirmed' ? 'Staff reported availability. Call to verify before referring a patient.' : st.tag === 'Unavailable' ? 'Staff reported no vials at the last update. Call to verify.' : st.tag === 'Restock announced' ? 'Restock announced; current stock is not confirmed. Call to verify.' : 'Availability must be verified directly with the facility.';
         const timestampLabel = s ? (s.status === 'Confirmed' ? 'Last confirmed' : s.status === 'Restock announced' ? 'Restock announced' : 'Last status update') : '';
         const hasCoords = h.coordinatesVerified === true && h.locationPending !== true && h.lat !== null && h.lat !== undefined && h.lng !== null && h.lng !== undefined && h.lat !== '' && h.lng !== '' && Number.isFinite(Number(h.lat)) && Number.isFinite(Number(h.lng)) && Math.abs(Number(h.lat)) <= 90 && Math.abs(Number(h.lng)) <= 180;
         const mapLink = hasCoords ? `<a class="facility-map-link" href="https://maps.google.com/?q=${Number(h.lat)},${Number(h.lng)}" target="_blank" rel="noopener">Open confirmed location in maps</a>` : '';
         const hasStock = s && s.stock !== undefined && s.stock !== null && s.stock !== '';
-        const stockBlock = `<div class="facility-stock ${hasStock ? '' : 'stock-none'}"><span>Antivenom stock</span><strong>${hasStock ? esc(String(s.stock)) + (Number(s.stock) === 1 ? ' vial' : ' vials') + ' available' : 'Not reported'}</strong>${hasStock && st.tag === 'Stale' ? '<small>Last reported; may be outdated. Call to verify.</small>' : ''}</div>`;
-        return `<article class="facility-card ${statusClass} ${st.tag === 'Stale' ? 'facility-stale' : ''}" data-facility="${esc((h.name + ' ' + place).toLowerCase())}" data-state="${statusClass}"><div class="facility-title"><div><h2>${esc(h.name)}</h2>${h.namePending ? '<span class="detail-pending">Facility name needs confirmation</span>' : ''}</div><span class="facility-badge ${st.tag === 'Stale' ? 'badge-stale' : ''}">${st.tag === 'Stale' ? 'Outdated' : st.tag === 'Confirmed' ? 'Confirmed' : st.tag === 'Restock announced' ? 'Restock announced' : 'Unconfirmed'}</span></div>
+        const stockBlock = `<div class="facility-stock ${hasStock ? '' : 'stock-none'}"><span>Last reported stock (not a guarantee)</span><strong>${hasStock ? esc(String(s.stock)) + (Number(s.stock) === 1 ? ' vial' : ' vials') : 'Not reported'}</strong>${s ? `<small>Source: ${esc(s.by || 'staff update')} · ${esc(relativeTime(s.at))}</small>` : '<small>No staff update recorded</small>'}</div>`;
+        return `<article class="facility-card ${statusClass} ${st.tag === 'Stale' ? 'facility-stale' : ''}" data-facility="${esc((h.name + ' ' + place).toLowerCase())}" data-state="${statusClass}"><div class="facility-title"><div><h2>${esc(h.name)}</h2>${h.namePending ? '<span class="detail-pending">Facility name needs confirmation</span>' : ''}</div><span class="facility-badge ${st.tag === 'Stale' ? 'badge-stale' : ''}">${st.tag === 'Stale' ? 'Outdated' : st.tag === 'Confirmed' ? 'Confirmed' : st.tag === 'Unavailable' ? 'No vials reported' : st.tag === 'Restock announced' ? 'Restock announced' : 'Unconfirmed'}</span></div>
           ${place ? `<p class="facility-location">${esc(place)}${h.locationPending ? ' <span class="detail-pending">Location unverified</span>' : ''}</p>` : '<p class="facility-location"><span class="detail-pending">Facility location not confirmed</span></p>'}
-          ${stockBlock}<hr class="facility-divider">${s ? `<div class="facility-verification"><p><strong>${timestampLabel}:</strong> <time datetime="${new Date(s.at).toISOString()}">${esc(new Date(s.at).toLocaleString())}</time> (${esc(relativeTime(s.at))})</p><p><strong>${s.status === 'Confirmed' ? 'Verified by' : 'Updated by'}:</strong> ${esc(s.by || 'Not recorded')}</p><p><strong>${s.status === 'Confirmed' ? 'Verification details' : 'Update details'}:</strong> ${esc(s.details || 'No details provided.')}</p></div>` : '<div class="facility-verification"><p><strong>Last verified:</strong> No staff confirmation recorded.</p><p><strong>Verified by:</strong> Not recorded</p><p><strong>Verification details:</strong> Not provided</p></div>'}<p class="facility-note">${esc(note)}</p>
-          <div class="facility-actions">${facilityContactLinks(h)}${mapLink}</div></article>`;
+          ${stockBlock}<p class="facility-note"><strong>${esc(note)}</strong> Current stock and capacity are not guaranteed.</p><div class="facility-actions">${facilityContactLinks(h)}${mapLink}</div><hr class="facility-divider">${s ? `<div class="facility-verification"><p><strong>${timestampLabel}:</strong> <time datetime="${new Date(s.at).toISOString()}">${esc(new Date(s.at).toLocaleString())}</time> (${esc(relativeTime(s.at))})</p><p><strong>Source:</strong> Staff update${s.by ? ` by ${esc(s.by)}` : ''}</p><p><strong>Details:</strong> ${esc(s.details || 'No details provided.')}</p></div>` : '<div class="facility-verification"><p><strong>Last updated:</strong> No staff confirmation recorded.</p><p><strong>Source:</strong> None recorded</p></div>'}</article>`;
       }).join('')}</div>
       <section class="home-handoff" id="handoff" aria-labelledby="handoffTitle"><h2 id="handoffTitle" tabindex="-1">Tell the Responders</h2><p class="lead">Share the key details with responders. Tap an answer or mark it Unknown; you do not need to guess.</p>${tellBody()}</section>
       <div class="status-contacts"><a href="#/do">First aid guidance</a><a href="#/about">About this guide</a></div>
     </section>`;
   },
 
-  do: () => `<h1>First aid and contacts</h1>${pending}
+  do: () => `<h1>First Aid and Contacts</h1>${pending}
     <section class="card"><h2>Call for help now</h2><div class="contact-links">
       <div><strong>${esc(D.primary.label)}</strong><span class="num">${esc(D.primary.number)}</span>${dial(D.primary)}</div>
-      <div><strong>${esc(D.alternate.label)}</strong><span class="num">${esc(D.alternate.number)}</span>${dial(D.alternate)}</div>
-    </div><a class="btn dial" href="tel:143">Call Philippine Red Cross · 143</a></section>
+    </div><a class="btn dial" href="tel:143">Call Philippine Red Cross · 143</a><a class="btn" href="#/nosignal">Call didn’t connect?</a></section>
     <h2>What to do now</h2>
     <div class="cols">
       <div class="card do"><h2>✔ Do</h2><ul class="clean">${D.dos.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
       <div class="card dont"><h2>✖ Don’t</h2><ul class="clean">${D.donts.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
     </div>
-    <a class="btn primary" href="#/tell">Tell the responder</a>
+    <a class="btn primary" href="#/tell">Tell the Responder</a>
     <a class="btn dial" style="background:var(--alarm);color:var(--onalarm)" href="#/home">Go to call block</a>`,
 
-  tell: () => `<h1>Tell the responder</h1>
+  tell: () => `<h1>Tell the Responder</h1>
     <p class="lead">Share the key details with responders. Tap an answer or mark it Unknown; you do not need to guess.</p>
     ${tellBody()}`,
 
   nosignal: () => `${back()}<h1>Call didn’t connect</h1>
     <div class="card"><h2>Try next</h2><ul class="clean">
-      <li>Call the alternate number.</li>
+      <li>Ask another person nearby to call local emergency or medical services.</li>
       <li>If it is safe, send someone to an area with signal.</li>
-      <li>Ask someone nearby to open this guide or call for you.</li></ul></div>
-    ${dial(D.alternate, 'btn primary')}<a class="btn dial" href="tel:143">📞 Call Philippine Red Cross · 143</a>
-    <div class="card"><span class="num big">${esc(D.alternate.number)}</span></div>
+      <li>Use the facility contact list to call a listed facility directly.</li>
+      <li>Continue to the first-aid guide; do not wait for a call or report to connect.</li></ul></div>
+    <a class="btn primary" href="#/home">Open facility contact list</a><a class="btn" href="#/do">Open first-aid guide</a>
+    <a class="btn dial" href="tel:143">📞 Call Philippine Red Cross · 143</a>
     <button class="btn" id="shareBtn">Share this guide</button>`,
 
   before: () => `${back()}<h1>Before an emergency</h1>
@@ -148,7 +147,8 @@ function sel(id, label, opts) {
   return `<div class="f"><label for="f_${id}">${label}</label><select id="f_${id}" data-sel="${id}"><option value="">Choose…</option>${optHtml(opts)}<option>Other (type)</option><option>Unknown</option></select><input id="o_${id}" class="other" placeholder="Type here" hidden></div>`;
 }
 function chips(id, label, opts, single) {
-  return `<div class="f"><div class="lbl" id="l_${id}">${label}</div><div class="chips" role="group" aria-labelledby="l_${id}" data-chips="${id}" ${single ? 'data-single' : ''}>${[...opts, 'Unknown'].map(o => `<button type="button" class="chip" aria-pressed="false">${esc(o)}</button>`).join('')}</div></div>`;
+  const urgent = ['Hard to breathe', 'Unconscious', 'Drooping eyelids'];
+  return `<div class="f"><div class="lbl" id="l_${id}">${label}</div><div class="chips" role="group" aria-labelledby="l_${id}" data-chips="${id}" ${single ? 'data-single' : ''}>${[...opts, 'Unknown'].map(o => `<button type="button" class="chip${id === 'cond' && urgent.includes(o) ? ' urgent-symptom' : ''}" aria-pressed="false">${esc(o)}</button>`).join('')}</div></div>`;
 }
 function txt(id, label, type = 'text', v = '') {
   return `<div class="f"><label for="f_${id}">${label}</label><input id="f_${id}" type="${type}" value="${esc(v)}"></div>`;
@@ -202,10 +202,11 @@ const pinText = () => {
 };
 const pinNote = () => { const p = getPin(); return p ? `<p class="review">Location pin attached: ${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}. Check whether it is still current; clear or replace it if needed.</p>` : ''; };
 function renderPin() {
-  const o = $('#pinOut'); if (!o) return; const p = getPin(); if (!p) { o.innerHTML = ''; updateHandoffSummary(); return; }
+  const o = $('#pinOut'); if (!o) return; const p = getPin(); if (!p) { o.innerHTML = '<p class="location-empty"><strong>No location pin selected.</strong> Area and landmark can still be used.</p>'; updateHandoffSummary(); return; }
   const link = pinLink(p), body = 'Snakebite location: ' + link;
-  o.innerHTML = `<div class="card"><div class="lbl">Your pin</div><span class="big">${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}</span>
-    <p>${p.source === 'GPS' ? `GPS accuracy about ${Math.round(p.accuracy || 0)} m` : p.source === 'Map' ? 'Map location selected; accuracy not measured' : 'Previously saved location; source and accuracy not recorded'}${p.at ? ` · selected ${new Date(p.at).toLocaleString()}` : ''}</p>
+  o.innerHTML = `<div class="card location-pin"><div class="lbl">Location pin · ${p.source === 'GPS' ? 'GPS estimate' : p.source === 'Map' ? 'Map selection' : 'Source unknown'}</div><span class="big">${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}</span>
+    <p>${p.source === 'GPS' ? `Estimated accuracy: about ${Math.round(p.accuracy || 0)} m` : p.source === 'Map' ? 'Accuracy not measured. Check the map point.' : 'Accuracy and source not recorded.'}${p.at ? ` · selected ${new Date(p.at).toLocaleString()}` : ''}</p>
+    <p class="field-hint">Confirm this is the current incident location. Choose GPS or tap a new map point to replace it.</p>
     <p><a href="${link}" target="_blank" rel="noopener">Open in maps</a> (needs internet)</p>
     <button class="btn small" id="cpPin" type="button">Copy link</button>
     <a class="btn small primary" href="sms:?&body=${encodeURIComponent(body)}">Send location by SMS</a>
@@ -255,7 +256,7 @@ function hState(h) {
   const s = hStatus()[h.name];
   if (!s || !s.at) return { tag: 'Unverified', note: 'Never confirmed.' };
   const status = s.status || 'Unverified';
-  if ((status === 'Confirmed' || status === 'Restock announced') && Date.now() - s.at > STALE_MS) return { tag: 'Stale', note: 'Last confirmation is over 24 hours old.', s };
+  if ((status === 'Confirmed' || status === 'Unavailable' || status === 'Restock announced') && Date.now() - s.at > STALE_MS) return { tag: 'Stale', note: 'Last staff update is over 24 hours old.', s };
   return { tag: status, note: '', s };
 }
 function availabilityOverview() {
@@ -282,14 +283,15 @@ const screensStaff = {
 
   'staff-dir': () => staffNav() + `<h1>Referral directory</h1>${availabilityOverview()}<button class="btn small" id="refresh" type="button">⟳ Refresh</button>
     <p class="review">Call to confirm antivenom. Listing does not guarantee stock or capacity.</p>
-    <div class="card"><div class="f"><label for="staffName">Your name (used for every confirmation)</label><input id="staffName" autocomplete="name" placeholder="Type once"></div></div>
+    <div class="card"><div class="f"><label for="staffName">Your name (used for every confirmation)</label><input id="staffName" autocomplete="name" placeholder="Type once"></div><p class="field-hint">To confirm stock, record a vial count and verification details: who you contacted, when, and what they reported. Updates older than 24 hours are marked stale.</p></div>
     ${D.hospitals.map((h, i) => { const st = hState(h), s = st.s;
       return `<div class="card staff-directory-card"><b>${esc(h.name)}</b><div class="staff-directory-contacts">${facilityContactLinks(h, 'staff')}</div>
       <span class="tag t-${st.tag}">${st.tag}</span> ${st.note ? `<small>${st.note}</small>` : ''}
       <div><small>${s ? `Last updated by ${esc(s.by)} on ${new Date(s.at).toLocaleString()} (${relativeTime(s.at)})` : 'Not confirmed yet'}</small></div>
-      <div class="f"><label for="verificationDetails${i}">Verification details (optional)</label><textarea id="verificationDetails${i}" rows="2" data-verification-details="${i}" placeholder="How was availability checked? What did the facility report?">${esc(s?.details || '')}</textarea></div>
+      <div class="f"><label for="verificationDetails${i}">Verification details (required to confirm)</label><textarea id="verificationDetails${i}" rows="2" data-verification-details="${i}" placeholder="Who did you contact, when, and what did they report?">${esc(s?.details || '')}</textarea></div>
             <div class="f"><label for="stock${i}">Antivenom vials in stock</label><input id="stock${i}" type="number" min="0" max="9999" step="1" inputmode="numeric" data-stock="${i}" value="${s && s.stock !== undefined && s.stock !== null ? s.stock : ''}" placeholder="Number of vials"><small class="field-hint">Shown to the public on this hospital’s card. Required to mark confirmed.</small></div>
             <button class="btn small primary" data-conf="${i}">Mark confirmed now</button>
+      <button class="btn small" data-unavailable="${i}">Record no vials (0)</button>
       <button class="btn small" data-restock="${i}">Mark restock announced</button>
       <button class="btn small" data-unconf="${i}">Mark unverified</button>
       </div>`; }).join('')}`,
@@ -342,6 +344,7 @@ async function api(path, options = {}) {
 let pendingSubmission = null;
 async function submitReport() {
   const button = $('#submitReport'), out = $('#submitStatus');
+  if (!navigator.onLine) { out.textContent = 'You appear to be offline, so this report was not sent. Keep the guide open, call for help using phone service, and try again when internet is available.'; return; }
   const details = Object.fromEntries(['area', 'surr', 'meet', 'landmark', 'time', 'cond', 'done', 'snake'].map(key => [key, key === 'time' ? biteTime() : val(key)]));
   const pin = getPin();
   if (!pin && ['Unknown', 'Not answered'].includes(details.area) && ['Unknown', 'Not answered'].includes(details.landmark)) {
@@ -352,13 +355,13 @@ async function submitReport() {
   button.disabled = true; out.textContent = 'Sending your report…';
   try {
     const result = await api(apiUrl('reports'), { method: 'POST', body: JSON.stringify({ id: pendingSubmission.id, details, pin }) });
-    out.textContent = `Report submitted to staff. Reference: ${result.id.slice(0, 8)}. Call for urgent assistance; this is not confirmation that help is on the way.`;
-    button.textContent = 'Report submitted';
+    out.textContent = `Report received by the staff report system. Reference: ${result.id.slice(0, 8)}. This does not confirm that staff have read it or that help is on the way. Call for urgent help.`;
+    button.textContent = 'Report sent';
     const reset = () => { button.disabled = false; button.textContent = 'Submit report to staff'; };
     $('#app').addEventListener('input', reset, { once: true });
     $('#app').addEventListener('click', e => { if (e.target.closest('.chip, #gps, #clrPin, #map')) reset(); });
   } catch (error) {
-    out.textContent = `${error.message} Submission is not confirmed. Retry to confirm delivery, or use the summary actions above. Your answers remain on this screen.`;
+    out.textContent = `${error.message} This report was not confirmed as received. Retry when connected, or use the summary actions above. Your answers remain on this screen.`;
     button.disabled = false;
   }
 }
@@ -513,6 +516,10 @@ function wire(r) {
     }));
   }
   if (r === 'tell' || r === 'home') {
+    const updateConnection = () => document.querySelectorAll('[data-connection-state]').forEach(el => { el.textContent = navigator.onLine ? 'Internet appears available. Submission still needs confirmation.' : 'Offline: staff reports cannot be sent. Use the call option if you need urgent help.'; el.classList.toggle('is-offline', !navigator.onLine); });
+    updateConnection();
+    window.ononline = updateConnection;
+    window.onoffline = updateConnection;
     pendingSubmission = null;
     on('submitReport', submitReport);
     on('copySummary', () => copy(buildHandoffSummary()));
@@ -527,15 +534,15 @@ function wire(r) {
     on('gps', () => {
       const o = $('#gpsOut'); o.innerHTML = '<p>Finding location…</p>';
       if (!navigator.geolocation) { o.innerHTML = '<p class="msg">GPS is not available. Tap the map or choose an area instead.</p>'; return; }
-      navigator.geolocation.getCurrentPosition(p => { o.innerHTML = `<p>GPS accuracy about ${Math.round(p.coords.accuracy)} m.</p>`; setPin(p.coords.latitude, p.coords.longitude, true, 'GPS', p.coords.accuracy); },
-        () => { o.innerHTML = '<p class="msg">Could not get GPS. Tap the map or choose an area instead.</p>'; }, { enableHighAccuracy: true, timeout: 15000 });
+      navigator.geolocation.getCurrentPosition(p => { o.innerHTML = `<p>GPS estimate; reported accuracy about ${Math.round(p.coords.accuracy)} m.</p>`; setPin(p.coords.latitude, p.coords.longitude, true, 'GPS', p.coords.accuracy); },
+        error => { const reason = error.code === error.PERMISSION_DENIED ? 'Location permission was denied.' : error.code === error.TIMEOUT ? 'GPS timed out.' : 'GPS could not find your location.'; o.innerHTML = `<p class="msg">${reason} You can still choose an area and landmark, or select a point on the map.</p>`; }, { enableHighAccuracy: true, timeout: 15000 });
     });
   }
   if (r === 'before') {
     on('save', async () => {
       const o = $('#saveOut');
       if (!('serviceWorker' in navigator)) { o.innerHTML = '<p class="msg">This browser cannot save offline. Add it to your home screen instead.</p>'; return; }
-      try { const keys = await (await caches.open('cmubiotrage-v33')).keys();
+      try { const keys = await (await caches.open('cmubiotrage-v38')).keys();
         o.innerHTML = keys.length >= 6 ? `<p class="msg">✔ Saved offline: reviewed ${esc(D.reviewed)}</p>` : '<p class="msg">Not saved yet. Stay online a few seconds and tap again.</p>';
       } catch { o.innerHTML = '<p class="msg">Could not check. Reload the page while online and try again.</p>'; }
       netStatus();
@@ -566,20 +573,22 @@ function wire(r) {
   }
   if (r === 'staff-reports') startReportView();
   if (r === 'staff-dir') on('refresh', () => { pulled[r] = false; route(); });
-  if (r === 'staff-dir') document.querySelectorAll('[data-conf],[data-restock],[data-unconf]').forEach(b => b.addEventListener('click', () => {
-    const conf = b.dataset.conf !== undefined, restock = b.dataset.restock !== undefined, key = b.dataset.conf ?? b.dataset.restock ?? b.dataset.unconf, i = +key, h = D.hospitals[i];
-    const by = $('#staffName').value.trim(); if ((conf || restock) && !by) { toast('Enter your name at the top first.'); $('#staffName').focus(); return; }
+  if (r === 'staff-dir') document.querySelectorAll('[data-conf],[data-restock],[data-unconf],[data-unavailable]').forEach(b => b.addEventListener('click', () => {
+    const conf = b.dataset.conf !== undefined, restock = b.dataset.restock !== undefined, unavailable = b.dataset.unavailable !== undefined, key = b.dataset.conf ?? b.dataset.restock ?? b.dataset.unavailable ?? b.dataset.unconf, i = +key, h = D.hospitals[i];
+    const by = $('#staffName').value.trim(); if ((conf || restock || unavailable) && !by) { toast('Enter your name at the top first.'); $('#staffName').focus(); return; }
     const detailInput = document.querySelector(`[data-verification-details="${i}"]`);
     const details = detailInput?.value.trim() || '';
     const stockInput = document.querySelector(`[data-stock="${i}"]`);
     let stock = null;
-    if (!b.dataset.unconf && stockInput && stockInput.value.trim() !== '') {
+    if (!b.dataset.unconf && !unavailable && stockInput && stockInput.value.trim() !== '') {
       const n = Number(stockInput.value);
       if (!Number.isInteger(n) || n < 0 || n > 9999) { toast('Enter vials as a whole number from 0 to 9999.'); stockInput.focus(); return; }
       stock = n;
     }
     if (conf && (stock === null || stock < 1)) { toast(stock === 0 ? 'Confirmed needs at least 1 vial. If none are in stock, use Mark unverified.' : 'Enter how many vials are in stock first.'); stockInput && stockInput.focus(); return; }
-    const all = hStatus(); all[h.name] = { status: conf ? 'Confirmed' : restock ? 'Restock announced' : 'Unverified', by: by || 'staff', at: Date.now(), details, stock };
+    if (unavailable) stock = 0;
+    if ((conf || restock || unavailable) && !details) { toast('Add who you contacted, when, and what they reported before saving this update.'); detailInput?.focus(); return; }
+    const all = hStatus(); all[h.name] = { status: conf ? 'Confirmed' : restock ? 'Restock announced' : unavailable ? 'Unavailable' : 'Unverified', by: by || 'staff', at: Date.now(), details, stock };
     store.set('ss_status', all); pushStatus(i, all[h.name]); const keep = by; route(); const n = $('#staffName'); if (n) n.value = keep;
   }));
   if (r === 'staff-alert') on('gen', () => {

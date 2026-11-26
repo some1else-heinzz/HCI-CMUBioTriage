@@ -591,3 +591,68 @@ html.light:not(.sun) #app .handoff-call-actions>a:not(.emergency-call){backgroun
 html.light:not(.sun) #app .handoff-call-actions>a:not(.emergency-call):hover{background:#e3f4ea!important}
 html:not(.light) #app .handoff-call-actions>a:not(.emergency-call){background:transparent!important;border:2px solid rgba(255,255,255,.4)!important;color:var(--ink)!important}
 @media(max-width:640px){#app .handoff-callout{grid-template-columns:1fr!important}}
+
+/* Emergency path: plain, opaque, high contrast, with one ordered sequence. */
+.availability-dashboard .emergency-start{display:block!important;background:#fff;color:#10231a;border:3px solid #a20f19;box-shadow:0 4px 16px rgba(0,0,0,.25);backdrop-filter:none;-webkit-backdrop-filter:none}
+.availability-dashboard .emergency-start h1,.availability-dashboard .emergency-start p{color:#10231a}
+.emergency-steps{list-style:none;counter-reset:emergency-step;padding:0;margin:14px 0 0;display:grid;gap:10px}
+.emergency-steps li{counter-increment:emergency-step;position:relative;padding:12px 14px 12px 54px;border:2px solid #53665b;border-radius:12px;background:#fff;color:#10231a}
+.emergency-steps li::before{content:counter(emergency-step);position:absolute;left:12px;top:12px;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#10231a;color:#fff;font-weight:900}
+.emergency-steps li>strong{display:block;font-size:1.08rem}
+.emergency-steps li>.btn{margin:7px 0 2px;min-height:50px;background:#075e36;color:#fff;border:2px solid #075e36}
+.emergency-steps li>.btn.emergency-call{background:#a20f19;border-color:#a20f19;color:#fff}
+.emergency-steps small{display:block;margin-top:5px;color:#263b30;font-size:.9rem;font-weight:600}
+.offline-hint{background:#fff;color:#10233a;border:2px solid #224b75}
+.offline-hint a{color:#073e77;font-weight:800}
+.facility-stock{display:block;background:#fff;color:#10231a;border:2px solid #355a45}
+.facility-stock span,.facility-stock strong,.facility-stock small{display:block;opacity:1}
+.facility-stock strong{margin:3px 0}
+.facility-stock small{font-size:.86rem}
+.connection-state{padding:10px 12px;border-left:4px solid #075e36;background:#edf7f0;color:#10231a;font-weight:700}
+.connection-state.is-offline{border-color:#a20f19;background:#fff0f0;color:#650b12}
+.location-pin{border:2px solid #245c3d}
+@media(min-width:700px){.emergency-steps{grid-template-columns:repeat(3,minmax(0,1fr))}.emergency-steps li{align-self:stretch}}
+@media(max-width:640px){.emergency-steps li{padding-left:52px}.availability-dashboard .emergency-start{padding:16px}.offline-hint{font-size:1rem}}
+
+/* Review and handoff refinements */
+.demo-notice{margin:10px 0;padding:12px 14px;border:2px solid #815600;border-left-width:7px;border-radius:10px;background:#fff3c4;color:#352300;font-size:.95rem;line-height:1.4}
+.demo-notice strong{display:block;margin-bottom:3px}
+.urgent-symptom-note{padding:9px 12px;border-left:5px solid #9d1620;background:#fff0f0;color:#541016;font-weight:750}
+.chip.urgent-symptom{border:2px solid #a21a24;background:#fff0f0;color:#541016;font-weight:800}
+.chip.urgent-symptom[aria-pressed=true]{background:#a21a24;color:#fff;border-color:#a21a24}
+.chip.urgent-symptom::before{content:"! Tell responder · "}
+.handoff-preview{position:sticky;top:8px;z-index:12;background:#fff;color:#10231a;border:2px solid #355a45;box-shadow:0 5px 18px rgba(0,0,0,.24);backdrop-filter:none;-webkit-backdrop-filter:none}
+.handoff-preview h2,.handoff-preview .lead{color:#10231a}
+.handoff-preview pre{max-height:20vh;overflow:auto;background:#f3f7f4;color:#10231a;border-color:#53665b}
+.location-empty{padding:10px 12px;border:1px dashed #53665b;border-radius:9px;background:#f3f7f4;color:#10231a}
+.call-failed-link{display:block;margin-top:5px;color:#073e77;font-weight:800;text-decoration:underline}
+.facility-card .facility-note{padding:9px 11px;background:#fff3c4;color:#352300;font-size:.9rem;font-weight:650}
+.facility-card .facility-actions{margin-top:8px}
+.facility-unavailable{border-left-color:#a21a24}
+.facility-unavailable .facility-badge{background:#fff0f0;border-color:#a21a24;color:#541016}
+.availability-dashboard .facility-stock{display:block!important;background:#fff!important;color:#10231a!important;border:2px solid #355a45!important;opacity:1!important}
+.availability-dashboard .facility-stock span,.availability-dashboard .facility-stock strong,.availability-dashboard .facility-stock small{color:#10231a!important;opacity:1!important}
+.availability-dashboard .emergency-steps li>a.btn{display:flex!important;min-height:52px!important;background:#075e36!important;border:2px solid #075e36!important;color:#fff!important;font-size:1rem!important;line-height:1.3!important;text-align:center!important;visibility:visible!important;opacity:1!important}
+.availability-dashboard .emergency-steps li>a.btn.emergency-call{background:#a20f19!important;border-color:#a20f19!important;color:#fff!important}
+@media(max-width:640px){.handoff-preview{top:4px}.handoff-preview pre{max-height:16vh}.demo-notice{font-size:.9rem}}
+
+/* Keep the emergency and stock panels aligned with the selected dark theme. */
+html:not(.light):not(.sun) .availability-dashboard .emergency-start{background:#17251d;color:#eef5ef}
+html:not(.light):not(.sun) .availability-dashboard .emergency-start h1,
+html:not(.light):not(.sun) .availability-dashboard .emergency-start p{color:#eef5ef}
+html:not(.light):not(.sun) .emergency-steps li{background:#101a14;color:#eef5ef;border-color:#668575}
+html:not(.light):not(.sun) .emergency-steps li::before{background:#bcebd0;color:#10231a}
+html:not(.light):not(.sun) .emergency-steps small{color:#d1e2d7}
+html:not(.light):not(.sun) .availability-dashboard .facility-stock{background:#17251d!important;color:#eef5ef!important;border-color:#7fd1a8!important}
+html:not(.light):not(.sun) .availability-dashboard .facility-stock span,
+html:not(.light):not(.sun) .availability-dashboard .facility-stock strong,
+html:not(.light):not(.sun) .availability-dashboard .facility-stock small{color:#eef5ef!important}
+html:not(.light):not(.sun) .offline-hint{background:#10233a;color:#f1f6ff;border-color:#91b8ff}
+html:not(.light):not(.sun) .offline-hint a{color:#b9d7ff}
+html:not(.light):not(.sun) .handoff-preview{background:#17251d;color:#eef5ef;border-color:#668575}
+html:not(.light):not(.sun) .handoff-preview h2,
+html:not(.light):not(.sun) .handoff-preview .lead{color:#eef5ef}
+html:not(.light):not(.sun) .handoff-preview pre,
+html:not(.light):not(.sun) .location-empty{background:#101a14;color:#eef5ef;border-color:#668575}
+html:not(.light):not(.sun) .connection-state{background:#152c20;color:#d9f4e3;border-color:#55b67c}
+html:not(.light):not(.sun) .connection-state.is-offline{background:#3a1719;color:#ffe3e4;border-color:#e5484d}

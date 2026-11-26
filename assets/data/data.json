@@ -5,12 +5,8 @@
     "reportContact":  "[CORRECTION CONTACT – confirm with UH]",
     "primary":  {
                     "label":  "University Hospital (UH)",
-                    "number":  "[PRIMARY NUMBER – confirm with UH]"
+                    "number":  "+63 917 100 5100"
                 },
-    "alternate":  {
-                      "label":  "Alternate contact",
-                      "number":  "[ALTERNATE NUMBER – confirm with UH]"
-                  },
     "dos":  [
                 "Move away from the snake. Stay calm and keep the person still.",
                 "Call for help now.",
@@ -23,7 +19,6 @@
                   "Never try to catch or kill the snake.",
                   "Do not cut the bite or suck out venom.",
                   "Do not apply ice.",
-                  "Tourniquet: [PLACEHOLDER – wording to be decided by UH medical reviewers].",
                   "Do not let the person walk around or drive.",
                   "Do not wait for symptoms before calling."
               ],

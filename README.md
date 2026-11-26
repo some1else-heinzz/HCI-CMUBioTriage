@@ -36,7 +36,7 @@ CMUBioTriage/
 ## Notes
 - Edit `assets/data/data.json` and replace the `[... confirm with UH]` placeholders with real numbers.
 - Change `STAFF_PIN` and `SITE_SALT` in `api/config.php` before real use.
-- After changing cached app files, bump the `CACHE` version in `sw.js` (currently `cmubiotrage-v30`) so returning users receive the update; then reload the guide online.
+- After changing cached app files, bump the `CACHE` version in `sw.js` (currently `cmubiotrage-v38`) so returning users receive the update; then reload the guide online.
 - Netlify cannot run PHP; `netlify.toml` blocks `/api/*` there so PHP source is never exposed.
 - Reports are plain JSON on disk: fine for a class demo, not for real patient data.
 
@@ -45,3 +45,4 @@ CMUBioTriage/
 - Put a short, human-readable fallback URL beside each QR code. Label it clearly, for example: “Scan to open the snakebite response guide. Save it while online for offline use.”
 - Test the final printed QR and fallback URL on several phones. A QR scan opens the homepage; it does not send a report or share location.
 - First aid text, hospital contacts, and emergency numbers are still demo content and must be confirmed by the local medical and facility reviewers before public distribution.
+- Staff stock confirmations require a vial count and verification details. Updates older than 24 hours are shown as stale; call the facility to verify current stock.
