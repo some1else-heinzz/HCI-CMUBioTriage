@@ -67,7 +67,6 @@ const tellBody = () => `
         <div id="pinOut" aria-live="polite"></div></section>
       <section class="card"><h2>What happened?</h2><p class="field-hint">For a staff report, provide an area, a landmark, or a location pin. Other answers are optional; choose Unknown if unsure.</p>
         ${sel('time','Time of the bite',D.options.times)}
-        ${txt('time_exact','Exact date and time, if known','datetime-local')}<small class="field-hint">Optional. Leave blank if you are unsure.</small>
         <p class="urgent-symptom-note">Symptoms to tell the responder about. This guide does not diagnose or rank severity.</p>${chips('cond','Victim’s condition (tap all that apply)',[...['Hard to breathe','Unconscious','Drooping eyelids'],...D.options.conditions.filter(x => !['Hard to breathe','Unconscious','Drooping eyelids'].includes(x))])}
         ${chips('done','Actions already taken',D.options.actions)}
         ${sel('snake','Snake (only if safe to note)',D.options.snakes)}</section>
@@ -82,7 +81,7 @@ const screens = {
       <div class="dashboard-brand"><strong>CMUBioTriage</strong></div>
       <section class="emergency-start" aria-labelledby="emergencyStartTitle">
         <div><p class="emergency-eyebrow">Snakebite response guide</p><h1 id="emergencyStartTitle">Get help first</h1><p>Ask someone nearby to help. Follow these steps in order.</p></div>
-        <ol class="emergency-steps"><li><strong>Call for help</strong><a class="btn emergency-call" href="tel:143">Call Philippine Red Cross · 143</a><a class="call-failed-link" href="#/nosignal">Call didn’t connect?</a></li><li><strong>Follow the guide</strong><a class="btn primary" href="#/do">Open first aid and contacts</a></li><li><strong>Share useful details</strong><a class="btn" href="#/tell">Prepare a handoff summary</a><small>A summary or staff report does not dispatch help.</small></li></ol>
+        <ol class="emergency-steps"><li><strong>Call for help</strong><a class="btn emergency-call" href="tel:143">Call Philippine Red Cross · 143</a><a class="call-failed-link" href="#/nosignal">Call didn’t connect?</a></li><li><strong>Follow the guide</strong><a class="btn primary" href="#/do">Open first aid and contacts</a><small>Step-by-step first aid, what to avoid, and who to contact.</small></li><li><strong>Share useful details</strong><a class="btn" href="#/tell">Prepare a handoff summary</a><small>A summary or staff report does not dispatch help.</small></li></ol>
       </section>
       <p class="offline-hint"><strong>Offline:</strong> Previously saved guide content and the area/landmark form can work offline. Reports are not queued to send later. New map areas need internet; calls and SMS need phone service. <a href="#/before">Save the guide before you need it.</a></p>
       <div class="status-heading"><div><h1>Facility status</h1><p class="lead">Reported antivenom stock and facility contacts</p></div><span class="status-connection ${SYNC() ? 'is-shared' : 'is-device-only'}">● ${SYNC() ? 'Shared sync configured' : 'Device only'}</span></div>
@@ -168,9 +167,7 @@ function val(id) {
   return e.value.trim() || 'Not answered';
 }
 function biteTime() {
-  const selected = val('time');
-  const exact = val('time_exact');
-  return exact === 'Not answered' ? selected : `${selected} (${exact})`;
+  return val('time');
 }
 function buildHandoffSummary() {
   return `SNAKEBITE HANDOFF\nArea: ${val('area')}\nSurroundings: ${val('surr')}\nLandmark: ${val('landmark')}\nCan someone meet responders: ${val('meet')}\nLocation pin: ${pinText()}\nTime of bite: ${biteTime()}\nCondition: ${val('cond')}\nActions already taken: ${val('done')}\nSnake (only if safely seen): ${val('snake')}`;
