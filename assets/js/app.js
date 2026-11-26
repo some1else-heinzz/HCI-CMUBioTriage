@@ -9,7 +9,6 @@ const store = {
   set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
 };
 const back = (to = '#/home') => `<a class="back" href="${to}">‹ Back</a>`;
-const pending = '<span class="review">Content pending medical review</span>';
 const dashboardNav = active => `<nav class="status-nav" aria-label="Main navigation"><a class="${active === 'home' ? 'status-nav-active' : ''}" ${active === 'home' ? 'aria-current="page"' : ''} href="#/home">⌁ &nbsp;Antivenom status</a><a class="${active === 'tell' ? 'status-nav-active' : ''}" ${active === 'tell' ? 'aria-current="page"' : ''} href="#/tell">▣ &nbsp;Handoff Summary</a><a class="${active === 'do' ? 'status-nav-active' : ''}" ${active === 'do' ? 'aria-current="page"' : ''} href="#/do">✚ &nbsp;First Aid and Contacts</a></nav>`;
 
 function dial(c, cls = 'btn dial') {
@@ -66,14 +65,14 @@ const tellBody = () => `
           <p id="mapNote" class="review" hidden>Map needs internet for new areas. Use GPS or the area list instead.</p></div>
         <button class="btn" id="gps" type="button">📍 Use my GPS</button><div id="gpsOut" aria-live="polite"></div>
         <div id="pinOut" aria-live="polite"></div></section>
-      <section class="card"><h2>What happened?</h2>${pending}<p class="field-hint">For a staff report, provide an area, a landmark, or a location pin. Other answers are optional; choose Unknown if unsure.</p>
+      <section class="card"><h2>What happened?</h2><p class="field-hint">For a staff report, provide an area, a landmark, or a location pin. Other answers are optional; choose Unknown if unsure.</p>
         ${sel('time','Time of the bite',D.options.times)}
         ${txt('time_exact','Exact date and time, if known','datetime-local')}<small class="field-hint">Optional. Leave blank if you are unsure.</small>
         <p class="urgent-symptom-note">Symptoms to tell the responder about. This guide does not diagnose or rank severity.</p>${chips('cond','Victim’s condition (tap all that apply)',[...['Hard to breathe','Unconscious','Drooping eyelids'],...D.options.conditions.filter(x => !['Hard to breathe','Unconscious','Drooping eyelids'].includes(x))])}
         ${chips('done','Actions already taken',D.options.actions)}
         ${sel('snake','Snake (only if safe to note)',D.options.snakes)}</section>
     </div>
-    <section class="card"><h2>Optional: submit a report to staff</h2><p>This sends the details to the staff report inbox when online. It does not call emergency services or confirm that help is on the way.</p><p class="review" role="note">Prototype only: do not enter names or other identifying details. Submitted details and location are stored on the demo server.</p><p class="connection-state" data-connection-state></p><button class="btn primary" id="submitReport" type="button">Submit report to staff</button><a class="btn emergency-call" href="tel:143">Call for urgent help · 143</a><div id="submitStatus" role="status" aria-live="polite"></div></section>`;
+    <section class="card"><h2>Optional: submit a report to staff</h2><p>This sends the details to the staff report inbox when online. It does not call emergency services or confirm that help is on the way.</p><p class="connection-state" data-connection-state></p><button class="btn primary" id="submitReport" type="button">Submit report to staff</button><a class="btn emergency-call" href="tel:143">Call for urgent help · 143</a><div id="submitStatus" role="status" aria-live="polite"></div></section>`;
 
 /* ---------- Public screens ---------- */
 const screens = {
@@ -85,10 +84,11 @@ const screens = {
         <div><p class="emergency-eyebrow">Snakebite response guide</p><h1 id="emergencyStartTitle">Get help first</h1><p>Ask someone nearby to help. Follow these steps in order.</p></div>
         <ol class="emergency-steps"><li><strong>Call for help</strong><a class="btn emergency-call" href="tel:143">Call Philippine Red Cross · 143</a><a class="call-failed-link" href="#/nosignal">Call didn’t connect?</a></li><li><strong>Follow the guide</strong><a class="btn primary" href="#/do">Open first aid and contacts</a></li><li><strong>Share useful details</strong><a class="btn" href="#/tell">Prepare a handoff summary</a><small>A summary or staff report does not dispatch help.</small></li></ol>
       </section>
-      <p class="offline-hint"><strong>Offline:</strong> Previously saved guide content and the area/landmark form can work offline. New map areas, calls, SMS, and staff reports may need internet or phone service. <a href="#/before">Save the guide before you need it.</a></p>
-      <div class="status-heading"><div><h1>Antivenom Availability</h1><p class="lead">Facility confirmations and emergency contacts</p></div><span class="status-connection ${SYNC() ? 'is-shared' : 'is-device-only'}">● ${SYNC() ? 'Shared sync configured' : 'Device only'}</span></div>
+      <p class="offline-hint"><strong>Offline:</strong> Previously saved guide content and the area/landmark form can work offline. Reports are not queued to send later. New map areas need internet; calls and SMS need phone service. <a href="#/before">Save the guide before you need it.</a></p>
+      <div class="status-heading"><div><h1>Facility status</h1><p class="lead">Reported antivenom stock and facility contacts</p></div><span class="status-connection ${SYNC() ? 'is-shared' : 'is-device-only'}">● ${SYNC() ? 'Shared sync configured' : 'Device only'}</span></div>
+      <p class="field-hint status-sync-explainer">${SYNC() ? 'Facility updates are set to sync across devices when online. Check each update time and call the facility to verify.' : 'Facility updates saved by staff in this browser are not visible on other devices. Availability still needs to be confirmed directly with each facility.'}</p>
       ${dashboardNav('home')}
-      <h2 class="section-title">Available hospitals</h2>
+      <h2 class="section-title">Listed facilities</h2>
       <div class="facility-grid" id="facilityGrid">${D.hospitals.map((h, i) => {
         const st = states[i], s = st.s;
         const statusClass = st.tag === 'Confirmed' ? 'facility-confirmed' : st.tag === 'Restock announced' ? 'facility-restock' : st.tag === 'Unavailable' ? 'facility-unavailable' : 'facility-needs';
@@ -108,7 +108,7 @@ const screens = {
     </section>`;
   },
 
-  do: () => `<h1>First Aid and Contacts</h1>${pending}
+  do: () => `<h1>First Aid and Contacts</h1>
     <section class="card"><h2>Call for help now</h2><div class="contact-links">
       <div><strong>${esc(D.primary.label)}</strong><span class="num">${esc(D.primary.number)}</span>${dial(D.primary)}</div>
     </div><a class="btn dial" href="tel:143">Call Philippine Red Cross · 143</a><a class="btn" href="#/nosignal">Call didn’t connect?</a></section>
@@ -126,11 +126,11 @@ const screens = {
     ${tellBody()}`,
 
   nosignal: () => `${back()}<h1>Call didn’t connect</h1>
-    <div class="card"><h2>Try next</h2><ul class="clean">
-      <li>Ask another person nearby to call local emergency or medical services.</li>
-      <li>If it is safe, send someone to an area with signal.</li>
-      <li>Use the facility contact list to call a listed facility directly.</li>
-      <li>Continue to the first-aid guide; do not wait for a call or report to connect.</li></ul></div>
+    <div class="card"><h2>Try these next steps</h2><ol class="clean">
+      <li>Ask someone nearby to try calling a listed emergency or facility contact.</li>
+      <li>If it is safe, ask someone to move to a place with phone signal and call. Stay with the person who needs help.</li>
+      <li>Open the facility list and choose a number to call directly.</li>
+      <li>Continue the first-aid guide. A report or message does not replace a call for help.</li></ol></div>
     <a class="btn primary" href="#/home">Open facility contact list</a><a class="btn" href="#/do">Open first-aid guide</a>
     <a class="btn dial" href="tel:143">📞 Call Philippine Red Cross · 143</a>
     <button class="btn" id="shareBtn">Share this guide</button>`,
@@ -146,7 +146,7 @@ const screens = {
     <div class="card"><p>A first-response guide for snakebites at CMU, with a referral tool for UH staff.</p>
     <p><b>Limits:</b> This is not medical treatment and not a diagnostic tool. It does not guarantee antivenom stock or hospital capacity.</p></div>
     <div class="card"><p><b>Content owner:</b> ${esc(D.owner)}</p><p><b>Version:</b> ${esc(D.version)}</p><p><b>Review status:</b> ${esc(D.reviewStatus || D.reviewed || 'Clinical review pending')}</p>
-    <p><b>Report outdated information:</b> ${esc(D.reportContact)}</p>${pending}</div>`
+    <p><b>Report outdated information:</b> ${esc(D.reportContact)}</p></div>`
 };
 
 const optHtml = o => o.map(x => `<option>${esc(x)}</option>`).join('');

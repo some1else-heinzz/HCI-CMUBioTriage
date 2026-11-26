@@ -50,6 +50,7 @@ h2{font-size:1.2rem;margin:1.1em 0 .4em;font-weight:800;color:var(--accent)}
 .do{border-left:8px solid var(--accent)}.dont{border-left:8px solid var(--alarm)}
 .dont h2{color:var(--alarm)}
 ul.clean{padding-left:1.1em;margin:.3em 0}ul.clean li{margin:.55em 0}
+ol.clean{padding-left:1.4em;margin:.3em 0}ol.clean li{margin:.7em 0}
 
 /* Forms */
 .f{margin:0 0 14px}.f label,.lbl,label{display:block;font-weight:700;margin:0 0 4px}
@@ -615,8 +616,6 @@ html:not(.light) #app .handoff-call-actions>a:not(.emergency-call){background:tr
 @media(max-width:640px){.emergency-steps li{padding-left:52px}.availability-dashboard .emergency-start{padding:16px}.offline-hint{font-size:1rem}}
 
 /* Review and handoff refinements */
-.demo-notice{margin:10px 0;padding:12px 14px;border:2px solid #815600;border-left-width:7px;border-radius:10px;background:#fff3c4;color:#352300;font-size:.95rem;line-height:1.4}
-.demo-notice strong{display:block;margin-bottom:3px}
 .urgent-symptom-note{padding:9px 12px;border-left:5px solid #9d1620;background:#fff0f0;color:#541016;font-weight:750}
 .chip.urgent-symptom{border:2px solid #a21a24;background:#fff0f0;color:#541016;font-weight:800}
 .chip.urgent-symptom[aria-pressed=true]{background:#a21a24;color:#fff;border-color:#a21a24}
@@ -634,7 +633,7 @@ html:not(.light) #app .handoff-call-actions>a:not(.emergency-call){background:tr
 .availability-dashboard .facility-stock span,.availability-dashboard .facility-stock strong,.availability-dashboard .facility-stock small{color:#10231a!important;opacity:1!important}
 .availability-dashboard .emergency-steps li>a.btn{display:flex!important;min-height:52px!important;background:#075e36!important;border:2px solid #075e36!important;color:#fff!important;font-size:1rem!important;line-height:1.3!important;text-align:center!important;visibility:visible!important;opacity:1!important}
 .availability-dashboard .emergency-steps li>a.btn.emergency-call{background:#a20f19!important;border-color:#a20f19!important;color:#fff!important}
-@media(max-width:640px){.handoff-preview{top:4px}.handoff-preview pre{max-height:16vh}.demo-notice{font-size:.9rem}}
+@media(max-width:640px){.handoff-preview{top:4px}.handoff-preview pre{max-height:16vh}}
 
 /* Keep the emergency and stock panels aligned with the selected dark theme. */
 html:not(.light):not(.sun) .availability-dashboard .emergency-start{background:#17251d;color:#eef5ef}
@@ -649,10 +648,12 @@ html:not(.light):not(.sun) .availability-dashboard .facility-stock strong,
 html:not(.light):not(.sun) .availability-dashboard .facility-stock small{color:#eef5ef!important}
 html:not(.light):not(.sun) .offline-hint{background:#10233a;color:#f1f6ff;border-color:#91b8ff}
 html:not(.light):not(.sun) .offline-hint a{color:#b9d7ff}
+.status-sync-explainer{margin:-6px 0 12px;max-width:70ch}
 html:not(.light):not(.sun) .handoff-preview{background:#17251d;color:#eef5ef;border-color:#668575}
 html:not(.light):not(.sun) .handoff-preview h2,
 html:not(.light):not(.sun) .handoff-preview .lead{color:#eef5ef}
 html:not(.light):not(.sun) .handoff-preview pre,
 html:not(.light):not(.sun) .location-empty{background:#101a14;color:#eef5ef;border-color:#668575}
+
 html:not(.light):not(.sun) .connection-state{background:#152c20;color:#d9f4e3;border-color:#55b67c}
 html:not(.light):not(.sun) .connection-state.is-offline{background:#3a1719;color:#ffe3e4;border-color:#e5484d}
