@@ -43,8 +43,14 @@ async function copy(text) {
   catch { const a = document.createElement('textarea'); a.value = text; document.body.append(a); a.select(); try { document.execCommand('copy'); toast('✔ Copied to clipboard'); } catch { toast('Could not copy. Select the text and copy it by hand.'); } a.remove(); }
 }
 async function share(text, url = location.href) {
-  if (navigator.share) { try { await navigator.share({ title: 'CMUbiotrage', text, url }); return; } catch { return; } }
+  if (navigator.share) { try { await navigator.share({ title: 'CMUBioTriage', text, url }); return; } catch { return; } }
   copy(url ? `${text} ${url}` : text);
+}
+
+function unverifiedContacts() {
+  const contacts = [D.alternate, D.campusSecurity].filter(contact => contact && contact.number);
+  if (!contacts.length) return '';
+  return `<details class="card unverified-contact-list"><summary>Unverified contacts — confirm before use</summary><p>These numbers have not been confirmed by local staff. Do not rely on them until verified.</p><ul>${contacts.map(contact => `<li><strong>${esc(contact.label)}:</strong> ${esc(contact.number)}</li>`).join('')}</ul></details>`;
 }
 
 const tellBody = () => `
@@ -67,14 +73,14 @@ const tellBody = () => `
         ${chips('done','Actions already taken',D.options.actions)}
         ${sel('snake','Snake (only if safe to note)',D.options.snakes)}</section>
     </div>
-    <section class="card"><h2>Optional: submit a report to staff</h2><p>This sends the details to the staff report inbox when online. It does not call emergency services or confirm that help is on the way.</p><p class="connection-state" data-connection-state></p><button class="btn primary" id="submitReport" type="button">Submit report to staff</button><a class="btn emergency-call" href="tel:143">Call for urgent help · 143</a><div id="submitStatus" role="status" aria-live="polite"></div></section>`;
+    <section class="card"><h2>Optional: submit a report to staff</h2><p>This sends the details to the staff report inbox when online. It does not call emergency services or confirm that help is on the way.</p><p class="review" role="note">Prototype only: do not enter names or other identifying details. Submitted details and location are stored on the demo server.</p><p class="connection-state" data-connection-state></p><button class="btn primary" id="submitReport" type="button">Submit report to staff</button><a class="btn emergency-call" href="tel:143">Call for urgent help · 143</a><div id="submitStatus" role="status" aria-live="polite"></div></section>`;
 
 /* ---------- Public screens ---------- */
 const screens = {
   home: () => {
     const states = D.hospitals.map(h => hState(h));
     return `<section class="status-page availability-dashboard">
-      <div class="dashboard-brand"><strong>CMUbiotrage</strong></div>
+      <div class="dashboard-brand"><strong>CMUBioTriage</strong></div>
       <section class="emergency-start" aria-labelledby="emergencyStartTitle">
         <div><p class="emergency-eyebrow">Snakebite response guide</p><h1 id="emergencyStartTitle">Get help first</h1><p>Ask someone nearby to help. Follow these steps in order.</p></div>
         <ol class="emergency-steps"><li><strong>Call for help</strong><a class="btn emergency-call" href="tel:143">Call Philippine Red Cross · 143</a><a class="call-failed-link" href="#/nosignal">Call didn’t connect?</a></li><li><strong>Follow the guide</strong><a class="btn primary" href="#/do">Open first aid and contacts</a></li><li><strong>Share useful details</strong><a class="btn" href="#/tell">Prepare a handoff summary</a><small>A summary or staff report does not dispatch help.</small></li></ol>
@@ -106,6 +112,7 @@ const screens = {
     <section class="card"><h2>Call for help now</h2><div class="contact-links">
       <div><strong>${esc(D.primary.label)}</strong><span class="num">${esc(D.primary.number)}</span>${dial(D.primary)}</div>
     </div><a class="btn dial" href="tel:143">Call Philippine Red Cross · 143</a><a class="btn" href="#/nosignal">Call didn’t connect?</a></section>
+    ${unverifiedContacts()}
     <h2>What to do now</h2>
     <div class="cols">
       <div class="card do"><h2>✔ Do</h2><ul class="clean">${D.dos.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
@@ -138,7 +145,7 @@ const screens = {
   about: () => `${back()}<h1>About this guide</h1>
     <div class="card"><p>A first-response guide for snakebites at CMU, with a referral tool for UH staff.</p>
     <p><b>Limits:</b> This is not medical treatment and not a diagnostic tool. It does not guarantee antivenom stock or hospital capacity.</p></div>
-    <div class="card"><p><b>Content owner:</b> ${esc(D.owner)}</p><p><b>Version:</b> ${esc(D.version)}</p><p><b>Reviewed:</b> ${esc(D.reviewed)}</p>
+    <div class="card"><p><b>Content owner:</b> ${esc(D.owner)}</p><p><b>Version:</b> ${esc(D.version)}</p><p><b>Review status:</b> ${esc(D.reviewStatus || D.reviewed || 'Clinical review pending')}</p>
     <p><b>Report outdated information:</b> ${esc(D.reportContact)}</p>${pending}</div>`
 };
 
@@ -498,7 +505,7 @@ function route() {
   const page = html + (r === 'about' || r === 'home' ? '' : '<p class="aboutlink"><a href="#/about">About this guide</a></p>');
   const inDashboardShell = r === 'tell' || r === 'do';
   $('#app').innerHTML = inDashboardShell
-    ? `<section class="status-page availability-dashboard app-page-shell"><div class="dashboard-brand"><strong>CMUbiotrage</strong></div>${dashboardNav(r)}<div class="app-page-content">${page}</div></section>`
+    ? `<section class="status-page availability-dashboard app-page-shell"><div class="dashboard-brand"><strong>CMUBioTriage</strong></div>${dashboardNav(r)}<div class="app-page-content">${page}</div></section>`
     : page;
   $('#app').focus({ preventScroll: true }); window.scrollTo(0, 0);
   bindUnknown(); wire(r);
@@ -542,8 +549,17 @@ function wire(r) {
     on('save', async () => {
       const o = $('#saveOut');
       if (!('serviceWorker' in navigator)) { o.innerHTML = '<p class="msg">This browser cannot save offline. Add it to your home screen instead.</p>'; return; }
-      try { const keys = await (await caches.open('cmubiotrage-v38')).keys();
-        o.innerHTML = keys.length >= 6 ? `<p class="msg">✔ Saved offline: reviewed ${esc(D.reviewed)}</p>` : '<p class="msg">Not saved yet. Stay online a few seconds and tap again.</p>';
+      try {
+        const registration = await navigator.serviceWorker.ready;
+        const worker = registration.active;
+        if (!worker) throw new Error('No active offline worker');
+        const saved = await new Promise((resolve, reject) => {
+          const channel = new MessageChannel();
+          const timer = setTimeout(() => { channel.port1.close(); reject(new Error('Offline check timed out')); }, 5000);
+          channel.port1.onmessage = event => { clearTimeout(timer); channel.port1.close(); resolve(!!event.data?.saved); };
+          worker.postMessage({ type: 'CHECK_OFFLINE_CACHE' }, [channel.port2]);
+        });
+        o.innerHTML = saved ? `<p class="msg">✔ Guide files are saved offline. ${esc(D.reviewStatus || D.reviewed || 'Clinical review pending')}</p>` : '<p class="msg">Not saved yet. Stay online, reload the guide, then check again.</p>';
       } catch { o.innerHTML = '<p class="msg">Could not check. Reload the page while online and try again.</p>'; }
       netStatus();
     });
@@ -610,7 +626,7 @@ function wire(r) {
 /* ---------- Status banner + boot ---------- */
 function netStatus() {
   const ok = 'serviceWorker' in navigator && navigator.serviceWorker.controller;
-  const n = $('#net'); if (!n) return; n.textContent = ok ? `Saved offline · reviewed ${D.reviewed}` : 'Not saved for offline use yet';
+  const n = $('#net'); if (!n) return; n.textContent = ok ? `Saved offline · ${D.reviewStatus || D.reviewed || 'Clinical review pending'}` : 'Not saved for offline use yet';
   n.className = 'pill' + (ok ? '' : ' off');
 }
 const MOON = '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>';
@@ -641,7 +657,7 @@ window.addEventListener('hashchange', route);
     ? '<div class="card"><h1>Open this through Apache</h1><p>You opened the file directly from the folder, which browsers block. Start Apache in XAMPP, then open:</p><p class="big">http://localhost/CMUBioTriage/</p></div>'
     : '<p class="msg">Could not load guide data. Reload while online once, then it will work offline.</p>'; return; }
   if (window.L) L.Icon.Default.imagePath = 'assets/vendor/leaflet/images/'; bindPrefs();
-  if ($('#ver')) $('#ver').textContent = `Version ${D.version} · Reviewed ${D.reviewed}`;
+  if ($('#ver')) $('#ver').textContent = `Version ${D.version} · ${D.reviewStatus || D.reviewed || 'Clinical review pending'}`;
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').then(() => navigator.serviceWorker.ready).then(() => { netStatus(); }).catch(() => {});
   try { const session = await api(apiUrl('session')); if (session.authenticated) sessionStorage.setItem('ss_staff', '1'); else sessionStorage.removeItem('ss_staff'); } catch { sessionStorage.removeItem('ss_staff'); }
   netStatus(); route();

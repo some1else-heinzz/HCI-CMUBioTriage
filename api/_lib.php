@@ -40,8 +40,15 @@ function update_json($file, callable $fn) {
     if (!$fh) json_out(500, ['error' => 'Storage is not writable. Check the api/_data folder permissions.']);
     flock($fh, LOCK_EX);
     $s = stream_get_contents($fh);
-    $data = json_decode($s === '' || $s === false ? '[]' : $s, true);
-    if (!is_array($data)) $data = [];
+    if ($s === false) {
+        flock($fh, LOCK_UN); fclose($fh);
+        json_out(500, ['error' => 'Could not read stored data. No changes were made.']);
+    }
+    $data = $s === '' ? [] : json_decode($s, true);
+    if (!is_array($data)) {
+        flock($fh, LOCK_UN); fclose($fh);
+        json_out(500, ['error' => 'Stored data is invalid JSON. No changes were made.']);
+    }
     $result = $fn($data);
     ftruncate($fh, 0);
     rewind($fh);
@@ -60,5 +67,6 @@ function read_json($file) {
     flock($fh, LOCK_UN);
     fclose($fh);
     $d = json_decode($s, true);
-    return is_array($d) ? $d : [];
+    if (!is_array($d)) json_out(500, ['error' => 'Stored data is invalid JSON.']);
+    return $d;
 }

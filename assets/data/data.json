@@ -1,16 +1,24 @@
 {
-    "version":  "0.1-demo",
-    "reviewed":  "[REVIEW DATE]",
-    "owner":  "[CONTENT OWNER – confirm with UH]",
-    "reportContact":  "[CORRECTION CONTACT – confirm with UH]",
+    "version":  "0.1-prototype",
+    "reviewStatus":  "Prototype — clinical review pending",
+    "owner":  "Prototype project — content owner not assigned",
+    "reportContact":  "No correction contact configured in this prototype",
     "primary":  {
-                    "label":  "University Hospital (UH)",
+                    "label":  "CMU University Hospital – Primary",
                     "number":  "+63 917 100 5100"
                 },
+    "alternate":  {
+                      "label":  "CMU Hospital alternate – unverified",
+                      "number":  "0917-127-9528"
+                  },
+    "campusSecurity":  {
+                         "label":  "CMU Security Services Hotline – unverified",
+                         "number":  "0917-153-3226"
+                       },
     "dos":  [
                 "Move away from the snake. Stay calm and keep the person still.",
                 "Call for help now.",
-                "Keep the bitten limb still and at about heart level.",
+                "Keep the bitten limb still and avoid unnecessary movement.",
                 "Take off rings, watches and tight clothing near the bite.",
                 "Note the time of the bite.",
                 "Note what the snake looked like, or take a photo ONLY if it is safe."
@@ -19,6 +27,7 @@
                   "Never try to catch or kill the snake.",
                   "Do not cut the bite or suck out venom.",
                   "Do not apply ice.",
+                  "Do not tie a tourniquet around the limb; it can be harmful.",
                   "Do not let the person walk around or drive.",
                   "Do not wait for symptoms before calling."
               ],
@@ -170,7 +179,7 @@
                                      "Non-venomous / observed",
                                      "Unknown"
                                  ],
-                    "_note":  "Area names and map centre are placeholders to verify with CMU. Condition and action wording must be confirmed by UH medical reviewers. syncUrl: paste a Firebase Realtime Database URL to share staff data between devices (see README)."
+                    "_note":  "Prototype data. Area names and map centre need CMU verification; condition and action wording need UH medical review. syncUrl enables optional Firebase staff sync (see README)."
                 },
     "syncUrl":  "",
     "mapCenter":  {

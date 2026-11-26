@@ -1,13 +1,13 @@
-# CMUbiotrage (XAMPP / PHP version)
+# CMUBioTriage (XAMPP / PHP version)
 
-## Run on your PC (XAMPP)
-1. Copy the `CMUBioTriage` folder into `C:\xampp\htdocs\`.
-2. In XAMPP Control Panel start **Apache** only (no MySQL needed).
-3. Open `http://localhost/CMUBioTriage/`.
+## Run locally (XAMPP)
+1. Put the project folder inside XAMPP's `htdocs` directory.
+2. Start **Apache** in XAMPP (MySQL is not needed).
+3. Open `http://localhost/<folder-name>/`, replacing `<folder-name>` with the project folder's name. Use Apache rather than a static preview server so PHP-backed staff features work.
 4. Staff login PIN is `1234` (change it in `api/config.php`).
 
 ## Open it on a phone
-- **Same Wi-Fi:** run `ipconfig`, then open `http://YOUR-PC-IP/CMUBioTriage/`. Allow Apache in Windows Firewall. Over plain http the phone blocks GPS, install and offline mode.
+- **Same Wi-Fi:** find the computer's local IP address and open `http://YOUR-PC-IP/<folder-name>/` on the phone. Allow Apache in the computer's firewall. Over plain HTTP, some phone features such as GPS and app installation may be restricted.
 - **Full features (https):** keep XAMPP running and use a tunnel (`ngrok http 80` or Cloudflare Tunnel), then open the https address.
 
 ## Folder layout
@@ -34,11 +34,11 @@ CMUBioTriage/
 ```
 
 ## Notes
-- Edit `assets/data/data.json` and replace the `[... confirm with UH]` placeholders with real numbers.
+- Edit `assets/data/data.json` to update guide wording, contacts, and facility details. Have clinical guidance and emergency contacts reviewed by CMU/UH before public use.
 - Change `STAFF_PIN` and `SITE_SALT` in `api/config.php` before real use.
-- After changing cached app files, bump the `CACHE` version in `sw.js` (currently `cmubiotrage-v38`) so returning users receive the update; then reload the guide online.
+- After changing cached app files, bump the `CACHE` version in `sw.js` (currently `cmubiotrage-v62`) so returning users receive the update; then reload the guide online.
 - Netlify cannot run PHP; `netlify.toml` blocks `/api/*` there so PHP source is never exposed.
-- Reports are plain JSON on disk: fine for a class demo, not for real patient data.
+- This is a pitch prototype. Reports and location data are stored as plain JSON on disk; do not enter real patient information or use this storage for a live service.
 
 ## QR and printed materials
 - Set poster and pocket-card QR codes to the **deployed HTTPS URL for this guide's public homepage**. There is no production URL or QR image in this project yet, so do not print a QR code made from localhost or a temporary tunnel address.

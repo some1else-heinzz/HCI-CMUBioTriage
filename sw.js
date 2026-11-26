@@ -1,7 +1,16 @@
-const CACHE='cmubiotrage-v38', TILES='cmubiotrage-tiles';
+const CACHE='cmubiotrage-v62', TILES='cmubiotrage-tiles';
 const FILES=['./','index.html','manifest.json','assets/css/styles.css','assets/js/app.js','assets/data/data.json','assets/icons/icon.svg','assets/icons/logo-96.png','assets/icons/logo-192.png','assets/icons/logo-512.png','assets/icons/logo-maskable-512.png','assets/img/bg-scales.jpg','assets/img/bg-snake.jpg','assets/img/bg-python.jpg','assets/img/bg-hex.svg','assets/vendor/leaflet/leaflet.js','assets/vendor/leaflet/leaflet.css','assets/vendor/leaflet/images/marker-icon.png','assets/vendor/leaflet/images/marker-icon-2x.png','assets/vendor/leaflet/images/marker-shadow.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x.startsWith('cmubiotrage-')&&x!==CACHE&&x!==TILES).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
+self.addEventListener('message',e=>{
+ if(e.data?.type!=='CHECK_OFFLINE_CACHE'||!e.ports?.[0])return;
+ e.waitUntil((async()=>{
+  const cache=await caches.open(CACHE);
+  const required=['index.html','assets/css/styles.css','assets/js/app.js','assets/data/data.json'];
+  const saved=(await Promise.all(required.map(path=>cache.match(new URL(path,self.registration.scope).href,{ignoreSearch:true})))).every(Boolean);
+  e.ports[0].postMessage({saved});
+ })().catch(()=>e.ports[0].postMessage({saved:false})));
+});
 self.addEventListener('fetch',e=>{
  const r=e.request; if(r.method!=='GET')return;
  const u=new URL(r.url);
