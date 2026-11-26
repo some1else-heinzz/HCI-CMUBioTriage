@@ -683,3 +683,8 @@ html:not(.light):not(.sun) .connection-state.is-offline{background:#3a1719;color
   .qr-card h1{font-size:23pt}
   .qr-scan{grid-row:auto;width:64mm}
 }
+
+/* The handoff preview should scroll with the form on phone-sized screens. */
+@media(max-width:640px){
+  .handoff-preview{position:static!important;top:auto!important;z-index:auto!important}
+}
