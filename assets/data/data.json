@@ -1,0 +1,190 @@
+{
+    "version":  "0.1-prototype",
+    "reviewStatus":  "Prototype — clinical review pending",
+    "owner":  "Prototype project — content owner not assigned",
+    "reportContact":  "No correction contact configured in this prototype",
+    "primary":  {
+                    "label":  "CMU University Hospital – Primary",
+                    "number":  "0917-100-5100"
+                },
+    "alternate":  {
+                      "label":  "CMU Hospital alternate – unverified",
+                      "number":  "0917-127-9528"
+                  },
+    "campusSecurity":  {
+                         "label":  "CMU Security Services Hotline – unverified",
+                         "number":  "0917-153-3226"
+                       },
+    "dos":  [
+                "Move away from the snake. Stay calm and keep the person still.",
+                "Call for help now.",
+                "Keep the bitten limb still and avoid unnecessary movement.",
+                "Take off rings, watches and tight clothing near the bite.",
+                "Note the time of the bite.",
+                "Note what the snake looked like, or take a photo ONLY if it is safe."
+            ],
+    "donts":  [
+                  "Never try to catch or kill the snake.",
+                  "Do not cut the bite or suck out venom.",
+                  "Do not apply ice.",
+                  "Do not tie a tourniquet around the limb; it can be harmful.",
+                  "Do not let the person walk around or drive.",
+                  "Do not wait for symptoms before calling."
+              ],
+    "hospitals":  [
+                      {
+                          "name":  "Bukidnon Provincial Hospital (BPH), Maramag",
+                          "location":  "Manuel A. Roxas St., Purok 2, North Poblacion, Maramag, Bukidnon 8714",
+                          "number":  "+63 917 109 1372",
+                          "contacts":  [
+                                           {
+                                               "label":  "ER / Main",
+                                               "number":  "+63 917 109 1372"
+                                           },
+                                           {
+                                               "label":  "OPD",
+                                               "number":  "+63 953 853 8504"
+                                           },
+                                           {
+                                               "label":  "Landline",
+                                               "number":  "(088) 828 1962"
+                                           }
+                                       ]
+                      },
+                      {
+                          "name":  "Bukidnon Provincial Medical Center (BPMC), Malaybalay",
+                          "location":  "Brgy. Casisang, Malaybalay City, Bukidnon",
+                          "number":  "+63 917 134 8748",
+                          "contacts":  [
+                                           {
+                                               "label":  "Mobile",
+                                               "number":  "+63 917 134 8748"
+                                           },
+                                           {
+                                               "label":  "Mobile",
+                                               "number":  "+63 926 967 1192"
+                                           },
+                                           {
+                                               "label":  "Landline",
+                                               "number":  "(088) 230 2111"
+                                           }
+                                       ]
+                      },
+                      {
+                          "name":  "Adventist Medical Center - Valencia City (formerly Valencia Sanitarium)",
+                          "location":  "A. Aguilar St., Poblacion, Valencia City, Bukidnon 8709",
+                          "number":  "(088) 828 7777",
+                          "contacts":  [
+                                           {
+                                               "label":  "Landline",
+                                               "number":  "(088) 828 7777"
+                                           }
+                                       ]
+                      },
+                      {
+                          "name":  "Northern Mindanao Medical Center (NMMC)",
+                          "location":  "Capitol Compound, Cagayan de Oro City",
+                          "number":  "(088) 856 4147",
+                          "contacts":  [
+                                           {
+                                               "label":  "Main",
+                                               "number":  "(088) 856 4147"
+                                           },
+                                           {
+                                               "label":  "Main",
+                                               "number":  "(088) 856 5490"
+                                           },
+                                           {
+                                               "label":  "Landline",
+                                               "number":  "(08822) 721 794"
+                                           }
+                                       ]
+                      }
+                  ],
+    "options":  {
+                    "areas":  [
+                                  "University Hospital (UH)",
+                                  "College of Veterinary Medicine",
+                                  "College of Forestry",
+                                  "College of Agriculture",
+                                  "College of Arts and Sciences",
+                                  "College of Engineering",
+                                  "College of Information Sciences and Computing",
+                                  "College of Nursing",
+                                  "College of Education",
+                                  "College of Human Ecology",
+                                  "College of Business and Management",
+                                  "Dormitory area",
+                                  "Greenhouse / nursery",
+                                  "Farm / field area",
+                                  "Forest / reserve area",
+                                  "Sports field / gym",
+                                  "Road or walkway",
+                                  "Main gate area"
+                              ],
+                    "surroundings":  [
+                                         "Inside a building",
+                                         "Open field / grass",
+                                         "Forest / thick trees",
+                                         "Beside a road",
+                                         "Near water / canal"
+                                     ],
+                    "meet":  [
+                                 "Yes",
+                                 "No"
+                             ],
+                    "times":  [
+                                  "Just now",
+                                  "About 5 minutes ago",
+                                  "About 15 minutes ago",
+                                  "About 30 minutes ago",
+                                  "About 1 hour ago",
+                                  "More than 1 hour ago"
+                              ],
+                    "conditions":  [
+                                       "Pain at bite",
+                                       "Swelling",
+                                       "Bleeding",
+                                       "Dizzy / weak",
+                                       "Vomiting",
+                                       "Hard to breathe",
+                                       "Drooping eyelids",
+                                       "Unconscious"
+                                   ],
+                    "actions":  [
+                                    "Called for help",
+                                    "Kept still",
+                                    "Removed rings / tight items",
+                                    "Applied tourniquet / tight band",
+                                    "Cleaned the wound",
+                                    "Nothing yet"
+                                ],
+                    "snakes":  [
+                                   "Not seen",
+                                   "Seen – with a hood",
+                                   "Seen – patterned",
+                                   "Seen – plain colour",
+                                   "Photo taken safely"
+                               ],
+                    "etas":  [
+                                 "Under 5 minutes",
+                                 "5–10 minutes",
+                                 "10–20 minutes",
+                                 "20–30 minutes",
+                                 "Over 30 minutes"
+                             ],
+                    "outcomes":  [
+                                     "Treated at UH",
+                                     "Referred to another hospital",
+                                     "Non-venomous / observed",
+                                     "Unknown"
+                                 ],
+                    "_note":  "Prototype data. Area names and map centre need CMU verification; condition and action wording need UH medical review. syncUrl enables optional Firebase staff sync (see README)."
+                },
+    "syncUrl":  "",
+    "mapCenter":  {
+                      "lat":  7.8575,
+                      "lng":  125.0495,
+                      "zoom":  16
+                  }
+}

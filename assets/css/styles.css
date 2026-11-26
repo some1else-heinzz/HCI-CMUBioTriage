@@ -1,0 +1,604 @@
+/* CMUBioTriage styles: dark theme (default), glass UI, light mode, sunlight mode */
+/* CMUBioTriage – deep-green theme (dark by default, light variant follows system) */
+:root{--bg:#101a14;--ink:#eef5ef;--muted:#b4c7ba;--card:#17251d;--line:#2c4237;--head:#1b3a2e;--onhead:#fff;--callbg:#14352a;--accent:#7fd1a8;--onaccent:#06150d;--alarm:#e5484d;--onalarm:#fff;--chip:#7fd1a8;--white:#f6fbf7;--whiteink:#10231a;--dial:#1f6b4d;--warn:#3b2f08;--warnink:#ffe08a;--logo:#f7c04a}
+*{box-sizing:border-box}
+html{font-size:calc(16px*var(--ts,1))}
+body{margin:0;background:var(--bg);color:var(--ink);font:1.125rem/1.5 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+.top,.foot{padding-inline:max(16px,calc((100% - 1040px)/2 + 16px))}
+.top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding-block:12px;background:var(--head);color:var(--onhead)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--onhead);text-decoration:none;font-size:1.1rem}
+.logo{display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:var(--logo);color:#14352a;font-weight:900}
+.pill{font-size:.8rem;padding:5px 12px;border-radius:99px;background:#dff3e6;color:#14352a;font-weight:700}
+.pill.off{background:var(--warn);color:var(--warnink);outline:2px solid var(--warnink)}
+main{flex:1;width:100%;max-width:1040px;margin:0 auto;padding:20px 16px}
+h1{font-size:1.7rem;margin:.1em 0 .5em;line-height:1.2;font-weight:800}
+h2{font-size:1.2rem;margin:1.1em 0 .4em;font-weight:800;color:var(--accent)}
+.lead{margin:0 0 12px;color:var(--muted)}
+
+/* Call block */
+.call{background:var(--callbg);color:#fff;border-radius:18px;padding:22px}
+.call h1{margin:0 0 14px;font-size:2.6rem;font-weight:900;letter-spacing:-.01em}
+.nums{display:grid;gap:12px}
+.nums>div{background:var(--white);color:var(--whiteink);border-radius:12px;padding:14px}
+.num{display:block;font-size:1.35rem;font-weight:800;margin:2px 0 8px;word-break:break-word}
+.nums .btn{margin:0;min-height:52px}
+.call>.btn.dial{background:transparent;border:2px solid #fff;color:#fff;margin:14px 0 0}
+
+/* Buttons */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:56px;width:100%;padding:12px 16px;margin:8px 0;border-radius:12px;border:2px solid var(--accent);background:transparent;color:var(--accent);font:inherit;font-weight:800;text-decoration:none;cursor:pointer;text-align:center}
+.btn.primary{background:var(--accent);color:var(--onaccent)}
+.btn.dial{background:var(--dial);border-color:var(--dial);color:#fff}
+.btn.small{min-height:48px;width:auto;display:inline-flex;margin:4px 6px 4px 0}
+
+/* Home tiles */
+.home{display:grid;gap:16px;align-items:start}
+@media(min-width:760px){.home{grid-template-columns:1.25fr 1fr}}
+.tiles{display:grid;gap:12px}
+@media(min-width:480px){.tiles{grid-template-columns:1fr 1fr}}
+@media(min-width:760px){.tiles{grid-template-columns:1fr}}
+.tile{position:relative;display:flex;flex-direction:column;justify-content:center;min-height:76px;padding:12px 44px 12px 18px;border:2px solid var(--line);border-radius:14px;background:var(--card);color:var(--accent);text-decoration:none}
+.tile b{font-size:1.15rem}.tile span{font-size:.9rem;color:var(--ink)}
+.tile::after{content:"→";position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:1.3rem}
+.tile:first-child{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+.tile:first-child span{color:var(--onaccent)}
+
+/* Cards, columns */
+.card{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:16px;margin:10px 0}
+.card h2{margin-top:0}
+.cols{display:grid;gap:14px}
+@media(min-width:760px){.cols{grid-template-columns:1fr 1fr;align-items:start}}
+.do{border-left:8px solid var(--accent)}.dont{border-left:8px solid var(--alarm)}
+.dont h2{color:var(--alarm)}
+ul.clean{padding-left:1.1em;margin:.3em 0}ul.clean li{margin:.55em 0}
+
+/* Forms */
+.f{margin:0 0 14px}.f label,.lbl,label{display:block;font-weight:700;margin:0 0 4px}
+input,textarea,select{width:100%;min-height:50px;padding:10px 12px;font:inherit;border:2px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+.other{margin-top:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:48px;padding:8px 14px;border-radius:99px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--chip);color:var(--onaccent);border-color:var(--chip);font-weight:800}
+.chip[aria-pressed=true]::before{content:"✔ "}
+
+/* Status bits */
+.review{background:var(--warn);color:var(--warnink);padding:5px 10px;border-radius:8px;font-size:.85rem;font-weight:700;display:inline-block;margin:4px 0}
+.tag{display:inline-block;padding:2px 10px;border-radius:99px;font-weight:800;font-size:.85rem;border:2px solid currentColor}
+.t-Confirmed{color:var(--accent)}.t-Unverified,.t-Stale{color:var(--warnink);background:var(--warn)}
+.big{font-size:1.5rem;font-weight:800;word-break:break-all}
+.msg{padding:10px 14px;border-radius:10px;background:var(--card);border:2px solid var(--accent);margin:8px 0;font-weight:600}
+pre{white-space:pre-wrap;background:var(--card);border:2px solid var(--line);border-radius:10px;padding:12px;font:inherit}
+.back{display:inline-block;margin-bottom:6px;color:var(--accent);font-weight:800}
+nav .btn.small{margin-bottom:10px}
+.foot{padding-block:14px;font-size:.85rem;border-top:2px solid var(--line);color:var(--muted);display:flex;justify-content:space-between;gap:12px}
+.foot a{color:var(--accent);font-weight:700}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:4px solid #f5a300;outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.topright{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.staffbtn{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:99px;border:2px solid #fff;color:#fff;font-weight:800;text-decoration:none}
+.staffbtn:focus-visible{outline:4px solid #f5a300;outline-offset:2px}
+
+#map{height:340px;border-radius:12px;border:2px solid var(--line);margin:8px 0}
+.msg.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:3000;max-width:92vw;font-size:1.1rem;box-shadow:0 6px 24px rgba(0,0,0,.4)}
+.prefs{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.lnk{background:none;border:0;padding:8px 0;min-height:44px;font:inherit;font-weight:700;color:var(--accent);text-decoration:underline;cursor:pointer}
+.lnk[aria-pressed=true]{background:var(--accent);color:var(--onaccent);padding:8px 12px;border-radius:8px;text-decoration:none}
+html.sun{--bg:#fff;--ink:#000;--muted:#1a1a1a;--card:#fff;--line:#000;--head:#000;--onhead:#fff;--callbg:#000;--accent:#00522a;--onaccent:#fff;--alarm:#a30000;--chip:#00522a;--white:#fff;--whiteink:#000;--dial:#00522a;--warn:#fff3b0;--warnink:#000}
+html.sun .card,html.sun .tile,html.sun input,html.sun select,html.sun .chip{border-width:3px}
+html.sun .tile:first-child span{color:#fff}
+
+#staffMap{height:420px;border-radius:12px;border:2px solid var(--line);isolation:isolate}
+.report-card h2{font-size:1.2rem;overflow-wrap:anywhere}
+.report-time{color:var(--muted);font-size:.9rem}
+.report-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:16px 0}
+.report-details dt{font-weight:700;font-size:.85rem;color:var(--muted)}
+.report-details dd{margin:3px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+button:disabled{opacity:.65;cursor:wait}
+@media(max-width:520px){#staffMap{height:320px}.report-details{grid-template-columns:1fr}}
+
+.btn.danger{border-color:var(--alarm);color:var(--alarm)}
+.report-actions{margin-top:10px}
+
+/* ===== Glass theme + snake-scale background ===== */
+:root{--glass:rgba(14,34,26,.52);--glass-2:rgba(255,255,255,.07);--glass-line:rgba(255,255,255,.17);--glass-hi:rgba(255,255,255,.22);--shadow:0 10px 34px rgba(0,0,0,.45)}
+body{background:#07120c}
+.bg{position:fixed;inset:0;z-index:-1;overflow:hidden;background:#07120c;pointer-events:none}
+.bg i{position:absolute;display:block}
+.bg .b1{inset:0;background:url(../img/bg-scales.jpg) center/cover no-repeat}
+.bg::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 30%,rgba(5,14,9,.25),rgba(5,14,9,.78))}
+.bg .b2,.bg .b3{width:min(75vw,760px);height:46vh;background:url(../img/bg-snake.jpg) no-repeat;background-size:cover;mix-blend-mode:screen;opacity:.75;z-index:1}
+.bg .b2{top:0;right:0;background-position:top;-webkit-mask-image:linear-gradient(to bottom left,#000 30%,transparent 85%);mask-image:linear-gradient(to bottom left,#000 30%,transparent 85%)}
+.bg .b3{bottom:0;left:0;background-position:bottom;-webkit-mask-image:linear-gradient(to top right,#000 30%,transparent 85%);mask-image:linear-gradient(to top right,#000 30%,transparent 85%)}
+.bg::after{z-index:0}
+.top{position:sticky;top:0;z-index:20;background:rgba(12,30,22,.55);border-bottom:1px solid var(--glass-line);-webkit-backdrop-filter:blur(16px) saturate(150%);backdrop-filter:blur(16px) saturate(150%)}
+.card,.tile,.call,.dock{background:var(--glass);border:1px solid var(--glass-line);box-shadow:var(--shadow),inset 0 1px 0 var(--glass-hi);-webkit-backdrop-filter:blur(18px) saturate(150%);backdrop-filter:blur(18px) saturate(150%)}
+.call{background:linear-gradient(160deg,rgba(30,82,62,.62),rgba(12,32,24,.58));border-radius:22px}
+.nums>div{background:var(--glass-2);color:var(--ink);border:1px solid var(--glass-line);box-shadow:inset 0 1px 0 var(--glass-hi);border-radius:16px}
+.card,.tile{border-radius:18px}
+.tile{transition:transform .15s ease,border-color .15s ease}
+.tile:hover{transform:translateY(-2px);border-color:var(--accent)}
+.tile:first-child{background:linear-gradient(135deg,rgba(142,224,184,.95),rgba(88,178,138,.9));border-color:rgba(255,255,255,.4)}
+input,textarea,select{background:rgba(0,0,0,.28);border:1px solid var(--glass-line)}
+.chip{background:rgba(255,255,255,.06);border:1px solid var(--glass-line);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.chip[aria-pressed=true]{background:var(--chip);border-color:var(--chip)}
+.btn:not(.primary):not(.dial){background:rgba(255,255,255,.06);border:1px solid var(--accent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.call>.btn.dial{background:rgba(255,255,255,.08);border:1px solid var(--glass-hi)}
+/* footer dock */
+.foot{display:flex;justify-content:center;padding:18px 16px 26px;border:0;background:none}
+.dock{display:inline-flex;flex-wrap:wrap;justify-content:center;gap:4px;padding:6px;border-radius:30px}
+.dockbtn{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 18px;border:0;border-radius:99px;background:transparent;color:var(--ink);font:inherit;font-size:.95rem;font-weight:700;text-decoration:none;cursor:pointer;transition:background .15s}
+.dockbtn:hover{background:rgba(255,255,255,.1)}
+.dockbtn[aria-pressed=true]{background:var(--accent);color:var(--onaccent)}
+.dockbtn svg{flex:none}
+/* fallbacks */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.card,.tile,.call,.dock,.top{background:rgba(14,34,26,.92)}}
+@media(prefers-reduced-transparency:reduce){.card,.tile,.call,.dock,.top,.chip{background:#12281e;-webkit-backdrop-filter:none;backdrop-filter:none}}
+@media(prefers-reduced-motion:reduce){.tile{transition:none}}
+/* Sunlight mode: plain, high-contrast, no photo or glass */
+html.sun .bg{display:none}
+html.sun body{background:#fff}
+html.sun .top{background:#000;-webkit-backdrop-filter:none;backdrop-filter:none}
+html.sun .card,html.sun .tile,html.sun .dock,html.sun .call,html.sun .nums>div,html.sun .chip,html.sun input,html.sun select{-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;border:3px solid #000}
+html.sun .card,html.sun .tile,html.sun .dock,html.sun .nums>div,html.sun .chip,html.sun input,html.sun select{background:#fff;color:#000}
+html.sun .call{background:#000;color:#fff}html.sun .call .nums>div{background:#fff;color:#000}
+html.sun .tile:first-child{background:#00522a;color:#fff}
+html.sun .btn:not(.primary):not(.dial){background:#fff;border:3px solid #00522a}
+html.sun .dockbtn{color:#000}html.sun .dockbtn[aria-pressed=true]{background:#00522a;color:#fff}
+
+/* ===== Subtle Scales + Corner Snakes ===== */
+.bg{position:fixed;inset:0;z-index:-1;overflow:hidden;background:#07130d;pointer-events:none}
+.bg i{position:absolute;display:block}
+.bg .b1{inset:0;background:url(../img/bg-scales.jpg) center/cover no-repeat;opacity:.28}
+.bg::after{content:"";position:absolute;inset:0;z-index:0;background:radial-gradient(110% 85% at 50% 35%,rgba(7,19,13,.35),rgba(5,13,9,.88))}
+.bg .b2,.bg .b3{width:min(70vw,720px);height:45vh;background:url(../img/bg-snake.jpg) no-repeat;background-size:cover;mix-blend-mode:screen;opacity:.32;z-index:1}
+.bg .b2{top:0;right:0;background-position:top right;-webkit-mask-image:linear-gradient(to bottom left,#000 20%,transparent 80%);mask-image:linear-gradient(to bottom left,#000 20%,transparent 80%)}
+.bg .b3{bottom:0;left:0;background-position:bottom left;-webkit-mask-image:linear-gradient(to top right,#000 20%,transparent 80%);mask-image:linear-gradient(to top right,#000 20%,transparent 80%)}
+.call{background:var(--glass)}
+.tile:first-child{background:var(--accent);border-color:rgba(255,255,255,.35)}
+
+/* ===== Light mode (same snake + scales background, lighter wash) ===== */
+html.light:not(.sun){--bg:#eef5ef;--ink:#10231a;--muted:#2f4a3b;--card:rgba(255,255,255,.72);--line:#b7cdbf;--head:#e6f1e9;--onhead:#10231a;--callbg:#14352a;--accent:#1f6b4d;--onaccent:#fff;--alarm:#b42318;--chip:#1f6b4d;--dial:#1f6b4d;--warn:#fff1c2;--warnink:#4d3800;--logo:#f7c04a;--glass:rgba(255,255,255,.64);--glass-2:rgba(255,255,255,.55);--glass-line:rgba(16,35,26,.2);--glass-hi:rgba(255,255,255,.9);--shadow:0 8px 26px rgba(16,35,26,.16)}
+html.light:not(.sun) .call{background:linear-gradient(160deg,rgba(24,74,55,.94),rgba(14,44,32,.92));color:#fff}
+html.light:not(.sun) .nums>div{background:rgba(255,255,255,.92);color:#10231a;border-color:rgba(255,255,255,.6)}
+html.light:not(.sun) .tile:first-child{background:var(--accent);color:#fff}
+html.light:not(.sun) .tile:first-child span{color:#fff}
+html.light:not(.sun) input,html.light:not(.sun) textarea,html.light:not(.sun) select{background:rgba(255,255,255,.8);color:#10231a;border-color:#9fb8a8}
+html.light:not(.sun) .chip{background:rgba(255,255,255,.65);color:#10231a;border-color:#9fb8a8}
+html.light:not(.sun) .chip[aria-pressed=true]{background:var(--chip);color:#fff;border-color:var(--chip)}
+html.light:not(.sun) .btn:not(.primary):not(.dial){background:rgba(255,255,255,.55);border-color:var(--accent);color:var(--accent)}
+html.light:not(.sun) .btn.primary{background:var(--accent);color:#fff}
+html.light:not(.sun) .dockbtn:hover{background:rgba(16,35,26,.08)}
+html.light:not(.sun) .dockbtn[aria-pressed=true]{background:var(--accent);color:#fff}
+html.light:not(.sun) .tag.t-Confirmed{color:#14532d}
+html.light:not(.sun) .foot{color:var(--muted)}
+@media(prefers-reduced-transparency:reduce){html.light:not(.sun) .card,html.light:not(.sun) .tile,html.light:not(.sun) .dock,html.light:not(.sun) .top,html.light:not(.sun) .chip{background:#f3f8f4}}
+
+
+/* ===== Header layout: brand + Staff on the left, display options on the right ===== */
+.top{justify-content:space-between;gap:10px 16px}
+.topleft{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{font-size:1.55rem;gap:12px;letter-spacing:-.01em}
+.logo{width:48px;height:48px;border-radius:13px;font-size:1.25rem}
+.staffbtn{min-height:42px;padding:0 18px}
+.top .dock{padding:4px;gap:2px;border-radius:26px}
+.top .dockbtn{min-height:42px;padding:0 14px;font-size:.85rem;gap:6px}
+.top .dockbtn svg{width:20px;height:20px}
+@media(max-width:820px){
+  .top .dockbtn{padding:0 11px}
+  .top .dockbtn span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+}
+@media(max-width:560px){
+  .brand{font-size:1.3rem}.logo{width:42px;height:42px}
+  .top .dock{margin-left:auto}
+}
+
+main:focus{outline:none}
+
+
+/* ===== Header v3: glass bar, single right-hand box (Staff highlighted), same background in both themes ===== */
+.top{background:rgba(10,26,19,.22);-webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%);border-bottom:1px solid rgba(255,255,255,.14);box-shadow:0 8px 30px rgba(0,0,0,.18);color:#fff}
+.top .brand{color:#fff}
+.top .dock{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2)}
+.top .dockbtn{color:#fff}
+.top .dockbtn:hover{background:rgba(255,255,255,.14)}
+.top .dockbtn.staffbtn{background:var(--accent);color:var(--onaccent);border:0;min-height:42px;padding:0 16px;border-radius:99px}
+.top .dockbtn.staffbtn:hover{filter:brightness(1.08)}
+@media(max-width:820px){
+  .top .dockbtn span{position:static;width:auto;height:auto;clip:auto;overflow:visible}
+  .top .dockbtn{padding:0 12px}
+  #tsBtn span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+}
+@media(max-width:380px){.top .dockbtn svg{display:none}}
+
+/* About link: end of page content, not a footer */
+.aboutlink{margin:28px 0 8px;text-align:center}
+.aboutlink a{color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:3px;padding:10px 12px;display:inline-block}
+
+/* ===== Light theme v2: bright, high-contrast for outdoor use; same scales + snake texture, inverted to dark-on-light ===== */
+html.light:not(.sun){--bg:#f1f7f2;--ink:#08150e;--muted:#1d3a2b;--card:rgba(255,255,255,.93);--line:#2d5a43;--head:#f1f7f2;--onhead:#08150e;--callbg:#0d3b29;--accent:#0f5a3b;--onaccent:#fff;--alarm:#a80f16;--onalarm:#fff;--chip:#0f5a3b;--dial:#0f5a3b;--warn:#fff0b3;--warnink:#3d2b00;--glass:rgba(255,255,255,.93);--glass-2:rgba(255,255,255,.96);--glass-line:rgba(13,59,41,.55);--glass-hi:rgba(255,255,255,1);--shadow:0 4px 14px rgba(8,21,14,.18);color-scheme:light}
+html.light:not(.sun) body{background:#eaf3ec;color:#08150e}
+html.light:not(.sun) .bg{background:#eaf3ec}
+html.light:not(.sun) .bg .b1{opacity:.5;filter:invert(1) hue-rotate(180deg) saturate(.8);mix-blend-mode:multiply}
+html.light:not(.sun) .bg .b2,html.light:not(.sun) .bg .b3{filter:invert(1) hue-rotate(180deg);mix-blend-mode:multiply;opacity:.5}
+html.light:not(.sun) .bg::after{z-index:2;background:radial-gradient(110% 85% at 50% 35%,rgba(246,251,247,.55),rgba(232,243,235,.35))}
+/* header: bright glass, dark text */
+html.light:not(.sun) .top{background:rgba(244,250,246,.62);border-bottom:1px solid rgba(13,59,41,.35);box-shadow:0 4px 18px rgba(8,21,14,.12);color:#08150e}
+html.light:not(.sun) .top .brand{color:#08150e}
+html.light:not(.sun) .top .dock{background:rgba(255,255,255,.7);border:2px solid rgba(13,59,41,.55)}
+html.light:not(.sun) .top .dockbtn{color:#08150e}
+html.light:not(.sun) .top .dockbtn:hover{background:rgba(13,59,41,.12)}
+html.light:not(.sun) .top .dockbtn.staffbtn{background:#0f5a3b;color:#fff}
+/* page text on the light background */
+html.light:not(.sun) main,html.light:not(.sun) h1{color:#08150e}
+html.light:not(.sun) h2,html.light:not(.sun) .back,html.light:not(.sun) .aboutlink a{color:#0f5a3b}
+html.light:not(.sun) .lead,html.light:not(.sun) .report-time,html.light:not(.sun) .report-details dt{color:#1d3a2b}
+html.light:not(.sun) .dont h2{color:#a80f16}
+/* boxes: near-opaque white, strong dark borders */
+html.light:not(.sun) .card,html.light:not(.sun) .tile,html.light:not(.sun) .msg,html.light:not(.sun) pre{background:rgba(255,255,255,.94);color:#08150e;border:2px solid #2d5a43}
+html.light:not(.sun) .tile{color:#0f5a3b}
+html.light:not(.sun) .tile span{color:#08150e}
+html.light:not(.sun) .tile:first-child{background:#0f5a3b;color:#fff;border-color:#0f5a3b}
+html.light:not(.sun) .tile:first-child span{color:#fff}
+html.light:not(.sun) .call{background:#0d3b29;color:#fff;border:2px solid #08150e}
+html.light:not(.sun) .call h1{color:#fff}
+html.light:not(.sun) .nums>div{background:#fff;color:#08150e;border:2px solid #fff}
+html.light:not(.sun) .call>.btn.dial{background:transparent;border:2px solid #fff;color:#fff}
+html.light:not(.sun) .btn.dial{background:#0f5a3b;border-color:#0f5a3b;color:#fff}
+html.light:not(.sun) .nums .btn.dial{background:#0f5a3b;border-color:#0f5a3b}
+html.light:not(.sun) .btn:not(.primary):not(.dial){background:#fff;border:2px solid #0f5a3b;color:#0f5a3b}
+html.light:not(.sun) .btn.primary{background:#0f5a3b;border-color:#0f5a3b;color:#fff}
+html.light:not(.sun) .btn.danger{color:#a80f16;border-color:#a80f16}
+html.light:not(.sun) input,html.light:not(.sun) textarea,html.light:not(.sun) select{background:#fff;color:#08150e;border:2px solid #2d5a43}
+html.light:not(.sun) .chip{background:#fff;color:#08150e;border:2px solid #2d5a43}
+html.light:not(.sun) .chip[aria-pressed=true]{background:#0f5a3b;color:#fff;border-color:#0f5a3b}
+html.light:not(.sun) .tag.t-Confirmed{color:#0b4a2e}
+html.light:not(.sun) .msg.toast{background:#fff;color:#08150e}
+html.light:not(.sun) a:focus-visible,html.light:not(.sun) button:focus-visible{outline-color:#b45f00}
+@media(prefers-reduced-transparency:reduce){html.light:not(.sun) .top{background:#f4faf6}}
+
+
+/* ===== Light theme v3 (matches approved mockup): off-white page, python-skin texture lower-right only, forest-green header ===== */
+html.light:not(.sun){--bg:#f2f5ef;--logo:#e9b83c;--accent:#1b3a2e}
+html.light:not(.sun) body,html.light:not(.sun) .bg{background:#f2f5ef}
+html.light:not(.sun) .bg .b1,html.light:not(.sun) .bg .b2{display:none}
+html.light:not(.sun) .bg::after{display:none}
+html.light:not(.sun) .bg .b3{display:block;left:auto;right:0;bottom:0;top:auto;width:min(62vw,860px);height:78vh;background:url(../img/bg-python.jpg) right bottom/cover no-repeat;filter:none;mix-blend-mode:multiply;opacity:.2;z-index:0;-webkit-mask-image:linear-gradient(to top left,#000 0%,rgba(0,0,0,.6) 35%,transparent 78%);mask-image:linear-gradient(to top left,#000 0%,rgba(0,0,0,.6) 35%,transparent 78%)}
+/* header */
+html.light:not(.sun) .top{background:rgba(27,58,46,.96);border-bottom:1px solid rgba(0,0,0,.25);box-shadow:0 4px 16px rgba(8,21,14,.25);color:#fff}
+html.light:not(.sun) .top .brand{color:#fff}
+html.light:not(.sun) .logo{background:#e9b83c;color:#1b3a2e;border-radius:10px}
+html.light:not(.sun) .top .dock{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.3)}
+html.light:not(.sun) .top .dockbtn{color:#fff}
+html.light:not(.sun) .top .dockbtn:hover{background:rgba(255,255,255,.16)}
+html.light:not(.sun) .top .dockbtn.staffbtn{background:#9be8c1;color:#0d2a1d;border:0}
+/* page text */
+html.light:not(.sun) h2,html.light:not(.sun) .back,html.light:not(.sun) .aboutlink a{color:#1b3a2e}
+/* Call now: frosted mint glass, white contact boxes */
+html.light:not(.sun) .call{background:rgba(206,235,217,.72);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:#0d2a1d;border:1.5px solid rgba(27,58,46,.3);box-shadow:0 6px 22px rgba(27,58,46,.12);border-radius:22px}
+html.light:not(.sun) .call h1{color:#1b3a2e}
+html.light:not(.sun) .nums>div{background:#fff;color:#0d2a1d;border:1.5px solid rgba(27,58,46,.25);border-radius:16px}
+html.light:not(.sun) .tag.t-Unverified{background:#ffd978;color:#4a3000;border:2px solid #c98a00;margin:4px 0 6px}
+html.light:not(.sun) .nums .btn.dial{background:#1b3a2e;border-color:#1b3a2e;color:#fff}
+html.light:not(.sun) .call>a.btn.dial[href="tel:911"]{background:#1b3a2e;border:2px solid #1b3a2e;color:#fff}
+html.light:not(.sun) .call>a.btn.dial[href="#/nosignal"]{background:transparent;border:2px solid #1b3a2e;color:#1b3a2e}
+/* tiles: bright mint primary, translucent sage glass for the rest */
+html.light:not(.sun) .tile{background:rgba(205,224,208,.6);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1.5px solid rgba(27,58,46,.28);color:#1b3a2e}
+html.light:not(.sun) .tile span{color:#244a3a}
+html.light:not(.sun) .tile:first-child{background:#9be8c1;border-color:#4fb98a;color:#0d2a1d}
+html.light:not(.sun) .tile:first-child span{color:#0d2a1d}
+
+/* Antivenom status board */
+.status-page{color:var(--ink)}
+.status-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.status-heading h1{font-size:2.15rem;margin:0;color:var(--ink)}
+.status-heading .lead{font-weight:650;margin:2px 0 14px}
+.status-connection{white-space:nowrap;border-radius:99px;padding:5px 12px;background:rgba(127,209,168,.16);color:var(--accent);font-size:.82rem;font-weight:800}
+.status-connection.is-device-only{background:#fff0ca;color:#805000}
+.status-connection.is-shared{background:#ddf5e8;color:#086842}
+.connection-warning{padding:13px 16px;margin:12px 0 10px;border:2px solid;border-radius:12px;font-size:.9rem;line-height:1.45}
+.connection-device-only{background:#fff4d9;border-color:#d99b26;color:#634300}
+.connection-shared{background:#e7f7ed;border-color:#35a56c;color:#075d39}
+.status-nav{display:flex;align-items:center;flex-wrap:wrap;gap:4px;padding:5px;margin-bottom:12px;border:1px solid var(--glass-line);border-radius:28px;background:var(--glass);box-shadow:var(--shadow)}
+.status-nav a{min-height:44px;padding:9px 14px;display:inline-flex;align-items:center;border-radius:99px;color:var(--ink);font-size:.95rem;font-weight:750;text-decoration:none;transition:background .15s,color .15s}
+.status-nav a:hover{background:var(--glass-2)}
+.status-nav a[aria-current="page"]{background:var(--accent);color:var(--onaccent)}
+.status-loaded,.facility-count{font-size:.82rem;color:var(--muted);font-weight:650;margin:10px 0}
+.status-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:10px 0 14px}
+.status-stat{display:flex;align-items:center;gap:13px;min-height:78px;padding:12px 14px;border:1px solid var(--line);border-left:4px solid #42a5df;border-radius:15px;background:var(--card)}
+.status-stat small{display:block;color:var(--muted);font-size:.78rem;font-weight:650}
+.status-stat strong{display:block;font-size:1.35rem;line-height:1.2}
+.stat-icon{display:grid;place-items:center;flex:none;width:42px;height:42px;border-radius:12px;background:rgba(127,209,168,.13);font-size:1.2rem;font-weight:850}
+.stat-green{border-left-color:#13ad79}.stat-lime{border-left-color:#69c94d}.stat-red{border-left-color:#f05268}
+.status-warning{padding:14px 16px;margin:14px 0 18px;border:1px solid #a8d9fb;border-radius:12px;background:#eaf5ff;color:#205581;font-size:.9rem}
+.status-filter{display:grid;grid-template-columns:minmax(0,1fr);align-items:center;gap:10px 12px;padding:14px;border:1px solid var(--line);border-radius:15px;background:var(--card)}
+.status-filter input{grid-column:1/-1;min-height:46px;background:var(--bg)}
+.status-choices{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:7px}
+.status-choice{min-height:44px;padding:8px 13px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;font-size:.84rem;font-weight:750;cursor:pointer}
+.status-choice span{display:inline-grid;place-items:center;min-width:24px;height:24px;margin-left:4px;padding:0 5px;border-radius:99px;background:var(--glass-2);font-size:.75rem}
+.status-choice[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+.status-filter .facility-count{margin:0}
+.status-filter-button{grid-column:2;justify-self:end;width:auto;min-width:150px;min-height:44px;padding:8px 20px;border:0;border-radius:10px;background:#087f71;color:#fff;font:inherit;font-size:.9rem;font-weight:800;cursor:pointer}
+.status-filter-button:hover{filter:brightness(1.08)}
+.facility-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.facility-card{min-width:0;padding:16px;border:1px solid var(--line);border-left:4px solid #d5e3df;border-radius:16px;background:var(--card);box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.facility-card[hidden]{display:none}
+.facility-title{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.facility-title h2{margin:2px 0 5px;color:var(--ink);font-size:1rem;line-height:1.35}
+.facility-badge{flex:none;padding:5px 9px;border:1px solid #efd7a6;border-radius:99px;background:#fff5df;color:#a94b00;font-size:.68rem;font-weight:850;text-align:center}
+.facility-location{margin:0 0 14px;color:var(--muted);font-size:.82rem}
+.detail-pending{display:inline-block;margin:3px 0;padding:3px 7px;border:1px solid #d99b26;border-radius:7px;background:#fff4d9;color:#634300;font-size:.7rem;font-weight:800}
+.facility-title .detail-pending{display:block;width:max-content;max-width:100%}
+.facility-note{margin:8px 0 14px;padding:8px 10px;border-radius:9px;background:#fff3d3;color:#8a5100;font-size:.76rem;font-weight:750}
+.facility-meta{font-size:.76rem;color:var(--muted)}
+.facility-meta strong{color:var(--ink)}
+.facility-meta time{font-weight:700}
+.facility-stale{border-left-color:#e49b20!important}
+.facility-badge.badge-stale{background:#fff0ca;border-color:#d99b26;color:#805000}
+.facility-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:12px}
+.facility-number{display:inline-block;padding:9px 12px;border:1px dashed #d99b26;border-radius:9px;background:#fff4d9;color:#634300;font-size:.75rem;font-weight:750}
+.facility-call-main{flex:1 1 100%;margin:2px 0!important;min-height:48px!important}
+.facility-call-secondary{display:flex;align-items:center;justify-content:space-between;gap:10px;flex:1 1 160px;min-height:44px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--glass-2);color:var(--ink);font-size:.78rem;font-weight:750;text-decoration:none}
+.facility-call-secondary small{color:var(--muted);font-size:.74rem}
+.staff-directory-contacts{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.staff-directory-contacts .facility-call-secondary{flex:0 1 auto}
+.facility-map-link{padding:9px 11px;border:1px solid var(--line);border-radius:9px;color:var(--accent);font-size:.78rem;font-weight:750}
+.facility-confirmed{border-left-color:#18af7d}.facility-confirmed .facility-badge{background:#e5f8ef;border-color:#a7dec1;color:#086842}.facility-confirmed .facility-note{background:#e5f8ef;color:#086842}
+.facility-restock{border-left-color:#69c94d}.status-contacts{display:flex;flex-wrap:wrap;gap:14px;margin:18px 0;font-size:.85rem;font-weight:700}
+.status-contacts a{color:var(--accent)}
+.contact-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px}
+.contact-links>div{min-width:0;padding:12px;border:1px solid var(--line);border-radius:12px}
+.contact-links .num{font-size:1rem;overflow-wrap:anywhere}
+.contact-source-note{margin:12px 0 0;color:var(--muted);font-size:.9rem}
+.contact-source-note a{color:var(--accent);overflow-wrap:anywhere}
+html.light:not(.sun) .status-warning{background:#edf6ff;color:#205581}
+html.light:not(.sun) .connection-device-only{background:#fff4d9;border-color:#d99b26;color:#634300}
+html.light:not(.sun) .connection-shared{background:#e7f7ed;border-color:#35a56c;color:#075d39}
+html.light:not(.sun) .status-stat,html.light:not(.sun) .status-filter,html.light:not(.sun) .facility-card{background:#fff}
+html.light:not(.sun) .facility-card{border-color:#d5e3df;border-left-width:4px;box-shadow:0 4px 14px rgba(17,49,37,.06)}
+html.light:not(.sun) .facility-title h2{color:#102c3a}
+@media(max-width:760px){.status-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.facility-grid{grid-template-columns:1fr}}
+@media(max-width:520px){.status-heading{display:block}.status-heading h1{font-size:1.8rem}.status-connection{display:inline-block;margin-bottom:8px}.status-filter{grid-template-columns:1fr}.status-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.status-choice{width:100%;padding-inline:8px}.status-filter .facility-count,.status-filter-button{grid-column:1;width:100%}.facility-title{display:block}.facility-badge{display:inline-block;margin-bottom:7px}.contact-links{grid-template-columns:1fr}}
+
+/* Handoff screen: emergency action, preview, and sharing controls */
+.handoff-callout{display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,.65fr);align-items:center;gap:14px;margin:14px 0;padding:16px;border:2px solid #d9363e;border-radius:14px;background:rgba(135,24,31,.16)}
+.handoff-callout h2{margin:0 0 5px;color:var(--alarm)}
+.handoff-callout p{margin:0;color:var(--ink);font-weight:650}
+.handoff-call-actions{display:grid;grid-template-columns:1fr;gap:8px}
+.handoff-call-actions .btn{width:100%;min-height:56px;margin:0;box-sizing:border-box}
+.emergency-call{border-color:#b4232e;background:#b4232e;color:#fff}
+.handoff-preview pre{max-height:330px;overflow:auto;font-size:.9rem}
+.handoff-preview .lead{margin:0 0 8px}
+.handoff-share-actions{display:flex;flex-wrap:wrap;gap:8px}
+.handoff-share-actions .btn{margin:0;min-height:46px;flex:1 1 150px}
+.handoff-share-note,.field-hint{display:block;margin:6px 0;color:var(--muted);font-size:.8rem}
+.field-hint{margin-top:-8px;margin-bottom:12px}
+html.light:not(.sun) .handoff-callout{background:#fff2f1;border-color:#b4232e}
+html.light:not(.sun) .emergency-call{background:#b4232e;border-color:#b4232e;color:#fff}
+@media(max-width:640px){.handoff-callout{grid-template-columns:1fr}.handoff-share-actions{display:grid;grid-template-columns:1fr}.handoff-share-actions .btn{width:100%}}
+
+/* Dashboard concept layout */
+.availability-dashboard{max-width:100%;padding:18px;border:1px solid rgba(255,255,255,.14);border-radius:19px;background:rgba(0,0,0,.78);color:#f7f7f7}
+.dashboard-brand{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.dashboard-brand strong{font-size:.95rem}
+.dashboard-brand span{padding:5px 10px;border-radius:99px;background:#062415;color:#18d36b;font-size:.72rem;font-weight:800}
+.availability-dashboard .status-heading h1{color:#f7f7f7;font-size:2rem}
+.availability-dashboard .status-heading .lead{color:#d0d0d0}
+.availability-dashboard .status-nav{background:#171717;border-color:#303030;box-shadow:none}
+.availability-dashboard .status-nav a{color:#efefef}
+.availability-dashboard .status-nav a[aria-current="page"]{background:#075e36;color:#fff}
+.overview-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:16px 10px 8px}
+.overview-heading h2{margin:0;color:#f7f7f7;font-size:1rem}
+.overview-heading span{padding:4px 9px;border-radius:99px;background:#09233c;color:#60b4ff;font-size:.72rem;font-weight:750}
+.availability-dashboard .status-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:0 10px 14px}
+.availability-dashboard .status-stat{min-height:78px;border:0;border-radius:9px;background:#303030;box-shadow:none}
+.availability-dashboard .status-stat .stat-icon{display:none}
+.availability-dashboard .status-stat div{display:flex;flex-direction:column-reverse;gap:4px}
+.availability-dashboard .status-stat small{color:#e0e0e0;font-size:.76rem}
+.availability-dashboard .status-stat strong{color:#f5f5f5;font-size:1.45rem}
+.availability-dashboard .status-stat.stat-green strong{color:#00c853}
+.availability-dashboard .connection-warning{margin:12px 10px}
+.availability-dashboard .dashboard-reminder{margin:14px 10px;padding:12px 14px;border:0;background:transparent;color:#f2f2f2}
+.availability-dashboard .dashboard-reminder strong{font-size:1rem}
+.availability-dashboard .dashboard-reminder strong::before{color:#39a7ff}
+.availability-dashboard .status-filter{margin:12px 10px;background:#1d1d1d;border-color:#383838}
+.availability-dashboard .status-filter input{background:#111;border-color:#505050;color:#fff}
+.availability-dashboard .status-choice{background:#222;border-color:#474747;color:#eee}
+.availability-dashboard .status-choice[aria-pressed="true"]{background:#087747;border-color:#087747;color:#fff}
+.availability-dashboard .facility-count{color:#d4d4d4}
+.availability-dashboard .facility-grid{grid-template-columns:1fr;gap:10px;margin:0 10px}
+.availability-dashboard .facility-card{padding:15px 14px;border:1px solid #353535;border-radius:14px;background:rgba(0,0,0,.3);box-shadow:none}
+.availability-dashboard .facility-title h2{color:#fff;font-size:1rem}
+.availability-dashboard .facility-location{color:#e2e2e2;margin:5px 0 12px}
+.availability-dashboard .facility-divider{border:0;border-top:1px solid #333;margin:12px 0}
+.availability-dashboard .facility-meta{color:#d8d8d8;font-size:.82rem}
+.availability-dashboard .facility-meta strong{color:#fff}
+.facility-verification{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 16px;margin:10px 0}
+.facility-verification p{margin:0;color:var(--muted);font-size:.78rem;overflow-wrap:anywhere}
+.facility-verification strong{display:block;color:var(--ink);font-size:.75rem}
+.facility-verification time{color:inherit}
+.availability-dashboard .facility-note{margin:8px 0;background:transparent;color:#cfcfcf;font-size:.78rem;font-weight:500;padding:0}
+.availability-dashboard .facility-verification p{color:#d8d8d8}
+.availability-dashboard .facility-verification strong{color:#fff}
+.availability-dashboard .facility-badge{background:#35270e;border-color:#634715;color:#ff8a00}
+.availability-dashboard .facility-confirmed .facility-badge{background:#092d1b;border-color:#176339;color:#39d879}
+.availability-dashboard .facility-stale .facility-badge{background:#35270e;color:#ffb74d}
+.availability-dashboard .facility-actions{justify-content:center}
+.availability-dashboard .facility-call-main{flex:0 1 270px;width:auto;min-height:46px!important;border:0;background:transparent;color:#f5f5f5;box-shadow:none}
+.availability-dashboard .facility-call-main::first-letter{color:#22c55e}
+.availability-dashboard .facility-call-secondary{background:#191919;border-color:#424242;color:#f2f2f2}
+.availability-dashboard .facility-call-secondary small{color:#c9c9c9}
+.availability-dashboard .status-contacts{margin:16px 10px 0}
+.availability-dashboard .status-contacts a{color:#9dd7ff}
+html.light:not(.sun) .availability-dashboard{background:#fff;color:#10231a;border-color:#cbd8d0;box-shadow:0 8px 30px rgba(17,49,37,.1)}
+html.light:not(.sun) .availability-dashboard .status-heading h1,html.light:not(.sun) .overview-heading h2{color:#10231a}
+html.light:not(.sun) .availability-dashboard .status-heading .lead{color:#385447}
+html.light:not(.sun) .availability-dashboard .status-nav{background:#f2f5f3;border-color:#d8e1dc}
+html.light:not(.sun) .availability-dashboard .status-nav a{color:#17392a}
+html.light:not(.sun) .availability-dashboard .status-nav a[aria-current="page"]{color:#fff}
+html.light:not(.sun) .availability-dashboard .status-stat{background:#f0f1f1}
+html.light:not(.sun) .availability-dashboard .status-stat strong{color:#122b3b}
+html.light:not(.sun) .availability-dashboard .status-stat.stat-green strong{color:#007d42}
+html.light:not(.sun) .availability-dashboard .status-stat small{color:#42515a}
+html.light:not(.sun) .availability-dashboard .dashboard-reminder,html.light:not(.sun) .availability-dashboard .facility-location,html.light:not(.sun) .availability-dashboard .facility-meta,html.light:not(.sun) .availability-dashboard .facility-verification p{color:#213a30}
+html.light:not(.sun) .availability-dashboard .facility-card{background:#fff;border-color:#d3ddd8}
+html.light:not(.sun) .availability-dashboard .facility-title h2,html.light:not(.sun) .availability-dashboard .facility-meta strong,html.light:not(.sun) .availability-dashboard .facility-verification strong{color:#102c3a}
+html.light:not(.sun) .availability-dashboard .facility-divider{border-color:#d8e0dc}
+html.light:not(.sun) .availability-dashboard .facility-note{color:#42515a}
+html.light:not(.sun) .availability-dashboard .facility-call-main{color:#17392a}
+html.light:not(.sun) .availability-dashboard .facility-call-secondary{background:#f7f9f8;color:#17392a;border-color:#cbd8d0}
+@media(max-width:700px){.facility-verification{grid-template-columns:1fr;gap:7px}}
+@media(max-width:520px){.availability-dashboard{padding:13px}.availability-dashboard .status-stats{margin-inline:0}.availability-dashboard .status-filter,.availability-dashboard .connection-warning,.availability-dashboard .dashboard-reminder,.availability-dashboard .facility-grid{margin-inline:0}.availability-dashboard .status-nav{border-radius:17px}.availability-dashboard .status-nav a{font-size:.8rem;padding-inline:9px}}
+
+/* ===== Stock block, section titles, handoff-on-home, staff overview ===== */
+.section-title{margin:18px 10px 10px;font-size:1.15rem}
+.facility-stock{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 12px;margin:0 0 12px;padding:10px 12px;border:1px solid rgba(127,209,168,.38);border-radius:12px;background:rgba(127,209,168,.13);color:#eaf7ef}
+.facility-stock span{font-size:.74rem;font-weight:750;text-transform:uppercase;letter-spacing:.04em;opacity:.9}
+.facility-stock strong{font-size:1.25rem;line-height:1.2}
+.facility-stock small{flex:1 1 100%;font-size:.75rem;font-weight:650}
+.facility-stock.stock-none{border-style:dashed;background:transparent}
+.facility-stock.stock-none strong{font-size:1rem;font-weight:700;opacity:.85}
+.home-handoff{margin:26px 10px 8px;padding-top:6px;border-top:1px solid rgba(255,255,255,.16)}
+.home-handoff>h2{margin:14px 0 4px;font-size:1.3rem}
+.staff-overview{margin:6px 0 14px}
+.staff-overview .overview-heading{margin:10px 0 8px}
+.staff-overview .overview-heading h2{color:var(--ink)}
+.staff-overview .status-stats{margin:0 0 12px}
+.staff-overview .status-stat{border-radius:10px}
+.staff-overview .dashboard-reminder{margin:12px 0}
+
+/* ===== Light theme v3: off-white page, mint hex-scale snake body lower-right, forest-green header ===== */
+html.light:not(.sun){--bg:#f2f5ef;--logo:#e9b83c}
+html.light:not(.sun) body,html.light:not(.sun) .bg{background:#f2f5ef}
+html.light:not(.sun) .bg .b1{display:none}
+html.light:not(.sun) .bg::after{display:none}
+html.light:not(.sun) .bg .b3{display:block;left:auto;top:auto;right:-30vw;bottom:-10vh;width:135vw;height:44vh;background-image:url(../img/bg-hex.svg),linear-gradient(to bottom,#d3eadf 0%,#a9d4c0 55%,#c6e3d4 100%);background-size:34px auto,100% 100%;background-repeat:repeat,no-repeat;background-position:0 0,0 0;filter:none;mix-blend-mode:normal;opacity:.6;transform:rotate(-31deg);transform-origin:center;z-index:0;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 12%,#000 62%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 12%,#000 62%,transparent 100%)}
+html.light:not(.sun) .bg .b2{display:block;left:auto;top:auto;right:-30vw;bottom:-10vh;width:135vw;height:44vh;background:linear-gradient(to bottom,rgba(255,255,255,0) 15%,rgba(255,255,255,.6) 38%,rgba(255,255,255,0) 62%);mix-blend-mode:normal;opacity:.8;transform:rotate(-31deg);z-index:1;-webkit-mask-image:none;mask-image:none;filter:none}
+/* header */
+html.light:not(.sun) .top{background:rgba(27,58,46,.96);border-bottom:1px solid rgba(0,0,0,.25);box-shadow:0 4px 16px rgba(8,21,14,.25);color:#fff}
+html.light:not(.sun) .top .brand{color:#fff}
+html.light:not(.sun) .logo{background:#e9b83c;color:#1b3a2e;border-radius:10px}
+html.light:not(.sun) .top .dock{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.3)}
+html.light:not(.sun) .top .dockbtn{color:#fff}
+html.light:not(.sun) .top .dockbtn:hover{background:rgba(255,255,255,.16)}
+html.light:not(.sun) .top .dockbtn.staffbtn{background:#9be8c1;color:#0d2a1d;border:0}
+html.light:not(.sun) h2,html.light:not(.sun) .back,html.light:not(.sun) .aboutlink a{color:#1b3a2e}
+/* availability dashboard in light mode */
+html.light:not(.sun) .availability-dashboard{background:rgba(255,255,255,.58);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1.5px solid rgba(27,58,46,.28);color:#0d2a1d;box-shadow:0 6px 22px rgba(27,58,46,.1)}
+html.light:not(.sun) .dashboard-brand span{background:#d6efe0;color:#1b3a2e}
+html.light:not(.sun) .availability-dashboard .status-heading h1,html.light:not(.sun) .section-title,html.light:not(.sun) .home-handoff>h2{color:#0d2a1d}
+html.light:not(.sun) .availability-dashboard .status-heading .lead,html.light:not(.sun) .home-handoff .lead{color:#244a3a}
+html.light:not(.sun) .availability-dashboard .status-connection.is-device-only{background:#ffe9b8;color:#6b3d00}
+html.light:not(.sun) .availability-dashboard .status-nav{background:rgba(255,255,255,.75);border:1.5px solid rgba(27,58,46,.3)}
+html.light:not(.sun) .availability-dashboard .status-nav a{color:#0d2a1d}
+html.light:not(.sun) .availability-dashboard .status-nav a:hover{background:rgba(27,58,46,.1)}
+html.light:not(.sun) .availability-dashboard .status-nav a[aria-current="page"]{background:#1b3a2e;color:#fff}
+html.light:not(.sun) .overview-heading h2,html.light:not(.sun) .staff-overview .overview-heading h2{color:#0d2a1d}
+html.light:not(.sun) .overview-heading span{background:#dcecff;color:#0d4a8a}
+html.light:not(.sun) .status-stat{background:#fff;border:1.5px solid rgba(27,58,46,.28);color:#0d2a1d}
+html.light:not(.sun) .status-stat small{color:#244a3a}
+html.light:not(.sun) .status-stat strong{color:#0d2a1d}
+html.light:not(.sun) .status-stat.stat-green strong{color:#0a7a45}
+html.light:not(.sun) .dashboard-reminder{color:#0d2a1d}
+html.light:not(.sun) .availability-dashboard .facility-card,html.light:not(.sun) .facility-card{background:rgba(255,255,255,.93);border:1.5px solid rgba(27,58,46,.3);border-left-width:5px;box-shadow:0 4px 14px rgba(17,49,37,.08)}
+html.light:not(.sun) .availability-dashboard .facility-title h2,html.light:not(.sun) .facility-title h2{color:#0d2a1d}
+html.light:not(.sun) .availability-dashboard .facility-location{color:#244a3a}
+html.light:not(.sun) .availability-dashboard .facility-divider{border-top:1px solid rgba(27,58,46,.2)}
+html.light:not(.sun) .availability-dashboard .facility-verification p{color:#244a3a}
+html.light:not(.sun) .availability-dashboard .facility-verification strong{color:#0d2a1d}
+html.light:not(.sun) .availability-dashboard .facility-note{color:#4a3000}
+html.light:not(.sun) .availability-dashboard .facility-badge{background:#ffe9b8;border-color:#c98a00;color:#6b3d00}
+html.light:not(.sun) .availability-dashboard .facility-confirmed .facility-badge{background:#d9f5e5;border-color:#35a56c;color:#075d39}
+html.light:not(.sun) .facility-stock{background:#e3f4ea;border:1.5px solid #4fb98a;color:#0d2a1d}
+html.light:not(.sun) .facility-stock.stock-none{background:#fff;border:1.5px dashed #6b8f7b}
+html.light:not(.sun) .home-handoff{border-top:1px solid rgba(27,58,46,.25)}
+html.light:not(.sun) .status-contacts a{color:#1b3a2e}
+
+/* ===== Fixes: call button layout/contrast, hint overlap, staff tabs, delete button ===== */
+html{scroll-padding-top:90px}
+.home-handoff{scroll-margin-top:90px}
+.f .field-hint,.card .field-hint{margin:8px 0 12px}
+.staff-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 6px}
+.staff-tabs .btn{width:auto;margin:0;min-height:44px}
+.availability-dashboard .facility-call-main{flex:1 1 100%;width:100%;justify-content:space-between;gap:12px;padding:10px 16px;text-align:left}
+.availability-dashboard .facility-call-main small{font-size:.85rem;white-space:nowrap}
+html.light:not(.sun) .availability-dashboard .facility-call-main,html.light:not(.sun) .facility-call-main{background:#1b3a2e;border:2px solid #1b3a2e;color:#fff;flex:1 1 100%;width:100%;justify-content:space-between}
+html.light:not(.sun) .availability-dashboard .facility-call-main span,html.light:not(.sun) .facility-call-main span{color:#fff;font-size:.95rem}
+html.light:not(.sun) .availability-dashboard .facility-call-main small,html.light:not(.sun) .facility-call-main small{color:#d6efe0;font-size:.88rem;font-weight:700}
+html.light:not(.sun) .availability-dashboard .facility-call-main:hover{background:#0f2a20}
+/* delete: red in light mode (beats the generic green outlined button rule) */
+html.light:not(.sun) .btn.danger:not(.primary):not(.dial){background:#fff;border-color:#b4232e;color:#b4232e}
+html.light:not(.sun) .btn.danger:not(.primary):not(.dial):hover{background:#b4232e;color:#fff}
+
+/* Emergency guide: shared structure, theme-specific readable colors. */
+.emergency-start{display:grid;grid-template-columns:1fr;gap:10px;margin:14px 0;padding:20px;border:2px solid #dc3545;border-radius:18px;background:#170909;color:#f4f1f1;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.emergency-start h1{margin:0 0 6px;color:#ed4b53;font-size:1.8rem}
+.emergency-start p{margin:4px 0;color:#f4f1f1}
+.emergency-eyebrow{color:#ed4b53;font-size:.8rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.emergency-start-actions{display:grid;gap:8px}
+.availability-dashboard .emergency-start-actions .btn{margin:0;background:#b4232e;border:2px solid #b4232e;color:#fff;text-decoration:none}
+.availability-dashboard .emergency-start-actions .btn:hover,.availability-dashboard .emergency-start-actions .btn:focus-visible{background:#8f1a24;border-color:#8f1a24;color:#fff}
+.emergency-start .emergency-limit{font-size:.85rem;font-weight:700;color:#ffe08a}
+.offline-hint{margin:12px 0 18px;padding:12px 14px;border:1px solid #91b8ff;border-radius:12px;background:#10233a;color:#f1f6ff;font-size:.9rem}
+html.light:not(.sun) .emergency-start{background:#fde8e8;border-color:#c62828;color:#10231a}
+html.light:not(.sun) .emergency-start h1,html.light:not(.sun) .emergency-start p{color:#10231a}
+html.light:not(.sun) .emergency-eyebrow{color:#b4232e}
+html.light:not(.sun) .availability-dashboard .emergency-start-actions .btn{background:#b4232e;border:2px solid #b4232e;color:#fff}
+html.light:not(.sun) .availability-dashboard .emergency-start-actions .btn:hover,html.light:not(.sun) .availability-dashboard .emergency-start-actions .btn:focus-visible{background:#8f1a24;border-color:#8f1a24;color:#fff}
+html.light:not(.sun) .emergency-start .emergency-limit{color:#694400}
+html.light:not(.sun) .offline-hint{background:#edf4ff;color:#10233a}
+@media(min-width:700px){.emergency-start{grid-template-columns:1fr 1fr;align-items:center}.emergency-start .emergency-limit{grid-column:1/-1}}
+
+/* Keep staff verification fields within each hospital card. */
+.staff-directory-card,.staff-directory-card .f{min-width:0;max-width:100%}
+.staff-directory-card textarea{display:block;box-sizing:border-box;width:100%;max-width:100%;min-width:0;resize:vertical}
+
+/* Dashboard and emergency action refinements */
+.top .dockbtn.staffbtn{background:transparent;color:inherit;border:1px solid transparent}
+.top .dockbtn.staffbtn:hover,.top .dockbtn.staffbtn:focus-visible{background:rgba(255,255,255,.14);color:inherit}
+html.light:not(.sun) .top .dockbtn.staffbtn{background:transparent;color:#fff;border:1px solid transparent}
+html.light:not(.sun) .top .dockbtn.staffbtn:hover,html.light:not(.sun) .top .dockbtn.staffbtn:focus-visible{background:rgba(255,255,255,.16);color:inherit}
+html.light:not(.sun) #app .availability-dashboard{background:#dff1e5;border-color:#1b3a2e}
+.app-page-content{padding:8px 10px 2px}
+@media(max-width:520px){.app-page-content{padding:6px 2px 0}}
+.handoff-call-actions{display:grid;gap:8px}
+.handoff-call-actions .btn{width:100%;min-height:56px;margin:0}
+.handoff-call-actions .btn:not(.emergency-call){border-color:rgba(255,255,255,.28);background:transparent;color:var(--ink)}
+.handoff-call-actions .btn:not(.emergency-call):hover,.handoff-call-actions .btn:not(.emergency-call):focus-visible{border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:var(--ink)}
+html.light:not(.sun) .handoff-call-actions .btn:not(.emergency-call){border-color:rgba(16,35,26,.25);color:#10231a}
+html.light:not(.sun) .handoff-call-actions .btn:not(.emergency-call):hover,html.light:not(.sun) .handoff-call-actions .btn:not(.emergency-call):focus-visible{background:rgba(16,35,26,.08);color:#10231a}
+#app .handoff-share-actions .btn{border:1px solid rgba(255,255,255,.28);background:transparent;color:var(--accent)}
+#app .handoff-share-actions .btn:hover,#app .handoff-share-actions .btn:focus-visible{border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:var(--ink)}
+html.light:not(.sun) #app .handoff-share-actions .btn{border-color:rgba(16,35,26,.25);color:#10231a}
+html.light:not(.sun) #app .handoff-share-actions .btn:hover,html.light:not(.sun) #app .handoff-share-actions .btn:focus-visible{background:rgba(16,35,26,.08);color:#10231a}
+html:not(.light) #app .handoff-share-actions #sumSms{background:#1f6b4d!important;border:2px solid #1f6b4d!important;color:#fff!important}
+html:not(.light) #app .handoff-share-actions #sumSms:hover,html:not(.light) #app .handoff-share-actions #sumSms:focus-visible{background:#18583e!important;border-color:#18583e!important;color:#fff!important}
+html:not(.light) #app .handoff-share-actions>.btn{background:#1f6b4d!important;border:2px solid #1f6b4d!important;color:#fff!important}
+html:not(.light) #app .handoff-share-actions>.btn:hover,html:not(.light) #app .handoff-share-actions>.btn:focus-visible{background:#18583e!important;border-color:#18583e!important;color:#fff!important}
+html.light:not(.sun) #app .handoff-share-actions #sumSms{background:#1f6b4d!important;border:2px solid #1f6b4d!important;color:#fff!important}
+html.light:not(.sun) #app .handoff-share-actions #sumSms:hover,html.light:not(.sun) #app .handoff-share-actions #sumSms:focus-visible{background:#18583e!important;border-color:#18583e!important;color:#fff!important}
+html.light:not(.sun) #app .handoff-share-actions>.btn{background:#1f6b4d!important;border:2px solid #1f6b4d!important;color:#fff!important}
+html.light:not(.sun) #app .handoff-share-actions>.btn:hover,html.light:not(.sun) #app .handoff-share-actions>.btn:focus-visible{background:#18583e!important;border-color:#18583e!important;color:#fff!important}
+.availability-dashboard .facility-call-main{flex:1 0 100%;width:100%;min-height:48px!important;margin:0!important;padding:8px 14px;border:1px solid #424242;border-radius:9px;background:#191919;color:#f5f5f5;box-shadow:none;justify-content:space-between;gap:8px;text-align:left;font-size:1rem;line-height:1.3}
+.availability-dashboard .facility-actions{display:flex;flex-wrap:wrap;align-items:stretch;justify-content:flex-start;gap:8px}
+.availability-dashboard .facility-call-secondary{flex:1 1 calc(50% - 4px);width:auto;min-width:0;min-height:48px!important;margin:0!important;padding:8px 10px;border-radius:9px;font-size:.78rem;line-height:1.3;overflow-wrap:anywhere}
+.availability-dashboard .facility-call-main small{font-size:.9rem;font-weight:800;white-space:nowrap}
+html.light:not(.sun) .availability-dashboard .facility-call-main{background:#1b3a2e;border:1px solid #1b3a2e;color:#fff}
+html.light:not(.sun) .availability-dashboard .facility-call-main small{color:#d6efe0}
+html.light:not(.sun) .availability-dashboard .facility-call-secondary small{color:#42515a}
+@media(max-width:520px){.availability-dashboard .facility-call-secondary{flex-basis:100%}}
+
+
+/* ===== Logo image ===== */
+.top .logo,html.light:not(.sun) .top .logo,html.light:not(.sun) .logo{display:block;width:42px;height:42px;padding:0;border-radius:50%;background:transparent;object-fit:contain;box-shadow:0 0 0 1px rgba(233,184,60,.35)}
+.handoff-call-actions .btn{display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.25}
+
+/* ===== Emergency callout: two equal, aligned buttons (final) ===== */
+#app .handoff-callout{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(260px,340px)!important;align-items:center!important;gap:16px 24px!important}
+#app .handoff-call-actions{display:grid!important;grid-template-columns:100%!important;gap:10px!important;width:100%!important;margin:0!important;padding:0!important}
+#app .handoff-call-actions>a,#app .handoff-call-actions>.btn,#app .handoff-call-actions>.btn.small{display:flex!important;align-items:center!important;justify-content:center!important;box-sizing:border-box!important;width:100%!important;min-width:0!important;max-width:100%!important;height:56px!important;min-height:56px!important;margin:0!important;padding:0 16px!important;text-align:center!important;font-size:1rem!important;line-height:1.2!important;border-radius:12px!important}
+#app .handoff-call-actions>.emergency-call{background:#b4232e!important;border:2px solid #b4232e!important;color:#fff!important}
+#app .handoff-call-actions>.emergency-call:hover,#app .handoff-call-actions>.emergency-call:focus-visible{background:#8f1a24!important;border-color:#8f1a24!important}
+html.light:not(.sun) #app .handoff-call-actions>a:not(.emergency-call){background:#fff!important;border:2px solid #1b3a2e!important;color:#1b3a2e!important}
+html.light:not(.sun) #app .handoff-call-actions>a:not(.emergency-call):hover{background:#e3f4ea!important}
+html:not(.light) #app .handoff-call-actions>a:not(.emergency-call){background:transparent!important;border:2px solid rgba(255,255,255,.4)!important;color:var(--ink)!important}
+@media(max-width:640px){#app .handoff-callout{grid-template-columns:1fr!important}}
