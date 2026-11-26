@@ -575,3 +575,19 @@ html.light:not(.sun) .availability-dashboard .facility-call-main{background:#1b3
 html.light:not(.sun) .availability-dashboard .facility-call-main small{color:#d6efe0}
 html.light:not(.sun) .availability-dashboard .facility-call-secondary small{color:#42515a}
 @media(max-width:520px){.availability-dashboard .facility-call-secondary{flex-basis:100%}}
+
+
+/* ===== Logo image ===== */
+.top .logo,html.light:not(.sun) .top .logo,html.light:not(.sun) .logo{display:block;width:42px;height:42px;padding:0;border-radius:50%;background:transparent;object-fit:contain;box-shadow:0 0 0 1px rgba(233,184,60,.35)}
+.handoff-call-actions .btn{display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.25}
+
+/* ===== Emergency callout: two equal, aligned buttons (final) ===== */
+#app .handoff-callout{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(260px,340px)!important;align-items:center!important;gap:16px 24px!important}
+#app .handoff-call-actions{display:grid!important;grid-template-columns:100%!important;gap:10px!important;width:100%!important;margin:0!important;padding:0!important}
+#app .handoff-call-actions>a,#app .handoff-call-actions>.btn,#app .handoff-call-actions>.btn.small{display:flex!important;align-items:center!important;justify-content:center!important;box-sizing:border-box!important;width:100%!important;min-width:0!important;max-width:100%!important;height:56px!important;min-height:56px!important;margin:0!important;padding:0 16px!important;text-align:center!important;font-size:1rem!important;line-height:1.2!important;border-radius:12px!important}
+#app .handoff-call-actions>.emergency-call{background:#b4232e!important;border:2px solid #b4232e!important;color:#fff!important}
+#app .handoff-call-actions>.emergency-call:hover,#app .handoff-call-actions>.emergency-call:focus-visible{background:#8f1a24!important;border-color:#8f1a24!important}
+html.light:not(.sun) #app .handoff-call-actions>a:not(.emergency-call){background:#fff!important;border:2px solid #1b3a2e!important;color:#1b3a2e!important}
+html.light:not(.sun) #app .handoff-call-actions>a:not(.emergency-call):hover{background:#e3f4ea!important}
+html:not(.light) #app .handoff-call-actions>a:not(.emergency-call){background:transparent!important;border:2px solid rgba(255,255,255,.4)!important;color:var(--ink)!important}
+@media(max-width:640px){#app .handoff-callout{grid-template-columns:1fr!important}}

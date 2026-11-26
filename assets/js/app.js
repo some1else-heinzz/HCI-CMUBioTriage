@@ -535,7 +535,7 @@ function wire(r) {
     on('save', async () => {
       const o = $('#saveOut');
       if (!('serviceWorker' in navigator)) { o.innerHTML = '<p class="msg">This browser cannot save offline. Add it to your home screen instead.</p>'; return; }
-      try { const keys = await (await caches.open('cmubiotrage-v30')).keys();
+      try { const keys = await (await caches.open('cmubiotrage-v33')).keys();
         o.innerHTML = keys.length >= 6 ? `<p class="msg">✔ Saved offline: reviewed ${esc(D.reviewed)}</p>` : '<p class="msg">Not saved yet. Stay online a few seconds and tap again.</p>';
       } catch { o.innerHTML = '<p class="msg">Could not check. Reload the page while online and try again.</p>'; }
       netStatus();
